@@ -19,9 +19,7 @@ Rails.application.routes.draw do
       patch 'update_profile'
     end
   end
-  
+
   # root 'template#index'
   get 'dashboard/index', to: 'dashboard#index'
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
