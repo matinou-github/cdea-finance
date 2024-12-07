@@ -1,0 +1,45 @@
+<div class="main-wrapper  account-wrapper">
+    <div class="content">
+        <div class="row mb-4">
+            <div class="col-sm-12 text-center">
+                <h2 class="text-dark">BONJOUR M/Mme <%=current_user.nom%> <%=current_user.prenom%>.</h2>
+                <h5 class="text-success">Merci pour votre inscription. Veuillez finaliser votre inscription en remplissant les informations suivantes</h5>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card-box">
+                    <h4 class="card-title">Information supplémentaire</h4>
+                    <%= form_with model: @user, url: update_profile_user_path(@user), local: true, class: "profile-form" do |f| %>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Votre communue</label>
+                            <div class="col-md-10">
+                                <%= f.select :commune, ["Cotonou", "Parakou", "Porto-Novo"], { prompt: "Choisissez votre commune" }, class: "form-control" %>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Votre village</label>
+                            <div class="col-md-10">
+                                <%= f.text_field :village, class: "form-control", placeholder: "Entrez votre village" %>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Photo CIP ou acte de naissance</label>
+                            <div class="col-md-10">
+                                <%= f.file_field :identity_card_photo, class: "form-control" %>
+                            </div>
+                        
+                        </div>
+
+                        <div class="form-actions text-end">
+                        <%= f.submit "Enregistrer", class: "btn btn-primary btn-lg" %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

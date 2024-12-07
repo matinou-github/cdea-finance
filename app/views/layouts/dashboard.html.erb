@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html data-turbo="false">
+  <head>
+    <title>CliniqueRenaissanceDivine</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+<style>
+/* Preloader container */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* Couleur de fond semi-transparente */
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Spinner animation */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #3498db; /* Couleur de l'animation */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animation keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+</style>
+
+  </head>
+
+  <body>
+
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+  
+  <div class="main-wrapper">
+    <%= render 'layouts/dashboard/header' %>
+    <%= render 'layouts/dashboard/sidebar' %>
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="container">
+                <%= yield %>
+                <%=render 'layouts/dashboard/footer'%>
+            </div>
+        </div>  
+    </div>
+
+    <%= render 'layouts/dashboard/notification_box' %>   
+  </div>
+
+<div class="sidebar-overlay" data-reff=""></div>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  // Masquer le preloader après le chargement complet
+  const preloader = document.getElementById("preloader");
+  window.addEventListener("load", () => {
+    if (preloader) {
+      preloader.style.opacity = "0";
+      preloader.style.transition = "opacity 0.5s ease-out";
+      setTimeout(() => {
+        preloader.style.display = "none";
+      }, 500); // Cache complètement après la transition
+    }
+  });
+});
+ </script>
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+	// Sélectionner tous les boutons de bascule
+	const togglePasswordButtons = document.querySelectorAll(".toggle-password");
+  
+	togglePasswordButtons.forEach((button) => {
+	  button.addEventListener("click", function () {
+		const targetInput = document.querySelector(this.getAttribute("data-target"));
+		if (targetInput) {
+		  // Alterner le type de champ entre "password" et "text"
+		  if (targetInput.type === "password") {
+			targetInput.type = "text";
+			this.innerHTML = '<i class="fa fa-eye-slash"></i>'; // Icône pour masquer
+		  } else {
+			targetInput.type = "password";
+			this.innerHTML = '<i class="fa fa-eye"></i>'; // Icône pour afficher
+		  }
+		}
+	  });
+	});
+  });
+ </script>
+ </body>
+</html>

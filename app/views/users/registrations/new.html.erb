@@ -1,0 +1,94 @@
+<style>
+  <style>
+.login-container, .registration-container {
+  width: max-content;
+  padding: 20px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  left: 50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+}
+.form-group label {
+  font-weight: bold;
+  color: white;
+}
+
+.form-control {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.btn-primary:hover {
+  background-color: #1b4d3e;
+}
+
+</style>
+
+<div style="background-image: url(/assets/tracteur4.jpg); background-size: cover;background-position: center; height:100vh;">
+  <div class="main-wrapper  account-wrapper">
+    <div class="account-page">
+      <div class="account-center">
+          <div class="account-box" style="background-color: rgba(0, 0, 0, 0.8);">
+             <div class="text-center">
+              <a href="index-2.html"><%= image_tag 'logo.png', width: "100" %></a>
+            </div>
+        <h2 class="text-light text-center">Créer un compte</h2>
+        <%= form_for(resource, as: :user, url: registration_path(resource_name), html: { method: :post, id: 'msform', class: "form-signin" }) do |f| %>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :nom, "Nom" %>
+              <%= f.text_field :nom, class: "form-control", placeholder: "Entrez votre nom" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :prenom, "Prénom" %>
+              <%= f.text_field :prenom, class: "form-control", placeholder: "Entrez votre prénom" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :phone_number, "Numéro de téléphone" %>
+              <%= f.telephone_field :phone_number, class: "form-control", placeholder: "Entrez votre numéro de téléphone" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :email, "E-mail (optionnel)" %>
+              <%= f.email_field :email, class: "form-control", placeholder: "Entrez votre e-mail (facultatif)" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :password, "Mot de passe" %>
+              <%= f.password_field :password, class: "form-control", placeholder: "Entrez votre mot de passe" %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :password_confirmation, "Confirmez le mot de passe" %>
+              <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirmez votre mot de passe" %>
+            </div>
+          </div>
+        </div>
+          
+          <div class="form-actions text-center">
+            <%= f.submit "Créer un compte", class: "btn btn-primary btn-block" %>
+          </div>
+        <% end %>
+        <div class="text-center">
+          <hr>
+          <p class="text-light">J'ai déjà un compte? <a class="text-warning" href="<%=new_user_session_path%>">Je me connecte</a></p>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

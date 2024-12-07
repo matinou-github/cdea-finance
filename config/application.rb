@@ -10,7 +10,9 @@ module CdeaFinance
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
-
+    config.i18n.default_locale = :fr
+    config.time_zone = 'Africa/Porto-Novo'
+    config.active_record.default_timezone = :local
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
