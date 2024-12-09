@@ -42,14 +42,14 @@
    <div class="form-group row">
       <label class="col-form-label col-md-2">Status de payement:</label>
       <div class="col-md-10">
-        <%= f.select :status, options_for_select([["Impayé", "unpaid"], ["Payé", "paid"], ["Annulé", "cancelled"]]), { selected: 'unpaid' }, class: "form-control" %>
+        <%= f.select :status, options_for_select([["Impayé", "unpaid"], ["Payé", "paid"], ["Annulé", "cancelled"]], @service_request.status || 'unpaid'), {}, class: "form-control" %>
       </div>
   </div>
 
   <div class="form-group row">
       <label class="col-form-label col-md-2">Status de la demande:</label>
       <div class="col-md-10">
-        <%= f.select :status_request, options_for_select([["En attente", "pending"], ["Confirmé", "confirm"], ["Rejeté", "reject"]]), { selected: 'pending' }, class: "form-control" %>
+        <%= f.select :status_request, options_for_select([["En attente", "pending"], ["Validé", "confirm"],["Executé", "execute"],  ["Rejeté", "reject"]]), { selected: 'pending' }, class: "form-control" %>
       </div>
   </div>
 
@@ -109,7 +109,3 @@
 
 </script>
 
-<div>
-  <%= link_to "Show this service request", @service_request %> |
-  <%= link_to "Back to service requests", service_requests_path %>
-</div>
