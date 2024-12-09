@@ -1,0 +1,55 @@
+<div id="<%= dom_id service_request %>" class="container mt-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-success text-white">
+      <h4><i class="fas fa-seedling"></i> Demande de Service - Détails</h4>
+    </div>
+    <div class="card-body">
+      <!-- Ligne 1 : Utilisateur et Statut -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-user"></i> Utilisateur :</strong> <%= service_request.user_id %></p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> <%= service_request.status %></p>
+        </div>
+      </div>
+
+      <!-- Ligne 2 : Superficie et Herbicide -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-leaf"></i> Superficie (Ha) :</strong> <%= service_request.superficie %></p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-flask"></i> Herbicide :</strong> <%= service_request.herbicide.nom %></p>
+        </div>
+      </div>
+
+      <!-- Ligne 3 : Prix Herbicide et Quantité -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-tag"></i> Prix de l'Herbicide :</strong> <%= number_to_currency(service_request.herbicide.prix) %></p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-cogs"></i> Quantité d'Herbicide :</strong> <%= service_request.herbicide_quantite %></p>
+        </div>
+      </div>
+
+      <!-- Ligne 4 : Garantie et Preuve -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-money-check-alt"></i> Garantie :</strong> <%= number_to_currency(service_request.garantie) %></p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <p><strong><i class="fas fa-file-upload"></i> Preuve :</strong> <%= service_request.preuve.present? ? service_request.preuve : "Aucune preuve fournie" %></p>
+        </div>
+      </div>
+
+      <!-- Bouton retour -->
+      <div class="mt-4">
+        <button class="btn btn-primary" onclick="window.history.back();">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

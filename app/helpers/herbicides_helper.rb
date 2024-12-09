@@ -1,0 +1,2 @@
+module HerbicidesHelper
+end

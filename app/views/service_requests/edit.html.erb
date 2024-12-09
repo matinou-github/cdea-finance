@@ -1,0 +1,115 @@
+
+
+<%= form_with model: @service_request, local: true do |f| %>
+
+  <div class="form-group row">
+      <label class="col-form-label col-md-2">Superficie a labouré en Ha</label>
+      <div class="col-md-10">
+          <%= f.number_field :superficie, step: 0.01, class: "form-control", id: "superficie" %>
+      </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-form-label col-md-2">
+      Besoins en herbicide
+    </label>
+    <div class="col-md-8">
+         <%= f.select :herbicide_id, 
+                 options_for_select(Herbicide.all.map { |h| [h.nom, h.id] }), 
+                 { prompt: "-- Choisir un herbicide --" }, 
+                 { id: "herbicide", class: "form-control", 
+                   data: { herbicide_prices: Herbicide.all.map { |h| [h.id, h.prix] }.to_h.to_json } } %>
+    </div>
+    <div class="col-md-2">
+         <%= f.number_field :herbicide_quantite, value: 0, min: 0, class: "form-control", id: "herbicide_quantite" %>
+    </div>
+</div>
+
+
+  <div class="form-group text-end">
+    <small>Cout de l'herbicide :</small>
+    <small id="prix_calculé">0</small> <small>F CFA</small>
+  </div>
+
+  <div class="form-group row">
+      <label class="col-form-label col-md-2">Frais de garantie  à payé (F CFA) :</label>
+      <div class="col-md-10">
+        <%= f.number_field :garantie, class: "form-control", id: "garantie_calculée_hidden" %>
+      </div>
+  </div>
+
+   <div class="form-group row">
+      <label class="col-form-label col-md-2">Status de payement:</label>
+      <div class="col-md-10">
+        <%= f.select :status, options_for_select([["Impayé", "unpaid"], ["Payé", "paid"], ["Annulé", "cancelled"]]), { selected: 'unpaid' }, class: "form-control" %>
+      </div>
+  </div>
+
+  <div class="form-group row">
+      <label class="col-form-label col-md-2">Status de la demande:</label>
+      <div class="col-md-10">
+        <%= f.select :status_request, options_for_select([["En attente", "pending"], ["Confirmé", "confirm"], ["Rejeté", "reject"]]), { selected: 'pending' }, class: "form-control" %>
+      </div>
+  </div>
+
+  
+  <div class="form-group">
+    <%= f.submit "Soumettre", class: "btn btn-primary btn-lg w-100" %>
+  </div>
+<% end %>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  // Récupérer les éléments du DOM
+  const herbicideSelect = document.getElementById("herbicide");
+  const herbicideQuantiteInput = document.getElementById("herbicide_quantite");
+  const superficieInput = document.getElementById("superficie");
+  const prixCalculéSpan = document.getElementById("prix_calculé");
+  const garantieCalculéeSpan = document.getElementById("garantie_calculée");
+  const garantieHiddenInput = document.getElementById("garantie_calculée_hidden");
+  console.log("Valeur de garantie avant soumission:", garantieHiddenInput.value);  // Vérifiez cette ligne dans la console
+  if (!herbicideSelect || !herbicideQuantiteInput || !superficieInput || !prixCalculéSpan || !garantieCalculéeSpan) {
+    console.error("Un ou plusieurs éléments nécessaires n'existent pas dans le DOM.");
+    return;
+  }
+
+  // Récupérer les prix des herbicides depuis l'attribut data
+  const herbicidePrices = JSON.parse(herbicideSelect.dataset.herbicidePrices);
+
+  // Fonction pour recalculer les valeurs
+  function recalculer() {
+    const herbicideId = herbicideSelect.value;
+    const quantite = parseFloat(herbicideQuantiteInput.value) || 0;
+    const superficie = parseFloat(superficieInput.value) || 0;
+
+    // Calcul du prix de l'herbicide
+    const prixHerbicide = herbicidePrices[herbicideId] ? herbicidePrices[herbicideId] * quantite : 0;
+    prixCalculéSpan.textContent = prixHerbicide;
+
+    // Calcul des frais de garantie
+    let garantie = 0;
+    const fraisDossier = 1000; // Exemple de frais de dossier fixe
+    if (superficie > 0) {
+      garantie = 10 * superficie + fraisDossier;
+    } else if (quantite > 0) {
+      garantie = 10 * quantite + fraisDossier;
+    }
+    garantieCalculéeSpan.textContent = garantie;
+    // Mettre à jour la garantie visible et le champ caché
+     garantieHiddenInput.value = garantie;
+  }
+
+  // Écoute des événements pour recalculer dynamiquement
+  herbicideSelect.addEventListener("change", recalculer);
+  herbicideQuantiteInput.addEventListener("input", recalculer);
+  superficieInput.addEventListener("input", recalculer);
+});
+
+</script>
+
+<div>
+  <%= link_to "Show this service request", @service_request %> |
+  <%= link_to "Back to service requests", service_requests_path %>
+</div>

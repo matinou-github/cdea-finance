@@ -1,0 +1,21 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h3>Détails de l'Herbicide</h3>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <h5>Nom :</h5>
+        <p><%= @herbicide.nom %></p>
+      </div>
+      <div class="mb-3">
+        <h5>Prix (F CFA) :</h5>
+        <p><%= number_to_currency(@herbicide.prix, unit: "", separator: ".", delimiter: ",") %></p>
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <%= link_to "Modifier", edit_herbicide_path(@herbicide), class: "btn btn-warning" %>
+      <%= link_to "Retour à la liste", herbicides_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+</div>

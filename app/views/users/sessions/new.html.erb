@@ -29,12 +29,6 @@ h2 {
   padding: 8px;
 }
 
-.btn-primary {
-  background-color: #2d6a4f;
-  border: none;
-  color: #ffffff;
-}
-
 .btn-primary:hover {
   background-color: #1b4d3e;
 }
@@ -63,9 +57,9 @@ h2 {
       </div>
     <% end %>
     <div class="login-footer text-center mt-2">
-      <p>Je n'ai pas encore de compte ? <a href="<%=new_user_registration_path%>">CREER COMPTE</a></p>
+      <p>Je n'ai pas encore de compte ? <a class="text-cdae" href="<%=new_user_registration_path%>">CREER COMPTE</a></p>
       <hr>
-      <%= link_to "Mot de passe oublié ?", new_user_password_path, class: "forgot-password-link" %>
+      <%= link_to "Mot de passe oublié ?", new_user_password_path, class: "forgot-password-link text-cdae" %>
     </div>
   </div>
 </div>

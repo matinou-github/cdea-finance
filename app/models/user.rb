@@ -4,10 +4,16 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+         enum role: {
+          admin: "admin",
+          agriculteur: "agriculteur",
+          technicien: "technicien",
+          secretaire: "secretaire"
+        }
 
   # Permet la connexion avec un email ou un numéro de téléphone
   attr_writer :login
-
+  has_many :service_requests
   def login
     @login || self.phone_number || self.email
   end

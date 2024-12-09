@@ -30,11 +30,11 @@
 
 </style>
 
-<div style="background-image: url(<%= asset_path('tracteur4.jpg') %>); background-size: cover;background-position: center; height:100vh;">
+<div style="background-image: url(<%= asset_path('tracteur4.jpg') %>); background-size: cover;background-position: center;">
   <div class="main-wrapper  account-wrapper">
     <div class="account-page">
       <div class="account-center">
-          <div class="account-box" style="background-color: rgba(0, 0, 0, 0.8);">
+          <div class="account-box" style="background-color: rgba(0, 0, 0, 0.8); border-radius: 10px;">
              <div class="text-center">
               <a href="index-2.html"><%= image_tag 'logo.png', width: "100" %></a>
             </div>
@@ -85,7 +85,7 @@
         <% end %>
         <div class="text-center">
           <hr>
-          <p class="text-light">J'ai déjà un compte? <a class="text-warning" href="<%=new_user_session_path%>">Je me connecte</a></p>
+          <p class="text-light">J'ai déjà un compte? <a class="text-cdae" href="<%=new_user_session_path%>">Je crée un connecte</a></p>
         </div>
         </div>
       </div>

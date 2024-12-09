@@ -1,0 +1,136 @@
+<style>
+  .rounded{border-radius: 1rem}.nav-pills .nav-link{color: #555}.nav-pills .nav-link.active{color: white}input[type="radio"]{margin-right: 5px}.bold{font-weight:bold}
+</style>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+          <div class="card shadow-lg border-0">
+        <div class="card-header btn-cdae text-white">
+          <h4><i class="fas fa-seedling"></i> Demande de Service - Détails</h4>
+        </div>
+        <div class="card-body">
+          <!-- Ligne 1 : Utilisateur et Statut -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-user"></i> Utilisateur :</strong> <%= @service_request.user.nom %> <%= @service_request.user.prenom %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> <%= @service_request.status %></p>
+            </div>
+          </div>
+
+          <!-- Ligne 2 : Superficie et Herbicide -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-leaf"></i> Superficie (Ha) :</strong> <%= @service_request.superficie %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-flask"></i> Herbicide :</strong> 
+              <%= @service_request.herbicide == nil ? "N/A" : @service_request.herbicide.nom  %>
+              </p>
+            </div>
+          </div>
+
+          <% if @service_request.herbicide%>
+          <!-- Ligne 3 : Prix Herbicide et Quantité -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-tag"></i> Prix de l'Herbicide :</strong> 
+              <% if @service_request.herbicide%>
+              <%= @service_request.herbicide.prix %> Fcfa
+              <%else%>
+                <p>N/A</p>
+              <%end%>
+              </p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-cogs"></i> Quantité d'Herbicide :</strong>
+              <%= @service_request.herbicide_quantite == nil ?  "N/A" : @service_request.herbicide_quantite %>
+              </p>
+            </div>
+          </div>
+          <%end%>
+
+          <!-- Ligne 4 : Garantie et Preuve -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-money-check-alt"></i> Garantie :</strong> <%= @service_request.garantie  %> Fcfa</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-file-upload"></i> Preuve :</strong> <%= @service_request.preuve.present? ? @service_request.preuve : "Aucune preuve fournie" %></p>
+            </div>
+          </div>
+
+          <!-- Bouton retour -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+        <div class="col-lg-12 mx-auto">
+            <div class="card ">
+                <div class="card-header">
+                    <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
+                        <!-- Credit card form tabs -->
+                        <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+                            <li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link active"> <i class="fas fa-mobile-alt mr-2"></i> MOMO </a> </li>
+                            <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fas fa-credit-card mr-2"></i> DIRECT </a> </li>
+                        </ul>
+                    </div> <!-- End -->
+                    <!-- Credit card form content -->
+                    <div class="tab-content">
+                    <!-- Paypal info -->
+                    <div id="paypal" class="tab-pane fade show active pt-3">
+                        <h5 class="text-center">Cliquer sur le bouton pour payer momo</h5>
+                        <% if @service_request.status.present? && @service_request.status == "unpaid"%>
+                          <div class="row mt-3">
+                            <div class="col-md-12">
+                              <%= form_tag service_payement_path, method: :post, class: 'col-auto' do %>
+                                <%= hidden_field_tag 'amount',  @service_request_amount %>
+                                <%= hidden_field_tag 'id', @service_request.id %>
+                                <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"
+                                  data-public-key="pk_sandbox_ywrlaTQdbqll7iBWVEkbrCZe"
+                                  data-button-text="EFFECTUER LE PAYEMENT"
+                                  data-button-class="btn btn-primary d-block h8 w-100"
+                                  data-transaction-amount="<%=  @service_request_amount %>"
+                                  data-transaction-description="Rendez-vous"
+                                  data-customer-email = "<%= current_user.email if current_user.present?%>"
+                                  data-customer-lastname = "<%= current_user.nom if current_user.nom.present? %>  <%= current_user.prenom if current_user.prenom.present? %>"
+                                  data-currency-iso="XOF"
+                                  data-widget-description=""
+                                  data-widget-image=""
+                                  data-widget-title="cdae-finance"> 
+                                </script>
+                              <% end %>
+                            </div>
+                          </div>
+                          <hr>
+                        <%end%>
+                        <small class="text-muted"><strong> Remarque :</strong> Après avoir cliqué sur le bouton, vous serez dirigé vers une passerelle sécurisée pour le paiement. Une fois le processus de paiement terminé, vous serez redirigé vers le site Web pour afficher les détails de votre commande. </small>
+                    </div> <!-- End -->
+                    <!-- bank transfer info -->
+                    <div id="net-banking" class="tab-pane fade pt-3">
+                        <div class="form-group "> <label for="Select Your Bank">
+                                <h6>Preuve de payement</h6>
+                                <form action="">
+                                <input type="file">
+                               </form>
+                               <hr>
+                        <div class="form-group text-center">
+                            <p> <button type="button" class="btn btn-primary "><i class="fas fa-mobile-alt mr-2"></i> Envoyer preuve de payement</button> </p>
+                        </div>
+                        <small class="text-muted"> <strong>Note:</strong> Votre status de payement sera a implayé jusqu'a ce que l'administrateur confirme le payement</small>
+                    </div> <!-- End -->
+                    <!-- End -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    </div>
+  </div>
+  
+
+

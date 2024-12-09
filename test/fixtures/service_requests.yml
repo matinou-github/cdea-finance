@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  superficie: 1.5
+  herbicide_nom: MyString
+  herbicide_prix: 9.99
+  herbicide_quantite: 1
+  garantie: 9.99
+  herbicide: one
+  preuve: MyString
+  status: MyString
+
+two:
+  user: two
+  superficie: 1.5
+  herbicide_nom: MyString
+  herbicide_prix: 9.99
+  herbicide_quantite: 1
+  garantie: 9.99
+  herbicide: two
+  preuve: MyString
+  status: MyString

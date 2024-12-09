@@ -1,0 +1,12 @@
+<% content_for :title, "Editing herbicide" %>
+
+<h1>Editing herbicide</h1>
+
+<%= render "form", herbicide: @herbicide %>
+
+<br>
+
+<div>
+  <%= link_to "Show this herbicide", @herbicide %> |
+  <%= link_to "Back to herbicides", herbicides_path %>
+</div>

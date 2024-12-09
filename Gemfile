@@ -38,6 +38,8 @@ gem "jquery-rails"
 gem "rails_db"
 gem 'rails-i18n'
 gem 'devise'
+gem 'fedapay', git: 'https://github.com/fedapay/fedapay-ruby.git'
+gem 'faraday', '~> 1.8'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"

@@ -1,0 +1,2 @@
+class IndiceSetting < ApplicationRecord
+end

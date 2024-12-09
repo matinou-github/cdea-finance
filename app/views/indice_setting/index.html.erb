@@ -1,0 +1,104 @@
+ <div>
+    <h1 class="text-center">Indice de calcul</h1>
+ </div>
+ 
+<%#= render 'shared/alert_notif_message'%>  
+<%= form_for @indice_setting, url: indice_setting_update_path, method: :put do |f| %>
+<div class="custom-container">
+  <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card"> 
+          <div class="card-header">
+            
+          </div>
+          <div class="card-body"> 
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <h5><strong>Information indice remboursement</strong></h5>
+                  <hr>
+                </div>
+                <div class="col-md-4">
+                  <h5>Kg percu par Ha labouré</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.text_field :kg_ha_laboure, autofocus: true, autocomplete: " kg_ha_laboure" , class: "form-control" %>
+                </div> 
+
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Kg percu par Litre Octroyé</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.text_field :kg_litre_octroi, autofocus: true, autocomplete: "kg_litre_octroi" , class: "form-control" %>
+                </div> 
+
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Valeur actuelle du soja</h5>   
+                 
+                </div>
+                <div class="col-md-8">  
+                  <%= f.number_field :valeur_soja, autofocus: true, autocomplete: "valeur_soja" , class: "form-control" %>
+                </div> 
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Taux de majoration qté impayé(%)</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.number_field :taux_majoration, autofocus: true, autocomplete: "taux_majoration" , class: "form-control" %>
+                </div> 
+
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <h5><strong>Information indice Garantie</strong></h5>
+                  <hr>
+                </div>
+                <div class="col-md-4">
+                  <h5>Taux/ha pour garantie (Fcfa)</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.number_field :garantie_ha, autofocus: true, autocomplete: "garantie_kg" , class: "form-control" %>
+                </div> 
+
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Taux/Litre pour garantie (Fcfa)</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.text_field :garantie_litre, autofocus: true, autocomplete: "garantie_litre:decimal" , class: "form-control" %>
+                </div> 
+
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Frais de dossier</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.text_field :frais_dossier, autofocus: true, autocomplete: "frais_dossier" , class: "form-control" %>
+                </div> 
+
+              </div>
+
+              <div class="row">
+                <%= f.submit "Sauvégarder", class: "btn btn-primary" %>
+              </div>
+              
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<% end %>
