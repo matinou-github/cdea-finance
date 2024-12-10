@@ -1,0 +1,54 @@
+
+<div class="container mt-2">
+  <div class="row mb-4">
+    <div class="col text-end">
+      <%= link_to "Nouvelle execution", new_execution_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+  <div class="card shadow-lg border-0">
+    <div class="card-header btn-cdae text-white">
+      <h4><i class="fas fa-seedling"></i> Les taches executées</h4>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-hover ">
+        <thead >
+          <tr>
+            <th>#</th>
+            <th>Demande ID</th>
+            <th>Superficie labourée</th>
+            <th>Superficie demandée</th>
+            <th>Preuve</th>
+            <th>Exécuté par</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @executions.each_with_index do |execution, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= execution.service_request_id %></td>
+              <td><%= execution.superficie %></td>
+              <td><%= execution.service_request.superficie %></td>
+              <td>
+                <% if execution.preuve.attached? %>
+                  <%= image_tag execution.preuve, style: "width: 100px;" %>
+                <% else %>
+                  <span class="text-muted">Aucune image</span>
+                <% end %>
+              </td>
+              <td><%= execution.user.nom %></td>
+              <td>
+                <div class="btn-group" role="group">
+                  <%= link_to 'Voir', execution_path(execution), class: "btn btn-info btn-sm" %>
+                  <%= link_to 'Modifier', edit_execution_path(execution), class: "btn btn-warning btn-sm" %>
+                  <%= link_to 'Supprimer', execution_path(execution), method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn btn-danger btn-sm" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+        </div>
+  </div>
+</div>
+

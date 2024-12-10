@@ -1,0 +1,80 @@
+
+<div class="container mt-2">
+  <div class="row mb-4">
+    <div class="col text-end">
+       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">
+          Ajouter un utilisateur +
+      </button>
+    </div>
+  </div>
+  <div class="card shadow-lg border-0">
+    <div class="card-header btn-cdae text-white">
+      <h4><i class="fas fa-user"></i> Les utilisateurs</h4>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th>#</th>
+            <th>Client ID</th>
+            <th>Nom & Prénom</th>
+            <th>Commune / Village</th>
+            <th>Zone</th>
+            <th>Téléphone</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>#</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each_with_index do |user, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= user.id %></td>
+              <td><%= user.nom %> <%= user.prenom %></td>
+              <td><%= user.commune%>/<%=user.village%></td>
+              <td><%= user.zone == nil ? "N/A" : user.zone  %></td>
+              <td><%= user.phone_number %></td>
+              <td><%= user.email == nil ?  "N/A" :user.email %></td>
+              <td><%=user.role%></td>
+              <td class="text-right">
+                <div class="dropdown">
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown<%= user.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-cogs"></i> 
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= user.id %>">
+                    <li><%= link_to new_service_request_path, class: 'dropdown-item' do %>
+                        <i class="fas fa-eye"></i> Voir
+                      <% end %></li>
+                    <li><%= link_to new_service_request_path, class: 'dropdown-item' do %>
+                        <i class="fas fa-edit"></i> Modifier
+                      <% end %></li>
+                    <li><%= link_to new_service_request_path, class: 'dropdown-item text-danger' do %>
+                        <i class="fas fa-trash-alt"></i> Supprimer
+                      <% end %></li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour ajouter un nouvel utilisateur -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content add_user_patient">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newUserModalLabel">Inscription utilisateur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulaire pour créer un nouvel utilisateur -->
+        <%= render "users/registrations/add_user"%>
+      </div>
+    </div>
+  </div>
+</div>

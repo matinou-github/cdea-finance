@@ -1,0 +1,61 @@
+<h2 class="text-center my-4">Historique des Zones Assignées</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <p class="text-muted">Liste des zones assignées aux agriculteurs.</p>
+  <%= link_to "Assigner une Zone", new_zone_assignment_path, class: "btn btn-primary" %>
+</div>
+
+<table class="table table-hover table-bordered">
+  <thead class="thead-dark">
+    <tr>
+      <th>#</th>
+      <th>Agriculteur</th>
+      <th>Zone</th>
+      <th>Assigné par</th>
+      <th>Date d'Assignation</th>
+      <th class="text-center">Actions</th> <!-- Colonne pour les actions -->
+    </tr>
+  </thead>
+  <tbody>
+    <% @zone_assignments.each_with_index do |assignment, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= assignment.user.nom %></td>
+        <td><%= assignment.zone %></td>
+        <td><%= assignment.assigned_by.nom %></td>
+        <td><%= assignment.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+        <td class="text-right">
+          <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown<%= assignment.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-cogs"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= assignment.id %>">
+              <li>
+                <%= link_to zone_assignment_path(assignment), class: 'dropdown-item' do %>
+                  <i class="fas fa-eye"></i> Voir
+                <% end %>
+              </li>
+              <li>
+                <%= link_to edit_zone_assignment_path(assignment), class: 'dropdown-item' do %>
+                  <i class="fas fa-edit"></i> Modifier
+                <% end %>
+              </li>
+              <li>
+                <%= link_to zone_assignment_path(assignment), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette assignation ?' }, class: 'dropdown-item text-danger' do %>
+                  <i class="fas fa-trash-alt"></i> Supprimer
+                <% end %>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<% if @zone_assignments.empty? %>
+  <div class="alert alert-info text-center" role="alert">
+    Aucune zone n'a encore été assignée.
+  </div>
+<% end %>

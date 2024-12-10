@@ -25,6 +25,10 @@ class ServiceRequestsController < ApplicationController
 
   # GET /service_requests/1/edit
   def edit
+    @indice_setting = IndiceSetting.last
+    @frais_dossier = @indice_setting.frais_dossier
+    @garantie_ha = @indice_setting.garantie_ha
+    @garantie_litre = @indice_setting.garantie_litre
   end
 
   # POST /service_requests or /service_requests.json
@@ -45,7 +49,7 @@ class ServiceRequestsController < ApplicationController
   def update
     respond_to do |format|
       if @service_request.update(service_request_params)
-        format.html { redirect_to @service_request, notice: "Service request was successfully updated." }
+        format.html { redirect_to service_requests_path, notice: "Service request was successfully updated." }
         format.json { render :show, status: :ok, location: @service_request }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -88,6 +92,6 @@ class ServiceRequestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def service_request_params
-      params.require(:service_request).permit(:user_id, :superficie, :herbicide_nom, :herbicide_prix, :herbicide_quantite, :garantie, :herbicide_id, :preuve, :status, :status_request)
+      params.require(:service_request).permit(:user_id, :superficie, :herbicide_nom, :herbicide_prix, :herbicide_quantite, :garantie, :herbicide_id, :preuve, :status, :status_request, :kg_paye)
     end
 end

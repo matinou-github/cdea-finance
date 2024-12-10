@@ -35,7 +35,14 @@
   <div class="form-group row">
       <label class="col-form-label col-md-2">Frais de garantie  à payé (F CFA) :</label>
       <div class="col-md-10">
-        <%= f.number_field :garantie, class: "form-control", id: "garantie_calculée_hidden" %>
+        <span class="form-control" id="garantie_calculée" style="background-color: #e9ecef;"><%= @service_request.garantie%></span>
+      </div>
+  </div>
+
+  <div class="form-group row">
+      <label class="col-form-label col-md-2">KG de soja à rembourser (F CFA) :</label>
+      <div class="col-md-10">
+        <span class="form-control" id="kg_calcule" style="background-color: #e9ecef;"><%= @service_request.kg_paye%></span>
       </div>
   </div>
 
@@ -53,6 +60,11 @@
       </div>
   </div>
 
+  <div style="display: none;">
+    <%= f.text_field :garantie, value: 0, id: "garantie_calculée_hidden" %>
+    <%= f.text_field :kg_paye, value: 0, id: "kg_calcule_hidden" %>
+  </div>  
+
   
   <div class="form-group">
     <%= f.submit "Soumettre", class: "btn btn-primary btn-lg w-100" %>
@@ -68,8 +80,9 @@
   const superficieInput = document.getElementById("superficie");
   const prixCalculéSpan = document.getElementById("prix_calculé");
   const garantieCalculéeSpan = document.getElementById("garantie_calculée");
+  const kgCalcule = document.getElementById("kg_calcule");
   const garantieHiddenInput = document.getElementById("garantie_calculée_hidden");
-  console.log("Valeur de garantie avant soumission:", garantieHiddenInput.value);  // Vérifiez cette ligne dans la console
+  const kgHiddenInput = document.getElementById("kg_calcule_hidden");
   if (!herbicideSelect || !herbicideQuantiteInput || !superficieInput || !prixCalculéSpan || !garantieCalculéeSpan) {
     console.error("Un ou plusieurs éléments nécessaires n'existent pas dans le DOM.");
     return;
@@ -90,15 +103,20 @@
 
     // Calcul des frais de garantie
     let garantie = 0;
-    const fraisDossier = 1000; // Exemple de frais de dossier fixe
+    let kg_rembourse = 0
+    const fraisDossier = <%= @frais_dossier%>; // Exemple de frais de dossier fixe
     if (superficie > 0) {
-      garantie = 10 * superficie + fraisDossier;
+      garantie = <%=@garantie_ha%> * superficie + fraisDossier;
+      kg_rembourse = 20 * superficie + fraisDossier;
     } else if (quantite > 0) {
-      garantie = 10 * quantite + fraisDossier;
+      garantie = <%= @indice_setting.garantie_litre%> * quantite + fraisDossier;
+      kg_rembourse = 10 * quantite + fraisDossier;
     }
     garantieCalculéeSpan.textContent = garantie;
+    kgCalcule.textContent = kg_rembourse;
     // Mettre à jour la garantie visible et le champ caché
      garantieHiddenInput.value = garantie;
+     kgHiddenInput.value = kg_rembourse;
   }
 
   // Écoute des événements pour recalculer dynamiquement
@@ -108,4 +126,3 @@
 });
 
 </script>
-

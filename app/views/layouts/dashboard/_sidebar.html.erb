@@ -5,28 +5,31 @@
           <ul>
                         <li class="menu-title text-light">Menu</li>
                         <li class="active">
-                            <a href="admin_dashboard.html"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="<%=dashboard_index_path%>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
 						<li>
-                            <a href="liste_clients.html"><i class="fa fa-user-o"></i> <span>Tous les clients</span></a>
+                            <a href="<%=dashboard_list_user_path%>"><i class="fa fa-user-o"></i> <span>Tous les clients</span></a>
                         </li>
                         <li>
                             <a href="<%=service_requests_path%>"><i class="fa fa-calendar"></i> <span>Liste des demandes</span></a>
                         </li>
                         <li>
-                            <a href="remboursement_form.html"><i class="fa fa-calendar-check-o"></i> <span>New remboursement</span></a>
+                            <a href="<%=remboursements_path%>"><i class="fa fa-calendar-check-o"></i> <span>Remboursement</span></a>
                         </li>
                         <li>
-                            <a href="hist_remboursement.html"><i class="fa fa-calendar-check-o"></i> <span>Histq remboursement</span></a>
-                        </li>
-                        <li>
-                            <a href="bilan_client.html"><i class="fa fa-calendar-check-o"></i> <span>Bilan Client</span></a>
+                            <a href="<%=dashboard_bilan_path%>"><i class="fa fa-calendar-check-o"></i> <span>Bilan Client</span></a>
                         </li>
                         <li>
                             <a href="<%=herbicides_path%>"><i class="fa fa-calendar-check-o"></i> <span>Les herbicides</span></a>
                         </li>
                         <li>
                             <a href="<%=indice_setting_path%>"><i class="fa fa-calendar-check-o"></i> <span>Indice de calcule</span></a>
+                        </li>
+                        <li>
+                            <a href="<%=zone_assignments_path%>"><i class="fa fa-calendar-check-o"></i> <span>Zone agriculteur</span></a>
+                        </li>
+                        <li>
+                            <a href="<%=executions_path%>"><i class="fa fa-calendar-check-o"></i> <span>Taches executées</span></a>
                         </li>
                         <li>
                             <a href="<%=new_service_request_path%>" style="font-weight: bolder;" class="text-warning"><i class="fa fa-hospital-o"></i> <span>Nouvelle demande</span></a>

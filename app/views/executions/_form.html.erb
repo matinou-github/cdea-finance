@@ -1,0 +1,33 @@
+<h1>Nouvelle Exécution</h1>
+
+<%= form_with(model: @execution, local: true) do |form| %>
+  <% if @execution.errors.any? %>
+    <div style="color: red;">
+      <h2><%= pluralize(@execution.errors.count, "erreur") %> empêchent cette exécution d'être sauvegardée :</h2>
+      <ul>
+        <% @execution.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :service_request_id, "Demande de service" %>
+    <%= form.collection_select :service_request_id, ServiceRequest.all, :id, :id, prompt: "-- Choisir une demande --", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :superficie, "Superficie labourée (en Ha)" %>
+    <%= form.number_field :superficie, step: 0.01, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :preuve, "Image de preuve" %>
+    <%= form.file_field :preuve, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.submit "Enregistrer", class: "btn btn-primary" %>
+  </div>
+<% end %>

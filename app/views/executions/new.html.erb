@@ -1,0 +1,45 @@
+<div class="container">
+  <h2 class="text-center my-4">Nouvelle execution</h2>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <%= form_with(model: @execution, local: true) do |form| %>
+        <% if @execution.errors.any? %>
+          <div class="alert alert-danger">
+            <h4>Erreurs</h4>
+            <ul>
+              <% @execution.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= form.label :service_request_id, "Demande de Service", class: "form-label" %>
+        
+          <%= form.select :service_request_id, 
+                      options_for_select(ServiceRequest.all.map { |h| [h.id, h.id] }), 
+                      { prompt: "-- Sélectionnez une demande --" }, 
+                      { class: "form-select shadow-sm select-beast"} %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :superficie, "Superficie Labourée (Ha)", class: "form-label" %>
+          <%= form.number_field :superficie, step: 0.01, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :preuve, "Image de Preuve", class: "form-label" %>
+          <%= form.file_field :preuve, class: "form-control" %>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <%= link_to 'Retour', executions_path, class: "btn btn-secondary" %>
+          <%= form.submit "Créer", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+      </div>
+  </div>
+</div>
+<%= javascript_include_tag 'tom_select'%> 

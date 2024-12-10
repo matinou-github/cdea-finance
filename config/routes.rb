@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :remboursements
+  resources :executions
+  resources :zone_assignments
   resources :service_requests
   resources :herbicides
   devise_scope :user do
@@ -21,9 +24,17 @@ Rails.application.routes.draw do
       patch 'update_profile'
     end
   end
+  resources :users, only: [:index, :show, :edit, :update, :destroy]
+  
+  namespace :users do
+    get 'admin/new', to: 'admin#new', as: 'admin_new'
+    post 'admin/create', to: 'admin#create', as: 'admin_create'
+  end
 
-  # root 'template#index'
+  get 'template/index', to:'template#index'
   get 'dashboard/index', to: 'dashboard#index'
+  get 'dashboard/list_user', to: 'dashboard#list_user'
+  get 'dashboard/bilan', to: 'dashboard#bilan'
 
   get 'indice_setting', to: 'indice_setting#index', as: 'indice_setting'
 put 'indice_setting/update', to: 'indice_setting#update', as: 'indice_setting_update'

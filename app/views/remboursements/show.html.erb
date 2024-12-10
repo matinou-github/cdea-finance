@@ -1,0 +1,18 @@
+<h1 class="text-center">Détails du Remboursement</h1>
+
+<div class="card mt-4">
+  <div class="card-header">
+    Remboursement #<%= @remboursement.id %>
+  </div>
+  <div class="card-body">
+    <p><strong>Agriculteur :</strong> <%= @remboursement.user.nom %></p>
+    <p><strong>Agriculteur :</strong> <%= @remboursement.service_request.id %></p>
+    <p><strong>Type de remboursement :</strong> <%= @remboursement.type_remboursement.capitalize %></p>
+    <p><strong>Valeur :</strong> <%= @remboursement.valeurs %> <%= @remboursement.type_remboursement == "nature" ? "Kg de soja" : "FCFA" %></p>
+    <p><strong>Crédité par :</strong> <%= @remboursement.credite_par.nom %></p>
+  </div>
+  <div class="card-footer text-end">
+    <%= link_to 'Retour', remboursements_path, class: "btn btn-secondary" %>
+    <%= link_to 'Modifier', edit_remboursement_path(@remboursement), class: "btn btn-warning" %>
+  </div>
+</div>

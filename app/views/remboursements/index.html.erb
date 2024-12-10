@@ -1,0 +1,48 @@
+
+<div class="container mt-2">
+  <div class="row mb-4">
+    <div class="col text-end">
+      <%= link_to "Nouvel remboursement", new_remboursement_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+  <div class="card shadow-lg border-0">
+    <div class="card-header btn-cdae text-white">
+      <h4><i class="fas fa-seedling"></i> Les remboursements</h4>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Agriculteur</th>
+            <th>Pour service</th>
+            <th>Type de Remboursement</th>
+            <th>Valeur</th>
+            <th>Crédité par</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @remboursements.each_with_index do |remboursement, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= remboursement.user.nom %></td>
+              <td><%=remboursement.service_request.id%></td>
+              <td><%= remboursement.type_remboursement.capitalize %></td>
+              <td><%= remboursement.valeurs %> <%= remboursement.type_remboursement == "nature" ? "Kg de soja" : "FCFA" %></td>
+              <td><%= remboursement.credite_par.nom %></td>
+              <td>
+                <div class="btn-group" role="group">
+                  <%= link_to 'Voir', remboursement_path(remboursement), class: "btn btn-info btn-sm" %>
+                  <%= link_to 'Modifier', edit_remboursement_path(remboursement), class: "btn btn-warning btn-sm" %>
+                  <%= link_to 'Supprimer', remboursement_path(remboursement), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ce remboursement ?' }, class: "btn btn-danger btn-sm" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+  </div>
+</div>
+

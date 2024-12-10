@@ -1,0 +1,12 @@
+<% content_for :title, "Editing execution" %>
+
+<h1>Editing execution</h1>
+
+<%= render "form", execution: @execution %>
+
+<br>
+
+<div>
+  <%= link_to "Show this execution", @execution %> |
+  <%= link_to "Back to executions", executions_path %>
+</div>

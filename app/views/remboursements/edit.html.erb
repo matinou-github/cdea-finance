@@ -1,0 +1,12 @@
+<% content_for :title, "Editing remboursement" %>
+
+<h1>Editing remboursement</h1>
+
+<%= render "form", remboursement: @remboursement %>
+
+<br>
+
+<div>
+  <%= link_to "Show this remboursement", @remboursement %> |
+  <%= link_to "Back to remboursements", remboursements_path %>
+</div>

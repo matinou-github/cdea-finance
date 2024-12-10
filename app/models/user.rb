@@ -10,10 +10,13 @@ class User < ApplicationRecord
           technicien: "technicien",
           secretaire: "secretaire"
         }
-
+  has_many :zone_assignments, dependent: :destroy
   # Permet la connexion avec un email ou un numéro de téléphone
   attr_writer :login
   has_many :service_requests
+  has_many :executions
+  has_many :remboursements
+  has_many :remboursements_credite_par, class_name: 'Remboursement', foreign_key: 'credite_par_id'
   def login
     @login || self.phone_number || self.email
   end

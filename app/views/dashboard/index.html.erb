@@ -21,7 +21,7 @@
         </style>
                 <div class="row">
                     <div class="col-md-12">
-                        <% if user_signed_in? && (current_user.commune.blank? || current_user.village.blank? || current_user.identity_card_photo.blank?) %>
+                        <% if user_signed_in? && current_user == "agriculteur" && (current_user.commune.blank? || current_user.village.blank? || current_user.identity_card_photo.blank?) %>
                             <div class="alert alert-warning">
                                 Votre profil est incomplet. Veuillez <%= link_to "le compléter ici", complete_profile_user_path(current_user) %>.
                             </div>
@@ -33,49 +33,49 @@
                     <div class="col-md-6 ">
                         <div class="bg-success statut">
                             <h3>Total des Clients</h3>
-                            <h1> <span id="digit">4</span> </h1>
+                            <h1> <span id="digit"><%=@user_count%></span> </h1>
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="deposit statut">
                             <h3>Total zones</h3>
-                            <h1> <span id="digit">4</span> </h1>
+                            <h1> <span id="digit"><%=@zone%></span> </h1>
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="bg-secondary statut">
                             <h3>Total demande</h3>
-                            <h1> <span id="digit">4</span> </h1>
+                            <h1> <span id="digit"><%=@total_demande%></span> </h1>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="withdraw statut">
                             <h3>Demandes en attente</h3>
-                            <h1> <span id="digit">0</span> </h1>
+                            <h1> <span id="digit"><%=@demande_attente%></span> </h1>
                         </div>
                     </div>
-                    <div class="col-md-6 ">
+                    <!--<div class="col-md-6 ">
                         <div class="bg-info statut">
                             <h3>Total Dette client (Kg)</h3>
-                            <h1><span id="digit">3</span></h1>
+                            <h1><span id="digit">00</span></h1>
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="statut" style="background-color:#7b811a">
                             <h3>Total Dette client (Fcfa)</h3>
-                            <h1><span id="digit">10000</span></h1>
+                            <h1><span id="digit"> 00</span></h1>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="col-md-6 ">
                         <div class="statut" style="background-color:#8b084a">
                             <h3>Total Soja recu (Kg)</h3>
-                            <h1><span id="digit">3</span></h1>
+                            <h1><span id="digit"><%= @Total_soja_recu%></span></h1>
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="statut" style="background-color:#085d3c">
                             <h3>Total remboursement client</h3>
-                            <h1><span id="digit">3000000</span></h1>
+                            <h1><span id="digit"><%=@Total_numeraire_recu%></span></h1>
                         </div>
                     </div>
                  

@@ -1,0 +1,40 @@
+<h1 class="text-center">Nouveau Remboursement</h1>
+
+<%= form_with(model: @remboursement, local: true) do |form| %>
+  <% if @remboursement.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Erreurs</h4>
+      <ul>
+        <% @remboursement.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :user_id, "Agriculteur", class: "form-label" %>
+    <%= form.collection_select :user_id, User.all, :id, :nom, { prompt: "Sélectionnez un utilisateur" }, class: "form-select shadow-sm select-beast" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :user_id, "Deamande", class: "form-label" %>
+    <%= form.collection_select :service_request_id, ServiceRequest.all, :id, :id, { prompt: "Sélectionnez ID de la demande" }, class: "form-select shadow-sm select-beast" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :type_remboursement, "Type de remboursement", class: "form-label" %>
+    <%= form.select :type_remboursement, options_for_select([["Nature", "nature"], ["Numéraire", "numeraire"]]), { include_blank: "Choisir un type" }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :valeurs, "Valeur", class: "form-label" %>
+    <%= form.number_field :valeurs, step: 0.01, class: "form-control" %>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= link_to 'Retour', remboursements_path, class: "btn btn-secondary" %>
+    <%= form.submit "Créer", class: "btn btn-primary" %>
+  </div>
+<% end %>
+<%= javascript_include_tag 'tom_select'%> 
