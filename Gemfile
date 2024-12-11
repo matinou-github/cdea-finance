@@ -39,7 +39,7 @@ gem "rails_db"
 gem 'rails-i18n'
 gem 'devise'
 gem 'fedapay', git: 'https://github.com/fedapay/fedapay-ruby.git'
-gem 'faraday', '~> 1.8'
+gem 'faraday', '~> 2.12'
 gem 'kaminari'
 gem 'caxlsx'
 gem 'caxlsx_rails'   # pour export Excel
