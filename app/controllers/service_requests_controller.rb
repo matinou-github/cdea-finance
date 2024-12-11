@@ -103,7 +103,6 @@ class ServiceRequestsController < ApplicationController
         credite_par: current_user
       )
   
-      service_request.update!(kg_paye: service_request.kg_paye.to_f - kg_to_convert)
       service_request.update!(garantie: service_request.garantie.to_f - guarantee_to_deduct)
   
       flash[:success] = "Garantie convertie avec succès en #{kg_to_convert} kg de soja."
