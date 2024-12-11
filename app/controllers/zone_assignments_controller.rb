@@ -4,7 +4,7 @@ class ZoneAssignmentsController < ApplicationController
   # GET /zone_assignments or /zone_assignments.json
   def index
     @users = User.where(role: 'agriculteur')
-    @zone_assignments = ZoneAssignment.all
+    @zone_assignments = ZoneAssignment.page(params[:page]).per(10).order(created_at: :desc)
   end
 
   # GET /zone_assignments/1 or /zone_assignments/1.json

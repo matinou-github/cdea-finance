@@ -40,6 +40,12 @@ gem 'rails-i18n'
 gem 'devise'
 gem 'fedapay', git: 'https://github.com/fedapay/fedapay-ruby.git'
 gem 'faraday', '~> 1.8'
+gem 'kaminari'
+gem 'caxlsx'
+gem 'caxlsx_rails'   # pour export Excel
+gem 'prawn'         # pour export PDF
+gem 'prawn-table'   # pour formater les tableaux dans le PDF
+gem 'csv'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"

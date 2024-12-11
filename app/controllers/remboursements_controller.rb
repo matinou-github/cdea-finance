@@ -3,7 +3,7 @@ class RemboursementsController < ApplicationController
  layout 'dashboard'
   # GET /remboursements or /remboursements.json
   def index
-    @remboursements = Remboursement.all
+    @remboursements = Remboursement.page(params[:page]).per(10).order(created_at: :desc)
   end
 
   # GET /remboursements/1 or /remboursements/1.json

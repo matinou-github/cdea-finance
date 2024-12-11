@@ -44,5 +44,13 @@
       </table>
       </div>
   </div>
+  <div class="d-flex mt-4" style="justify-content:space-between;">
+    <div>
+      <%= page_entries_info @remboursements, entry_name: "Remboursements" %>
+    </div>
+    <div>
+      <%= paginate @remboursements %>
+    </div>
+  </div>
 </div>
 

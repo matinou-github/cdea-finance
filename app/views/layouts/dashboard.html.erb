@@ -93,26 +93,26 @@
 });
  </script>
  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-	// Sélectionner tous les boutons de bascule
-	const togglePasswordButtons = document.querySelectorAll(".toggle-password");
-  
-	togglePasswordButtons.forEach((button) => {
-	  button.addEventListener("click", function () {
-		const targetInput = document.querySelector(this.getAttribute("data-target"));
-		if (targetInput) {
-		  // Alterner le type de champ entre "password" et "text"
-		  if (targetInput.type === "password") {
-			targetInput.type = "text";
-			this.innerHTML = '<i class="fa fa-eye-slash"></i>'; // Icône pour masquer
-		  } else {
-			targetInput.type = "password";
-			this.innerHTML = '<i class="fa fa-eye"></i>'; // Icône pour afficher
-		  }
-		}
-	  });
-	});
-  });
+    document.addEventListener("DOMContentLoaded", function () {
+      // Sélectionner tous les boutons de bascule
+      const togglePasswordButtons = document.querySelectorAll(".toggle-password");
+    
+      togglePasswordButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const targetInput = document.querySelector(this.getAttribute("data-target"));
+          if (targetInput) {
+            // Alterner le type de champ entre "password" et "text"
+            if (targetInput.type === "password") {
+            targetInput.type = "text";
+            this.innerHTML = '<i class="fa fa-eye-slash"></i>'; // Icône pour masquer
+            } else {
+            targetInput.type = "password";
+            this.innerHTML = '<i class="fa fa-eye"></i>'; // Icône pour afficher
+            }
+          }
+        });
+      });
+    });
  </script>
  </body>
 </html>

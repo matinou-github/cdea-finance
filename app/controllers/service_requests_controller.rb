@@ -5,7 +5,7 @@ class ServiceRequestsController < ApplicationController
 
   # GET /service_requests or /service_requests.json
   def index
-    @service_requests = ServiceRequest.all
+    @service_requests = ServiceRequest.page(params[:page]).per(10).order(created_at: :desc)
   end
 
   # GET /service_requests/1 or /service_requests/1.json
@@ -20,6 +20,8 @@ class ServiceRequestsController < ApplicationController
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
     @garantie_litre = @indice_setting.garantie_litre
+    @kg_ha_laboure = @indice_setting.kg_ha_laboure
+    @kg_litre_octroie = @indice_setting.kg_litre_octroi
     @service_request = ServiceRequest.new
   end
 
@@ -49,7 +51,7 @@ class ServiceRequestsController < ApplicationController
   def update
     respond_to do |format|
       if @service_request.update(service_request_params)
-        format.html { redirect_to service_requests_path, notice: "Service request was successfully updated." }
+        format.html { redirect_to @service_request, notice: "Service request was successfully updated." }
         format.json { render :show, status: :ok, location: @service_request }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -76,13 +78,44 @@ class ServiceRequestsController < ApplicationController
       paid = { paye: true, mode: transaction.mode, date_approved: transaction.approved_at, montant: transaction.amount}
       @service_request.update(status: "paid")
   
-      redirect_to service_requests_path
+      redirect_to dashboard_success_payment_path(demande_id: @service_request)
       flash[:success] = "Souscription faites avec succès."
     else
-      redirect_to service_request_url(@service_request)
+      redirect_to service_request(@service_request)
       flash[:error] = "Erreur lors de la souscription; veillez reessayer svp"
     end
   end
+
+  def convertir_garantie
+    service_request = ServiceRequest.find(params[:id])
+    @indice_setting = IndiceSetting.last
+    @valeur_soja = @indice_setting.valeur_soja
+  
+    kg_to_convert = params[:kg_to_convert].to_f
+    guarantee_to_deduct = params[:guarantee_to_deduct].to_f
+  
+    if service_request.garantie.to_f >= guarantee_to_deduct
+      Remboursement.create!(
+        user: service_request.user,
+        service_request: service_request,
+        type_remboursement: "nature",
+        valeurs: kg_to_convert,
+        credite_par: current_user
+      )
+  
+      service_request.update!(kg_paye: service_request.kg_paye.to_f - kg_to_convert)
+      service_request.update!(garantie: service_request.garantie.to_f - guarantee_to_deduct)
+  
+      flash[:success] = "Garantie convertie avec succès en #{kg_to_convert} kg de soja."
+    else
+      flash[:error] = "Garantie insuffisante pour effectuer cette conversion."
+    end
+  
+    redirect_to dashboard_bilan_path
+  end
+  
+  
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -94,4 +127,6 @@ class ServiceRequestsController < ApplicationController
     def service_request_params
       params.require(:service_request).permit(:user_id, :superficie, :herbicide_nom, :herbicide_prix, :herbicide_quantite, :garantie, :herbicide_id, :preuve, :status, :status_request, :kg_paye)
     end
+
+    
 end

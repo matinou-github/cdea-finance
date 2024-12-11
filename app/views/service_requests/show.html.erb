@@ -16,7 +16,7 @@
               <p><strong><i class="fas fa-user"></i> Utilisateur :</strong> <%= @service_request.user.nom %> <%= @service_request.user.prenom %></p>
             </div>
             <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> <%= @service_request.status %></p>
+              <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> <%= @service_request.status_payement %></p>
             </div>
           </div>
 
@@ -58,7 +58,7 @@
               <p><strong><i class="fas fa-money-check-alt"></i> Garantie :</strong> <%= @service_request.garantie  %> Fcfa</p>
             </div>
             <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-file-upload"></i> Preuve :</strong> <%= @service_request.preuve.present? ? @service_request.preuve : "Aucune preuve fournie" %></p>
+               <p><strong><i class="fas fa-money-check-alt"></i> Kg de soja a rembourser :</strong> <%= @service_request.kg_paye  %> Fcfa</p>
             </div>
           </div>
 
@@ -70,6 +70,7 @@
         <div class="row">
         <div class="col-lg-12 mx-auto">
             <div class="card ">
+              <%if @service_request.status == "unpaid" %>
                 <div class="card-header">
                     <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
                         <!-- Credit card form tabs -->
@@ -113,7 +114,7 @@
                     <!-- bank transfer info -->
                     <div id="net-banking" class="tab-pane fade pt-3">
                         <div class="form-group "> <label for="Select Your Bank">
-                                <p><strong><i class="fas fa-money-check-alt"></i> Kg de soja a rembourser :</strong> <%= @service_request.kg_paye  %> Fcfa</p>
+                               <input type="file">
                                <hr>
                         <div class="form-group text-center">
                             <p> <button type="button" class="btn btn-primary "><i class="fas fa-mobile-alt mr-2"></i> Envoyer preuve de payement</button> </p>
@@ -122,6 +123,11 @@
                     </div> <!-- End -->
                     <!-- End -->
                 </div>
+                <%else%>
+                <div class="mt-3 mb-3">
+                  <h3 class="text-success text-center">Garantie payé</h3>
+                </div>
+                <%end%>
             </div>
         </div>
     </div>

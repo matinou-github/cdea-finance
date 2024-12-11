@@ -25,7 +25,7 @@ class HerbicidesController < ApplicationController
 
     respond_to do |format|
       if @herbicide.save
-        format.html { redirect_to @herbicide, notice: "Herbicide was successfully created." }
+        format.html { redirect_to herbicides_path, notice: "Herbicide was successfully created." }
         format.json { render :show, status: :created, location: @herbicide }
       else
         format.html { render :new, status: :unprocessable_entity }

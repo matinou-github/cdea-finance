@@ -1,0 +1,103 @@
+<style>
+    .img-thumbnail {
+  border: 3px solid #007bff;
+}
+.form-label {
+  font-weight: bold;
+}
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+</style>
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Modifier le Profil</h4>
+    </div>
+    <div class="card-body">
+      <%= form_for @user, url: user_path(@user), method: :patch, html: { multipart: true } do |f| %>
+        <div class="row">
+          <!-- Profile Image -->
+          <div class="col-md-3 text-center">
+            <div class="mb-3">
+              <%= image_tag "user.jpg", alt: "Image de profil", class: "img-thumbnail rounded-circle", style: "width: 150px; height: 150px;" %>
+            </div>
+          </div>
+          
+          <!-- Personal Information -->
+          <div class="col-md-9">
+            <div class="row">
+              <div class="col-md-6">
+                <%= f.label :nom, "Nom", class: "form-label" %>
+                <%= f.text_field :nom, class: "form-control", placeholder: "Entrez votre nom" %>
+              </div>
+              <div class="col-md-6">
+                <%= f.label :prenom, "Prénom", class: "form-label" %>
+                <%= f.text_field :prenom, class: "form-control", placeholder: "Entrez votre prénom" %>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <%= f.label :phone_number, "Numéro de Téléphone", class: "form-label" %>
+                <%= f.text_field :phone_number, class: "form-control", placeholder: "Entrez votre numéro de téléphone" %>
+              </div>
+              <div class="col-md-6">
+                <%= f.label :email, "Adresse Email", class: "form-label" %>
+                <%= f.email_field :email, class: "form-control", placeholder: "Entrez votre email" %>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <%= f.label :commune, "commune", class: "form-label" %>
+                <%= f.text_field :commune, class: "form-control", placeholder: "Entrez votre commune" %>
+              </div>
+              <div class="col-md-6">
+                <%= f.label :village, "Village", class: "form-label" %>
+                <%= f.text_field :village, class: "form-control", placeholder: "Entrez votre Village" %>
+              </div>
+              <%if current_user.role == "admin"%>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class="mb-3">Role</label>
+                    <%= f.select :role, User.roles.keys.map { |role| [role.humanize, role] }, { include_blank: "Sélectionnez un rôle" }, class: "form-control select" %>
+                  </div>
+                </div>
+              <%end%>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- Additional Information -->
+
+
+        <!-- Password Update -->
+        <div class="row">
+          <div class="col-md-6">
+            <%= f.label :password, "Nouveau Mot de Passe", class: "form-label" %>
+            <%= f.password_field :password, class: "form-control", placeholder: "Entrez un nouveau mot de passe" %>
+          </div>
+          <div class="col-md-6">
+            <%= f.label :password_confirmation, "Confirmez le Mot de Passe", class: "form-label" %>
+            <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirmez le nouveau mot de passe" %>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="text-end">
+          <%= f.submit "Mettre à Jour", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

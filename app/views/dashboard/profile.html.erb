@@ -1,0 +1,68 @@
+
+                <div class="row">
+                    <div class="col-sm-10 col-6">
+                        <h4 class="page-title">Profile</h4>
+                    </div>
+
+                    <div class="col-sm-2 col-6 text-right m-b-30">
+                        <%= link_to 'Modifier Profile', edit_user_path(current_user), class: 'btn btn-primary btn-rounded' %>
+                    </div>
+                </div>
+                <div class="card-box profile-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-view">
+                                <div class="profile-img-wrap">
+                                    <div class="profile-img">
+                                            <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
+                                    </div>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="profile-info-left">
+                                                <h3 class="user-name m-t-0 mb-0"><%= current_user.nom.presence || "Non inscrite" %></h3>
+                                                <small class="text-muted">Actif</small>
+                                                <div class="staff-id">Status : <%=current_user.role%> </div>
+                                                <div class="staff-id">Employee ID : U-000<%=current_user.id%> </div>
+                                                <div class="staff-msg"><%= link_to 'Modifier Profile', edit_user_path(current_user), class: 'btn btn-primary' %></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <span class="title">Numero:</span>
+                                                    <span class="text">
+                                                        <%= current_user.phone_number.presence || "Non inscrite" %>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Email:</span>
+                                                    <span class="text"><a href="#"><%= current_user.email.presence || "Non inscrite" %></a></span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Village:</span>
+                                                    <span class="text"><%= current_user.village.presence || "Non inscrite" %></span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Commune:</span>
+                                                    <span class="text"><%= current_user.commune || "Non inscrite" %></span>
+                                                </li>
+                                                <br>
+                                                <li>
+                                                    <span class="title">Photo:</span>
+                                                    <span class="text"><%= current_user.identity_card_photo || "Non inscrite" %></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-5"></div>
+
+				
+                
+            

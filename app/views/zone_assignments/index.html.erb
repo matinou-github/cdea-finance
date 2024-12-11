@@ -53,6 +53,15 @@
   </tbody>
 </table>
 
+ <div class="d-flex mt-4" style="justify-content:space-between;">
+    <div>
+      <%= page_entries_info @zone_assignments, entry_name: "zones" %>
+    </div>
+    <div>
+      <%= paginate @zone_assignments %>
+    </div>
+  </div>
+
 
 <% if @zone_assignments.empty? %>
   <div class="alert alert-info text-center" role="alert">

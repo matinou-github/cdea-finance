@@ -1,7 +1,7 @@
 class ServiceRequest < ApplicationRecord
   belongs_to :user
   belongs_to :herbicide, optional: true
-  has_many :remboursements
+  has_many :remboursements, dependent: :destroy
 
 validates :superficie, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 validates :herbicide_quantite, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
@@ -19,6 +19,28 @@ end
     end
   end
 
+  def status_payement
+    case status
+    when 'paid'
+      'Payé'
+    else
+      'Impayé'
+    end
+  end
+
+  def status_demande
+    case status_request
+    when 'pending'
+      'En attente'
+    when 'confirm'
+      'Confirmé'
+    when 'execute'
+      'Terminé'
+    else
+      'Rejeté'
+    end
+  end
+  
   private
 
 

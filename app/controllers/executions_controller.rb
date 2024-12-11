@@ -3,7 +3,7 @@ class ExecutionsController < ApplicationController
   layout 'dashboard'
   # GET /executions or /executions.json
   def index
-    @executions = Execution.all
+    @executions = Execution.page(params[:page]).per(10).order(created_at: :desc)
   end
 
   # GET /executions/1 or /executions/1.json

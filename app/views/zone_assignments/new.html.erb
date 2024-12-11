@@ -7,7 +7,7 @@
         <div class="mb-3 form-group">
           <%= f.label :user_id, "Sélectionnez un Agriculteur", class: "form-label" %>
           <%= f.select :user_id, 
-          User.all.map { |user| [user.nom, user.id] }, 
+          @users.map { |user| [user.nom, user.id] }, 
           { prompt: '-- Choisissez un agriculteur --'}, class: "form-select shadow-sm select-beast" %>
         </div>
         <div class="mb-3">

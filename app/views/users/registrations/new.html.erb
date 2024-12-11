@@ -68,13 +68,23 @@
           <div class="col-md-6">
             <div class="form-group">
               <%= f.label :password, "Mot de passe" %>
-              <%= f.password_field :password, class: "form-control", placeholder: "Entrez votre mot de passe" %>
+              <div class="position-relative">
+                <%= f.password_field :password, class: "form-control", placeholder: "Entrez votre mot de passe", id: "password" %>
+                <button type="button" class="btn btn-outline-secondary btn-sm toggle-password" data-target="#password" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%);">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
               <%= f.label :password_confirmation, "Confirmez le mot de passe" %>
-              <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirmez votre mot de passe" %>
+              <div class="position-relative">
+                <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirmez votre mot de passe", id: "password_confirmation" %>
+                <button type="button" class="btn btn-outline-secondary btn-sm toggle-password" data-target="#password_confirmation" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%);">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -92,3 +102,26 @@
     </div>
   </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Sélectionner tous les boutons de bascule
+      const togglePasswordButtons = document.querySelectorAll(".toggle-password");
+    
+      togglePasswordButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          const targetInput = document.querySelector(this.getAttribute("data-target"));
+          if (targetInput) {
+            // Alterner le type de champ entre "password" et "text"
+            if (targetInput.type === "password") {
+            targetInput.type = "text";
+            this.innerHTML = '<i class="fa fa-eye-slash"></i>'; // Icône pour masquer
+            } else {
+            targetInput.type = "password";
+            this.innerHTML = '<i class="fa fa-eye"></i>'; // Icône pour afficher
+            }
+          }
+        });
+      });
+    });
+ </script>

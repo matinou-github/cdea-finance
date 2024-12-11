@@ -1,5 +1,5 @@
 
-<div class="container mt-2">
+<div class="container mt-2 mb-5">
   <div class="row mb-4">
     <div class="col text-end">
       <%= link_to "Nouvelle service", new_service_request_path, class: "btn btn-primary" %>
@@ -40,14 +40,21 @@
               <td><%= service_request.garantie %></td>
               <td>
                 <span class="badge <%= service_request.status == 'unpaid' ? 'badge-danger' : 'badge-success' %>">
-                  <%= service_request.status %>
+                  <%= service_request.status_payement %>
                 </span>
               </td>
               <td><%= service_request.created_at %></td>
               <td>
-                <span class="badge <%= service_request.status_request == 'Completed' ? 'badge-success' : 'badge-warning' %>">
-                  <%= service_request.status_request %>
-                </span>
+                             
+                  <% if service_request.status_request == 'pending'%>
+                   <span class="badge badge-warning"> <%= service_request.status_demande %> </span>
+                  <%elsif service_request.status_request == 'confirm' %>
+                   <span class="badge badge-primary"> <%= service_request.status_demande %> </span>
+                  <%elsif service_request.status_request == 'execute' %>
+                    <span class="badge badge-success"> <%= service_request.status_demande %> </span>
+                  <%else%>
+                    <span class="badge badge-danger"> <%= service_request.status_demande %> </span>
+                  <%end%>
               </td>
               <td class="text-right">
                 <div class="dropdown">
@@ -71,6 +78,14 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+  </div>
+  <div class="d-flex mt-4" style="justify-content:space-between;">
+    <div>
+      <%= page_entries_info @service_requests, entry_name: "Demandes de service" %>
+    </div>
+    <div>
+      <%= paginate @service_requests %>
     </div>
   </div>
 </div>

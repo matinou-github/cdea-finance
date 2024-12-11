@@ -97,10 +97,10 @@
     const fraisDossier = <%= @frais_dossier%>; // Exemple de frais de dossier fixe
     if (superficie > 0) {
       garantie = <%=@garantie_ha%> * superficie + fraisDossier;
-      kg_rembourse = 20 * superficie + fraisDossier;
+      kg_rembourse =  <%=@kg_ha_laboure%> * superficie;
     } else if (quantite > 0) {
       garantie = <%= @indice_setting.garantie_litre%> * quantite + fraisDossier;
-      kg_rembourse = 10 * quantite + fraisDossier;
+      kg_rembourse = <%=@kg_litre_octroie%>  * quantite;
     }
     garantieCalculéeSpan.textContent = garantie;
     kgCalcule.textContent = kg_rembourse;

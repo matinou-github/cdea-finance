@@ -35,8 +35,20 @@ Rails.application.routes.draw do
   get 'dashboard/index', to: 'dashboard#index'
   get 'dashboard/list_user', to: 'dashboard#list_user'
   get 'dashboard/bilan', to: 'dashboard#bilan'
-
+  get 'dashboard/profile', to: 'dashboard#profile'
+  get 'dashboard/accueil', to: 'dashboard#accueil'
+  get 'dashboard/success_payment', to: 'dashboard#success_payment'
   get 'indice_setting', to: 'indice_setting#index', as: 'indice_setting'
 put 'indice_setting/update', to: 'indice_setting#update', as: 'indice_setting_update'
 post 'service_payement/', to: 'service_requests#service_payement', as: 'service_payement'
+
+#post 'service_requests/:id/convertir_garantie', to: 'service_requests#convertir_garantie', as: 'convertir_garantie'
+
+
+resources :service_requests do
+  member do
+    post :convertir_garantie
+  end
+end
+
 end
