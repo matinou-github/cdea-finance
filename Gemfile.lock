@@ -92,10 +92,9 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
-    bootstrap (5.2.3)
+    bootstrap (5.3.3)
       autoprefixer-rails (>= 9.1.0)
-      popper_js (>= 2.11.6, < 3)
-      sassc-rails (>= 2.0.0)
+      popper_js (>= 2.11.8, < 3)
     brakeman (6.2.2)
       racc
     builder (3.3.0)
@@ -225,17 +224,17 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.16.8-aarch64-linux)
+    nokogiri (1.17.1-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.16.8-arm-linux)
+    nokogiri (1.17.1-arm-linux)
       racc (~> 1.4)
-    nokogiri (1.16.8-arm64-darwin)
+    nokogiri (1.17.1-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.8-x86-linux)
+    nokogiri (1.17.1-x86-linux)
       racc (~> 1.4)
-    nokogiri (1.16.8-x86_64-darwin)
+    nokogiri (1.17.1-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.8-x86_64-linux)
+    nokogiri (1.17.1-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     parallel (1.26.3)
@@ -428,7 +427,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap
-  bootstrap (~> 5.2.0)
+  bootstrap (~> 5.3.3)
   brakeman
   capybara
   caxlsx
