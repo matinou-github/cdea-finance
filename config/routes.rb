@@ -51,4 +51,12 @@ resources :service_requests do
   end
 end
 
+resources :annual_balances, only: [:index, :show] do
+  member do
+    post :apply_interest # Pour appliquer une majoration
+    post :convert_to_cash # Pour convertir en numéraire
+    post :apply_remboursement # Pour appliquer un remboursement
+  end
+end
+
 end

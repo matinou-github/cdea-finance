@@ -26,6 +26,18 @@
       <%= form.label :prix, "Prix de l'Herbicide (F CFA)", class: "form-label" %>
       <%= form.number_field :prix, step: 0.01, class: "form-control", placeholder: "Ex: 2500" %>
     </div>
+
+  <!-- Garantie -->
+    <div class="mb-3">
+      <%= form.label :prix, "Garentie pour l'Herbicide (F CFA)", class: "form-label" %>
+      <%= form.number_field :garantie_par_litre, step: 0.01, class: "form-control", placeholder: "Ex: 2500" %>
+    </div>
+
+    <!-- Soja à rembourser -->
+    <div class="mb-3">
+      <%= form.label :prix, "Soja par litre", class: "form-label" %>
+      <%= form.number_field :soja_par_litre, step: 0.01, class: "form-control", placeholder: "Ex: 2500" %>
+    </div>
   </div>
 
   <div class="card-footer text-end">

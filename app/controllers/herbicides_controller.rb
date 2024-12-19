@@ -38,7 +38,7 @@ class HerbicidesController < ApplicationController
   def update
     respond_to do |format|
       if @herbicide.update(herbicide_params)
-        format.html { redirect_to @herbicide, notice: "Herbicide was successfully updated." }
+        format.html { redirect_to herbicides_path, notice: "Herbicide was successfully updated." }
         format.json { render :show, status: :ok, location: @herbicide }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -65,6 +65,6 @@ class HerbicidesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def herbicide_params
-      params.require(:herbicide).permit(:nom, :prix)
+      params.require(:herbicide).permit(:nom, :prix, :garantie_par_litre, :soja_par_litre)
     end
 end

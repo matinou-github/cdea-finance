@@ -61,8 +61,8 @@
   </div>
 
   <div style="display: none;">
-    <%= f.text_field :garantie, value: 0, id: "garantie_calculée_hidden" %>
-    <%= f.text_field :kg_paye, value: 0, id: "kg_calcule_hidden" %>
+    <%= f.text_field :garantie, value: @service_request.garantie, id: "garantie_calculée_hidden" %>
+    <%= f.text_field :kg_paye, value: @service_request.kg_paye, id: "kg_calcule_hidden" %>
   </div>  
 
   

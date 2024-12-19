@@ -11,15 +11,19 @@
           <th>#</th>
           <th>Nom</th>
           <th>Prix (F CFA)</th>
+          <th>Garentie (F CFA)</th>
+          <th>Soja par litre (kg)</th>
           <th class="text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% @herbicides.each_with_index do |herbicide, index| %>
+        <% @herbicides.each_with_index do |herbicide, index| %> 
           <tr>
             <td><%= index + 1 %></td>
             <td><%= herbicide.nom %></td>
             <td><%= number_to_currency(herbicide.prix, unit: "", separator: ".", delimiter: ",") %></td>
+            <td><%= herbicide.garantie_par_litre %></td>
+            <td><%= herbicide.soja_par_litre %></td>
             <td class="text-center">
               <%= link_to "Voir", herbicide_path(herbicide), class: "btn btn-primary btn-sm me-2" %>
               <%= link_to "Modifier", edit_herbicide_path(herbicide), class: "btn btn-warning btn-sm me-2" %>

@@ -5,7 +5,7 @@ class ServiceRequestsController < ApplicationController
 
   # GET /service_requests or /service_requests.json
   def index
-    @service_requests = ServiceRequest.page(params[:page]).per(10).order(created_at: :desc)
+    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page]).per(10).order(created_at: :desc)
   end
 
   # GET /service_requests/1 or /service_requests/1.json
@@ -23,6 +23,7 @@ class ServiceRequestsController < ApplicationController
     @kg_ha_laboure = @indice_setting.kg_ha_laboure
     @kg_litre_octroie = @indice_setting.kg_litre_octroi
     @service_request = ServiceRequest.new
+    @service_request.service_request_herbicides.build
   end
 
   # GET /service_requests/1/edit
@@ -34,18 +35,29 @@ class ServiceRequestsController < ApplicationController
   end
 
   # POST /service_requests or /service_requests.json
-  def create
-     logger.debug "Service request params: #{params.inspect}"
-    @service_request = ServiceRequest.new(service_request_params)
-    # Sauvegarder avec user_id
-    @service_request.user_id = current_user.id  # Assurez-vous d'être authentifié avec Devise
 
+
+  def create
+    @service_request = ServiceRequest.new(service_request_params.except(:herbicides))
+    @service_request.user_id = current_user.id 
     if @service_request.save
-      redirect_to @service_request, notice: 'Demande de service enregistrée avec succès.'
+      # Associer les herbicides après la création
+      params[:service_request][:herbicides]&.each do |herbicide_params|
+        Rails.logger.debug "Traitement de l'herbicide : #{herbicide_params}"
+        @service_request.service_request_herbicides.create(
+          herbicide_id: herbicide_params[:id],
+          quantite: herbicide_params[:quantite]
+        )
+        
+      end
+  
+      redirect_to service_requests_path, notice: 'Demande créée avec succès.'
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
+  
+  
 
   # PATCH/PUT /service_requests/1 or /service_requests/1.json
   def update
@@ -124,7 +136,14 @@ class ServiceRequestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def service_request_params
-      params.require(:service_request).permit(:user_id, :superficie, :herbicide_nom, :herbicide_prix, :herbicide_quantite, :garantie, :herbicide_id, :preuve, :status, :status_request, :kg_paye)
+      params.require(:service_request).permit(
+        :superficie, 
+        :garantie, 
+        :kg_paye, 
+        :status, 
+        :status_request, 
+        herbicides: [:id, :quantite]
+      )
     end
 
     

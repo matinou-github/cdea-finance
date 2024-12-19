@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_10_130455) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_18_160828) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_10_130455) do
     t.decimal "prix"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "garantie_par_litre"
+    t.decimal "soja_par_litre"
   end
 
   create_table "indice_settings", force: :cascade do |t|
@@ -81,8 +83,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_10_130455) do
     t.datetime "updated_at", null: false
     t.bigint "service_request_id"
     t.index ["credite_par_id"], name: "index_remboursements_on_credite_par_id"
-    t.index ["service_request_id"], name: "index_remboursements_on_service_request_id"
     t.index ["user_id"], name: "index_remboursements_on_user_id"
+  end
+
+  create_table "service_request_herbicides", force: :cascade do |t|
+    t.bigint "service_request_id", null: false
+    t.bigint "herbicide_id", null: false
+    t.integer "quantite", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["herbicide_id"], name: "index_service_request_herbicides_on_herbicide_id"
+    t.index ["service_request_id"], name: "index_service_request_herbicides_on_service_request_id"
   end
 
   create_table "service_requests", force: :cascade do |t|
@@ -135,9 +146,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_10_130455) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "executions", "service_requests"
   add_foreign_key "executions", "users"
-  add_foreign_key "remboursements", "service_requests"
   add_foreign_key "remboursements", "users"
   add_foreign_key "remboursements", "users", column: "credite_par_id"
+  add_foreign_key "service_request_herbicides", "herbicides"
+  add_foreign_key "service_request_herbicides", "service_requests"
   add_foreign_key "service_requests", "herbicides"
   add_foreign_key "service_requests", "users"
 end

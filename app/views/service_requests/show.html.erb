@@ -25,33 +25,27 @@
             <div class="col-md-6 mb-3">
               <p><strong><i class="fas fa-leaf"></i> Superficie (Ha) :</strong> <%= @service_request.superficie %></p>
             </div>
+
+            <% if @service_request.service_request_herbicides.present?%>
+          <!-- Ligne 3 : Prix Herbicide et Quantité -->
+          
             <div class="col-md-6 mb-3">
               <p><strong><i class="fas fa-flask"></i> Herbicide :</strong> 
-              <%= @service_request.herbicide == nil ? "N/A" : @service_request.herbicide.nom  %>
+             <ul>
+                <% @service_request.service_request_herbicides.each do |sr_herbicide| %>
+                  <li>
+                    <strong>Nom :</strong> <%= sr_herbicide.herbicide.nom %>
+                    <strong>Quantité :</strong> <%= sr_herbicide.quantite %>
+                  </li>
+                <% end %>
+              </ul>
               </p>
             </div>
-          </div>
-
-          <% if @service_request.herbicide%>
-          <!-- Ligne 3 : Prix Herbicide et Quantité -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-tag"></i> Prix de l'Herbicide :</strong> 
-              <% if @service_request.herbicide%>
-              <%= @service_request.herbicide.prix %> Fcfa
-              <%else%>
-                <p>N/A</p>
-              <%end%>
-              </p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-cogs"></i> Quantité d'Herbicide :</strong>
-              <%= @service_request.herbicide_quantite == nil ?  "N/A" : @service_request.herbicide_quantite %>
-              </p>
-            </div>
-          </div>
           <%end%>
 
+          </div>
+
+      <hr>    
           <!-- Ligne 4 : Garantie et Preuve -->
           <div class="row">
             <div class="col-md-6 mb-3">
