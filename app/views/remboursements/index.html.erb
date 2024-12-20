@@ -15,10 +15,11 @@
           <tr>
             <th>#</th>
             <th>Agriculteur</th>
-            <th>Pour service</th>
+            <th>Campagne</th>
             <th>Type de Remboursement</th>
             <th>Valeur</th>
             <th>Crédité par</th>
+            <th>Remboursé le</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -26,11 +27,12 @@
           <% @remboursements.each_with_index do |remboursement, index| %>
             <tr>
               <td><%= index + 1 %></td>
-              <td><%= remboursement.user.nom %></td>
-              <td><%=remboursement.service_request.id%></td>
+              <td><%= remboursement.user.full_name %></td>
+              <td><%=remboursement.year%></td>
               <td><%= remboursement.type_remboursement.capitalize %></td>
               <td><%= remboursement.valeurs %> <%= remboursement.type_remboursement == "nature" ? "Kg de soja" : "FCFA" %></td>
-              <td><%= remboursement.credite_par.nom %></td>
+              <td><%= remboursement.credite_par.full_name %></td>
+              <td><%= remboursement.created_at %></td>
               <td>
                 <div class="btn-group" role="group">
                   <%= link_to 'Voir', remboursement_path(remboursement), class: "btn btn-info btn-sm" %>

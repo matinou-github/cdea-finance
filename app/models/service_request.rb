@@ -1,8 +1,6 @@
 class ServiceRequest < ApplicationRecord
-
-  after_save :update_annual_balance
-  
   belongs_to :user
+  after_create :update_balance
   #has_many :remboursements, dependent: :destroy
 
   has_many :service_request_herbicides, dependent: :destroy
@@ -12,7 +10,21 @@ class ServiceRequest < ApplicationRecord
 
 validates :superficie, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 validates :herbicide_quantite, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-validate :au_moins_un_champ
+
+belongs_to :balance, optional: true
+
+after_create :update_balance
+
+def update_balance
+  @indice_setting = IndiceSetting.last
+  @frais_dossier = @indice_setting.frais_dossier
+
+  year = self.created_at.year
+  balance = Balance.find_or_create_by(user_id: self.user_id, year: year)
+  balance.total_kg_paye += self.kg_paye.to_f
+  balance.total_garantie += self.garantie - @frais_dossier
+  balance.save
+end
 
 # def nature_sum
 #   remboursements.where(type_remboursement: "nature").sum(:valeurs)
@@ -40,34 +52,17 @@ validate :au_moins_un_champ
     when 'pending'
       'En attente'
     when 'confirm'
-      'Confirmé'
+      'Validé'
     when 'execute'
-      'Terminé'
+      'Executé'
     else
       'Rejeté'
     end
   end
   
-
-
-
   private
 
-  def update_annual_balance
-    # Trouver ou créer le balance annuel de l'utilisateur pour l'année courante
-    annual_balance = AnnualBalance.find_or_create_by(year: Time.current.year, user_id: user_id)
-
-    # Mettre à jour les valeurs du cumul
-    annual_balance.total_kg += kg_paye.to_f
-    annual_balance.remaining_due += garantie.to_f
-    annual_balance.save!
-  end
 
 
-
-  def au_moins_un_champ
-    if superficie.blank? && herbicide_quantite.blank?
-      errors.add(:base, "Vous devez renseigner au moins une superficie ou une quantité d'herbicide.")
-    end
-  end
+ 
 end

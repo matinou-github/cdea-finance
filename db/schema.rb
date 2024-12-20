@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_18_160828) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_20_140251) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,22 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_160828) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "balances", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "year", null: false
+    t.decimal "total_kg_paye", default: "0.0"
+    t.decimal "total_garantie", default: "0.0"
+    t.decimal "total_remboursement", default: "0.0"
+    t.decimal "kg_restants", default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "valeur_majoree_kg"
+    t.decimal "valeur_majoree_numeraire"
+    t.string "status", default: "en cours"
+    t.decimal "valeur_restants", default: "0.0"
+    t.index ["user_id"], name: "index_balances_on_user_id"
   end
 
   create_table "executions", force: :cascade do |t|
@@ -81,7 +97,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_160828) do
     t.bigint "credite_par_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "service_request_id"
+    t.integer "year", null: false
     t.index ["credite_par_id"], name: "index_remboursements_on_credite_par_id"
     t.index ["user_id"], name: "index_remboursements_on_user_id"
   end
@@ -144,6 +160,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_160828) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "balances", "users"
   add_foreign_key "executions", "service_requests"
   add_foreign_key "executions", "users"
   add_foreign_key "remboursements", "users"

@@ -65,6 +65,6 @@ class RemboursementsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def remboursement_params
-      params.require(:remboursement).permit(:user_id, :type_remboursement, :valeurs, :credite_par_id, :service_request_id)
+      params.require(:remboursement).permit(:user_id, :type_remboursement, :valeurs, :credite_par_id, :year)
     end
 end

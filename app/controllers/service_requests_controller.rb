@@ -1,7 +1,7 @@
 class ServiceRequestsController < ApplicationController
   before_action :authenticate_user!
   layout 'dashboard'
-  before_action :set_service_request, only: %i[ show edit update destroy ]
+  before_action :set_service_request, only: %i[ show edit update destroy update_status]
 
   # GET /service_requests or /service_requests.json
   def index
@@ -32,6 +32,12 @@ class ServiceRequestsController < ApplicationController
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
     @garantie_litre = @indice_setting.garantie_litre
+    @kg_ha_laboure = @indice_setting.kg_ha_laboure
+    @kg_litre_octroie = @indice_setting.kg_litre_octroi
+    @service_request = ServiceRequest.find(params[:id])
+    @herbicides = @service_request.service_request_herbicides.includes(:herbicide)
+    #service_request.service_request_herbicides
+    @all_herbicides = Herbicide.all
   end
 
   # POST /service_requests or /service_requests.json
@@ -124,8 +130,15 @@ class ServiceRequestsController < ApplicationController
   
     redirect_to dashboard_bilan_path
   end
-  
-  
+
+  def update_status
+    if @service_request.update(status_request: params[:service_request][:status_request])
+      redirect_to service_requests_path
+      
+    else
+      render json: { message: "Erreur lors de la mise à jour du statut." }, status: :unprocessable_entity
+    end
+  end
   
 
   private

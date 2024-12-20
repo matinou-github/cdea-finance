@@ -18,8 +18,8 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :user_id, "Deamande", class: "form-label" %>
-    <%= form.collection_select :service_request_id, ServiceRequest.all, :id, :id, { prompt: "Sélectionnez ID de la demande" }, class: "form-select shadow-sm select-beast" %>
+    <%= form.label :year, "Année", class: "form-label" %>
+    <%= form.collection_select :year, Balance.all, :year, :year, { prompt: "Sélectionnez l'année" }, class: "form-select shadow-sm select-beast" %>
   </div>
 
   <div class="mb-3">

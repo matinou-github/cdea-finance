@@ -20,7 +20,10 @@ class User < ApplicationRecord
   def login
     @login || self.phone_number || self.email
   end
-
+  def full_name
+    "#{nom} #{prenom}"
+  end
+  
   # Ajuster la recherche pour l'authentification
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup

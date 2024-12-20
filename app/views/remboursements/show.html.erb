@@ -6,7 +6,7 @@
   </div>
   <div class="card-body">
     <p><strong>Agriculteur :</strong> <%= @remboursement.user.nom %></p>
-    <p><strong>Agriculteur :</strong> <%= @remboursement.service_request.id %></p>
+    <p><strong>Agriculteur :</strong> <%= @remboursement.year%></p>
     <p><strong>Type de remboursement :</strong> <%= @remboursement.type_remboursement.capitalize %></p>
     <p><strong>Valeur :</strong> <%= @remboursement.valeurs %> <%= @remboursement.type_remboursement == "nature" ? "Kg de soja" : "FCFA" %></p>
     <p><strong>Crédité par :</strong> <%= @remboursement.credite_par.nom %></p>

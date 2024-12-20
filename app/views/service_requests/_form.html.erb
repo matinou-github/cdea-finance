@@ -1,3 +1,17 @@
+<style>
+  .herbicide-group{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+  }
+  .remove-herbicide{
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+</style>
 <%= form_with model: @service_request, local: true do |f| %>
 
   <div class="form-group row">
@@ -13,8 +27,8 @@
     <div class="herbicide-group">
       <div class="form-group row">
         <!-- Sélection d'un herbicide -->
-        <label class="col-form-label col-md-2">Herbicide</label>
-        <div class="col-md-4">
+        <div class="col-md-6">
+          <label class="col-form-label">Herbicide</label>
           <select class="form-control herbicide-select" name="service_request[herbicides][][id]"  data-soja-par-litre='<%= Herbicide.all.map { |h| [h.id, h.soja_par_litre] }.to_h.to_json %>' data-herbicide-prices='<%= Herbicide.all.map { |h| [h.id, h.garantie_par_litre] }.to_h.to_json %>'>
             <option value="">-- Choisir un herbicide --</option>
             <% Herbicide.all.each do |herbicide| %>
@@ -24,29 +38,32 @@
         </div>
 
         <!-- Champ pour la quantité -->
-        <label class="col-form-label col-md-2">Quantité (L)</label>
         <div class="col-md-2">
+          <label class="col-form-label">Quantité (L)</label>
           <input type="number" name="service_request[herbicides][][quantite]" class="form-control herbicide-quantite" min="0" step="0.01" value="0">
         </div>
 
         <!-- Champ pour la garantie (lecture seule) -->
-        <label class="col-form-label col-md-2">Garantie (F CFA)</label>
-        <div class="col-md-2">
+        
+        <div class="col-md-4">
+          <label class="col-form-label">Garantie (F CFA)</label>
           <input type="text" class="form-control herbicide-garantie" readonly>
         </div>
       </div>
+      
     </div>
+    
   </div>
 
   <!-- Bouton pour ajouter un nouvel herbicide -->
-  <div class="form-group">
+  <div class="form-group text-end">
     <button type="button" id="add-herbicide" class="btn btn-secondary">Ajouter un herbicide</button>
   </div>
 
-  <div class="form-group text-end">
+  <!--<div class="form-group text-end">
     <small>Coût de l'herbicide :</small>
-    <small id="prix_calculé">0</small> <small>F CFA</small>
-  </div>
+    <small id="prix_calculé">0</small> 
+  </div>--><small id="prix_calculé"></small> 
 
   <div class="form-group row">
       <label class="col-form-label col-md-2">Frais de garantie à payer (F CFA) :</label>
@@ -130,7 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (superficie > 0) {
       totalGarantie += <%= @garantie_ha %> * superficie + fraisDossier;
-      totalKgRembourse += <%= @kg_ha_laboure %> * superficie;
+       container.querySelectorAll(".herbicide-group").forEach((group) => {
+      const { soja } = recalculerGarantie(group);
+      totalKgRembourse += (<%= @kg_ha_laboure %> * superficie) + soja;
+    });
+      
     }else{
     container.querySelectorAll(".herbicide-group").forEach((group) => {
       const { garantie, soja } = recalculerGarantie(group);

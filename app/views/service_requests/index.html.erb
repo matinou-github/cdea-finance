@@ -21,15 +21,17 @@
       <th>Herbicides et Quantités</th>
       <th>Garantie totale (FCFA)</th>
       <th>Kg Soja remboursé</th>
-      <th>Statut</th>
+      <th>Payement</th>
+      <th>Status</th>
       <th>Actions</th>
+      <th>#</th>
     </tr>
   </thead>
   <tbody>
     <% @service_requests.each do |service_request| %>
       <tr>
         <td><%= service_request.id %></td>
-        <td><%= service_request.user.nom %></td>
+        <td><%= service_request.user.full_name %></td>
         <td><%= service_request.superficie %></td>
         <td>
           <% if service_request.service_request_herbicides.any? %>
@@ -54,13 +56,29 @@
         <td>
           <%= service_request.kg_paye %> Kg
         </td>
-        <td><%= service_request.status %></td>
+        <td><%= service_request.status_payement %></td>
         <td>
-          <%= link_to 'Voir', service_request_path(service_request) %>
-          <%= link_to 'Modifier', edit_service_request_path(service_request) %>
+           <%if service_request.status_request == 'pending'%>
+           <span class="badge badge-warning"> En attente </span>
+         <% elsif service_request.status_request == 'confirm'%>
+            <span class="badge badge-primary">Validé</span>
+         <% elsif service_request.status_request ==  'execute'%>
+             <span class="badge badge-success"> Executé</span>
+         <% else%>
+            <span class="badge badge-danger">Rejeté</span>
+          <%end%>
+       </td>
+        <td class="text-center">
+          <%= link_to 'Détail', service_request_path(service_request), class: 'btn btn-sm btn-primary' %>
+          
           <%= link_to 'Supprimer', service_request_path(service_request), 
                       method: :delete, 
-                      data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' } %>
+                      data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'btn btn-sm btn-danger' %>
+        </td>
+         <td>
+          <%= form_with(model: service_request, url: update_status_service_request_path(service_request), method: :patch, remote: true, class: "update-status-form") do |form| %>
+            <%= form.select :status_request, options_for_select([['En attente', 'pending'], ['Validé', 'confirm'], ['Executé', 'execute'], ['Rejeté', 'rejected']], service_request.status_request), { class: 'form-control' }, { onchange: 'this.form.submit()' } %>
+          <% end %>
         </td>
       </tr>
     <% end %>
@@ -79,3 +97,11 @@
 </div>
 
 
+<script>
+  $(document).on('ajax:success', '.update-status-form', function(event) {
+  const data = event.detail[0];
+  const statusCell = $(this).closest('tr').find('td.status');
+  statusCell.text(data.status);
+});
+
+</script>

@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   resources :remboursements
   resources :executions
   resources :zone_assignments
-  resources :service_requests
+  resources :service_requests do
+    member do
+      patch :update_status
+    end
+  end
   resources :herbicides
   devise_scope :user do
     root to: 'users/sessions#new'  
@@ -51,11 +55,12 @@ resources :service_requests do
   end
 end
 
-resources :annual_balances, only: [:index, :show] do
+
+resources :balances do
   member do
-    post :apply_interest # Pour appliquer une majoration
-    post :convert_to_cash # Pour convertir en numéraire
-    post :apply_remboursement # Pour appliquer un remboursement
+    post :convertir_garantie
+    post :appliquer_majoration
+    post :reporter_valeur
   end
 end
 
