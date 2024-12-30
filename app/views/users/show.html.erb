@@ -1,178 +1,75 @@
-<style>
-          .profile-view .profile-img {
-        height: 100px;
-        width: 100px;
-    }
-        .profile-view .profile-img .avatar {
-        font-size: 24px;
-        height: 100px;
-        line-height: 100px;
-        margin: 0;
-        width: 100px;
-    }
-        .profile-info-left {
-        text-align: center;
-    }
-        .profile-info-left {
-        border-right: none;
-        border-bottom: 2px dashed #ccc;
-        margin-bottom: 20px;
-        padding-bottom: 20px;
-    }
-      .profile-view .profile-basic {
-        margin-left: 0;
-        margin-top: 15px;
-    }
 
-
-</style>
-
-
-
-    <div class="row">
-        <div class="col-sm-10 col-6">
-            <h4 class="page-title">Profile</h4>
-        </div>
-
-        <div class="col-sm-2 col-6 text-right m-b-30">
-            <%= link_to 'RETOUR', :back, class:"btn btn-primary btn-rounded" %>
-           
-        </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-          <div class="card-box profile-header">
-          <div class="row">
-              <div class="col-md-12">
-                  <div class="profile-view">
-                      <div class="">
-                          <div class="profile-img">
-                                <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
-                          </div>
-                      </div>
-                      <div class="profile-basic">
-                          <div class="row">
-                              <div class="col-md-12">
-                                  <div class="profile-info-left">
-                                      <h4 class="user-name m-t-0 mb-0"><%= @user.nom.presence || "" %> <%= @user.prenom.presence || "" %></h4>
-                                      <small class="text-muted">Actif</small>
-                                      <div class="staff-id">Status : <%=@user.role%> </div>
-                                      <div class="staff-id">Employee ID : U-000<%=@user.id%> </div>
-                                      <div class="staff-msg"><a href="chat.html" class="btn btn-primary">Modifier profile</a></div>
-                                  </div>
-                              </div>
-                              <div class="col-md-12">
-                                  <ul class="personal-info">
-                                      <li>
-                                          <span class="title">Numero:</span>
-                                          <span class="text">
-                                              <%= @user.phone_number.presence || "Non inscrite" %>
-                                          </span>
-                                      </li>
-                                      <li>
-                                          <span class="title">Email:</span>
-                                          <span class="text"><a href="#"><%= @user.email.presence || "Non inscrite" %></a></span>
-                                      </li>
-                                      <li>
-                                          <span class="title">Commune:</span>
-                                          <span class="text"><%= @user.commune.presence || "Non inscrite" %></span>
-                                      </li>
-                                      <li>
-                                          <span class="title">Village:</span>
-                                          <span class="text"><%= @user.village.presence || "Non inscrite" %></span>
-                                      </li>
-                                      <li>
-                                          <span class="title">Photo carte:</span>
-                                          <span class="text"><%= @user.identity_card_photo.presence || "Non inscrite" %></span>
-                                      </li>
-                                  </ul>
-                              </div>
-                          </div>
-                      </div>
-                  </div>                        
-              </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-8">
-        <div class="profile-tabs">
-          <div class="card">
-            <div class="card-body profile-tabs">
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#Medical_info" role="tab" aria-selected="true">
-                            <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                            <span class="d-none d-sm-block">Demande de service</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" href="#AppointmentList" role="tab" aria-selected="false" tabindex="-1">
-                            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                            <span class="d-none d-sm-block">Payement</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" href="#PrescriptionList" role="tab" aria-selected="false" tabindex="-1">
-                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                            <span class="d-none d-sm-block">Rendez-vous</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" href="#Invoices" role="tab" aria-selected="false" tabindex="-1">
-                            <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                            <span class="d-none d-sm-block">Facture</span>
-                        </a>
-                    </li>
-                </ul>
-                <!-- Tab panes -->
-                <div class="tab-content p-3 text-muted">
-                    <div class="tab-pane active show" id="Medical_info" role="tabpanel">
-                        <div class="table-responsive">
-                            <table class="table table-striped mb-0">
-                                <tbody>
-                                    Demande de service
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="row mt-3">
+                    <div class="col-sm-10 col-6">
+                        <h4 class="page-title">Profile</h4>
                     </div>
-                    <div class="tab-pane" id="AppointmentList" role="tabpanel">
-                        <table class="table table-bordered dt-responsive nowrap " style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                              <tbody>
-                                    Payement
-                                </tbody>
-                            
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="PrescriptionList" role="tabpanel">
-                        <table class="table table-bordered dt-responsive nowrap " style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                          <tbody>
-                            Rendez-vous
-                          </tbody>
-                        </table>
-                        
-                    </div>
-                    <div class="tab-pane" id="Invoices" role="tabpanel">
-                        <table class="table table-bordered dt-responsive nowrap " style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <tbody>
-                                Facture
-                            </tbody>
-                            </table>
+
+                    <div class="col-sm-2 col-6 text-right m-b-30">
+                        <%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary btn-rounded' %>
                     </div>
                 </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-              
-                
+                <div class="card-box profile-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-view">
+                                <div class="profile-img-wrap">
+                                    <% if @user.identity_card_photo.present? %>
+                                        <div class="profile-img">
+                                            <img src="<%= @user.identity_card_photo %>" alt="Photo d'identité de <%= @user.full_name %>" style="max-width: 200px;"/>
+                                            <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
+                                    </div>
+                                    <%else%>
+                                        <div class="profile-img">
+                                                <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
+                                        </div>
+                                    <%end%>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="profile-info-left">
+                                                <h3 class="user-name m-t-0 mb-0"><%= @user.full_name%></h3>
+                                                <small class="text-muted">Actif</small>
+                                                <div class="staff-id">Status : <%=@user.role%> </div>
+                                                <div class="staff-id">N° CLIENT : <%=@user.code_client%> </div>
+                                                <div class="staff-msg"><%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary' %></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <span class="title">Tél:</span>
+                                                    <span class="text">
+                                                        <%= @user.phone_number.presence || "Non inscrite" %>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Email:</span>
+                                                    <span class="text"><a href="#"><%= @user.email.presence || "Non inscrite" %></a></span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Village:</span>
+                                                    <span class="text"><%= @user.village.presence || "Non inscrite" %></span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Commune:</span>
+                                                    <span class="text"><%= @user.commune || "Non inscrite" %></span>
+                                                </li>
+                                                <br>
+                                                <li>
+                                                    <span class="title">Photo:</span>
+                                                    <span class="text"><%= @user.identity_card_photo || "Non inscrite" %></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-5"></div>
+
+				
                 
             
-
- 
-    <div class="text-center mt-4">
-      <%= link_to 'Éditer', edit_user_path(@user), class: 'btn btn-primary me-2' %>
-      <%= link_to 'Supprimer', user_path(@user), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?" }, class: 'btn btn-danger ms-2' %>
-    </div>
-

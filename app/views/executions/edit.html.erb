@@ -1,12 +1,79 @@
-<% content_for :title, "Editing execution" %>
+<div class="container">
+  <h2 class="text-center my-4">Modification</h2>
 
-<h1>Editing execution</h1>
+  <div class="card shadow-sm">
+    <div class="card-body">
+  <%= form_with model: @execution, url: execution_path(@execution), method: :patch, html: { enctype: 'multipart/form-data' }, local: true do |form| %>
 
-<%= render "form", execution: @execution %>
+    <% if @execution.errors.any? %>
+      <div class="alert alert-danger">
+        <h4>Erreurs</h4>
+        <ul>
+          <% @execution.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-<br>
+    <div class="mb-3">
+      <%= form.label :service_request_id, "Demande de Service", class: "form-label" %>
+      <%= form.select :service_request_id, 
+                      options_for_select(@demandes_validees.map { |h| [h.id, h.id] }, @execution.service_request_id), 
+                      { prompt: "-- Sélectionnez une demande --" }, 
+                      { class: "form-select shadow-sm select-beast", id: "service_request_select"  } %>
+    </div>
 
-<div>
-  <%= link_to "Show this execution", @execution %> |
-  <%= link_to "Back to executions", executions_path %>
+    <div class="mb-3">
+      <%= form.label :superficie, "Superficie Labourée (Ha)", class: "form-label" %>
+      <%= form.number_field :superficie, value: @execution.superficie, step: 0.01, class: "form-control", id: "superficie_field" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :preuve, "Image de Preuve (optionnelle)", class: "form-label" %>
+      <% if @execution.preuve.present? %>
+        <div class="mb-2">
+          <p>Image actuelle :</p>
+          <a href="<%=@execution.preuve%>">Voir</a>
+        </div>
+      <% end %>
+      <%= form.file_field :file, class: "form-control", required: false %>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <%= link_to 'Retour', executions_path, class: "btn btn-secondary" %>
+      <%= form.submit "Sauvégarder", class: "btn btn-primary" %>
+    </div>
+  <% end %>
 </div>
+
+</div>
+<%= javascript_include_tag 'tom_select'%> 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const serviceRequestSelect = document.getElementById("service_request_select");
+    const superficieField = document.getElementById("superficie_field");
+
+    serviceRequestSelect.addEventListener("change", function () {
+      const selectedId = this.value;
+      console.log("ID sélectionné :", selectedId); // Vérifie l'ID sélectionné
+
+      if (selectedId) {
+        fetch(`/service_requests/${selectedId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Données reçues :", data); // Affiche les données reçues
+            if (data.superficie) {
+              superficieField.value = data.superficie;
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur AJAX :", error);
+          });
+      } else {
+        superficieField.value = "";
+      }
+    });
+
+  });
+</script>

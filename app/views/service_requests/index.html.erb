@@ -22,9 +22,12 @@
       <th>Garantie totale (FCFA)</th>
       <th>Kg Soja remboursé</th>
       <th>Payement</th>
+      <th>Recepteur payement</th>
       <th>Status</th>
       <th>Actions</th>
+       <%if current_user.role != "agriculteur" %>
       <th>#</th>
+      <%end%>
     </tr>
   </thead>
   <tbody>
@@ -58,6 +61,14 @@
         </td>
         <td><%= service_request.status_payement %></td>
         <td>
+          <%if service_request.status == "paid"  %>
+            <%=service_request.recu_par%>
+          <%else%>
+          <p>----</p>
+          <%end%>
+        </td>
+       
+        <td>
            <%if service_request.status_request == 'pending'%>
            <span class="badge badge-warning"> En attente </span>
          <% elsif service_request.status_request == 'confirm'%>
@@ -68,18 +79,26 @@
             <span class="badge badge-danger">Rejeté</span>
           <%end%>
        </td>
+
         <td class="text-center">
-          <%= link_to 'Détail', service_request_path(service_request), class: 'btn btn-sm btn-primary' %>
           
+          <%= link_to 'Détail', service_request_path(service_request), class: 'btn btn-sm btn-primary' %>
+          <%if current_user.role == "agriculteur" && service_request.status_request == 'pending' %>
+            <%= link_to 'Editer', edit_service_request_path(service_request), class: 'btn btn-sm btn-warning' %>
+          <%else%>
+            <%= link_to 'Editer', edit_service_request_path(service_request), class: 'btn btn-sm btn-warning' %>
+          <%end%>
           <%= link_to 'Supprimer', service_request_path(service_request), 
                       method: :delete, 
                       data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'btn btn-sm btn-danger' %>
         </td>
+        <%if current_user.role != "agriculteur" %>
          <td>
           <%= form_with(model: service_request, url: update_status_service_request_path(service_request), method: :patch, remote: true, class: "update-status-form") do |form| %>
             <%= form.select :status_request, options_for_select([['En attente', 'pending'], ['Validé', 'confirm'], ['Executé', 'execute'], ['Rejeté', 'rejected']], service_request.status_request), { class: 'form-control' }, { onchange: 'this.form.submit()' } %>
           <% end %>
         </td>
+        <%end%>
       </tr>
     <% end %>
   </tbody>

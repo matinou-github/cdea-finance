@@ -4,12 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-         enum role: {
-          admin: "admin",
-          agriculteur: "agriculteur",
-          technicien: "technicien",
-          secretaire: "secretaire"
-        }
+        enum :role, {:admin=>"admin", :agriculteur=>"agriculteur", :technicien=>"technicien", :secretaire=>"secretaire"}
+
   has_many :zone_assignments, dependent: :destroy
   # Permet la connexion avec un email ou un numéro de téléphone
   attr_writer :login
@@ -22,6 +18,10 @@ class User < ApplicationRecord
   end
   def full_name
     "#{nom} #{prenom}"
+  end
+
+  def code_client
+    "CLO#{id}#{village}"
   end
   
   # Ajuster la recherche pour l'authentification

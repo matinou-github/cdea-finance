@@ -30,8 +30,8 @@
               <td><%= execution.superficie %></td>
               <td><%= execution.service_request.superficie %></td>
               <td>
-                <% if execution.preuve.attached? %>
-                  <%= image_tag execution.preuve, style: "width: 100px;" %>
+                <% if execution.preuve.present? %>
+                  <%=link_to "Voir la preuve", "#{execution.preuve}", target: "_blank", class: "text-light btn btn-primary"%>
                 <% else %>
                   <span class="text-muted">Aucune image</span>
                 <% end %>

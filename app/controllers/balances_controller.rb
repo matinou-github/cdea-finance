@@ -2,7 +2,11 @@ class BalancesController < ApplicationController
     before_action :authenticate_user!  # Si tu utilises Devise pour l'authentification
     layout 'dashboard'
     def index
-      @balances = Balance.page(params[:page]).per(10).order(:year)
+      if current_user.role == "agriculteur"
+        @balances = Balance.where(user_id: current_user.id).page(params[:page]).per(10).order(:year)
+      else
+        @balances = Balance.page(params[:page]).per(10).order(:year)
+      end
 
       @indice_setting = IndiceSetting.last
       @frais_dossier = @indice_setting.frais_dossier

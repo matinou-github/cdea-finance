@@ -38,14 +38,14 @@
         </div>
 
         <!-- Champ pour la quantité -->
-        <div class="col-md-2">
+        <div class="col">
           <label class="col-form-label">Quantité (L)</label>
           <input type="number" name="service_request[herbicides][][quantite]" class="form-control herbicide-quantite" min="0" step="0.01" value="0">
         </div>
 
         <!-- Champ pour la garantie (lecture seule) -->
         
-        <div class="col-md-4">
+        <div class="col-md-4 champs_superficie">
           <label class="col-form-label">Garantie (F CFA)</label>
           <input type="text" class="form-control herbicide-garantie" readonly>
         </div>
@@ -110,7 +110,25 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Un ou plusieurs éléments nécessaires sont absents du DOM.");
     return;
   }
+  const champsSuperficie = document.querySelector('.champs_superficie');
+  
+  
+  //Fonction pour cacher champs garantie
+  function cacherGarantie(champsSuperficie) {
+    console.log(champsSuperficie);
+    superficieInput.addEventListener('input', () => {
+    const superficieValue = parseFloat(superficieInput.value);
 
+    if (!isNaN(superficieValue) && superficieValue > 0) {
+      champsSuperficie.style.display = 'none';
+    } else {
+      champsSuperficie.style.display = 'block';
+    }
+  }); 
+  }
+
+  cacherGarantie(champsSuperficie)
+  
   // Fonction pour recalculer les garanties pour un groupe
   function recalculerGarantie(group) {
     const select = group.querySelector(".herbicide-select");
@@ -146,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fraisDossier = <%= @frais_dossier %>;
 
     if (superficie > 0) {
+      const fraisDossier = <%= @frais_dossier %> * superficie;
       totalGarantie += <%= @garantie_ha %> * superficie + fraisDossier;
        container.querySelectorAll(".herbicide-group").forEach((group) => {
       const { soja } = recalculerGarantie(group);
@@ -199,7 +218,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function attachEventListeners(group) {
     const select = group.querySelector(".herbicide-select");
     const quantiteInput = group.querySelector(".herbicide-quantite");
+    const champsSuperficie = group.querySelector(".champs_superficie");
     const removeButton = group.querySelector(".remove-herbicide");
+
+    cacherGarantie(champsSuperficie)
+   
+    
 
     select.addEventListener("change", () => {
       recalculerGarantie(group);

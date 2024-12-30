@@ -53,15 +53,14 @@
                 <%= f.email_field :email, class: "form-control", placeholder: "Entrez votre email" %>
               </div>
             </div>
-
             <div class="row mt-3">
               <div class="col-md-6">
-                <%= f.label :commune, "commune", class: "form-label" %>
-                <%= f.text_field :commune, class: "form-control", placeholder: "Entrez votre commune" %>
+                <%= f.label :commune, "commune", class: "form-label" %> 
+                 <%= f.select :commune, ["N'Dali", "Pèrèrè", "Sinandé"], { prompt: "Choisissez votre commune" }, class: "form-control" %>
               </div>
               <div class="col-md-6">
                 <%= f.label :village, "Village", class: "form-label" %>
-                <%= f.text_field :village, class: "form-control", placeholder: "Entrez votre Village" %>
+                <%= f.select :village, ["Bininsi", "Bori", "Pèrèrè", "Sinawourarou"], { prompt: "Choisissez votre village" }, class: "form-control" %>
               </div>
               <%if current_user.role == "admin"%>
                 <div class="col-sm-12">

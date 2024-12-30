@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :remboursements
-  resources :executions
+  resources :executions do
+    collection do
+      post 'upload_identity_card'
+    end
+  end
   resources :zone_assignments
   resources :service_requests do
     member do
@@ -26,6 +30,7 @@ Rails.application.routes.draw do
     member do
       get 'complete_profile'
       patch 'update_profile'
+      post 'upload_identity_card'
     end
   end
   resources :users, only: [:index, :show, :edit, :update, :destroy]
@@ -35,9 +40,16 @@ Rails.application.routes.draw do
     post 'admin/create', to: 'admin#create', as: 'admin_create'
   end
 
+  resources :dashboard, only: [] do
+    collection do
+      get :export_pdf, defaults: { format: :pdf }
+    end
+  end
+
   get 'template/index', to:'template#index'
   get 'dashboard/index', to: 'dashboard#index'
   get 'dashboard/list_user', to: 'dashboard#list_user'
+
   get 'dashboard/bilan', to: 'dashboard#bilan'
   get 'dashboard/profile', to: 'dashboard#profile'
   get 'dashboard/accueil', to: 'dashboard#accueil'
@@ -45,7 +57,7 @@ Rails.application.routes.draw do
   get 'indice_setting', to: 'indice_setting#index', as: 'indice_setting'
 put 'indice_setting/update', to: 'indice_setting#update', as: 'indice_setting_update'
 post 'service_payement/', to: 'service_requests#service_payement', as: 'service_payement'
-
+patch '/service_requests/:id/payement_direct', to: 'service_requests#payement_direct', as: 'payement_direct'
 #post 'service_requests/:id/convertir_garantie', to: 'service_requests#convertir_garantie', as: 'convertir_garantie'
 
 

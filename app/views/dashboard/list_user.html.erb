@@ -7,6 +7,47 @@
       </button>
     </div>
   </div>
+  <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <%= form_with url: dashboard_list_user_path, method: :get, local: true, class: "formSearch form-inline" do %>
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                      <%= text_field_tag :id, params[:id], class: "search_id form-control", placeholder: "Recherche par ID" %>
+                    </div>
+                     <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                         <%= text_field_tag :full_name, params[:full_name], class: "search_nom form-control", placeholder: "Recherche par nom/prénom" %>
+                      </div>
+
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <select name="village" class="form-control search selectVillage" data-action="autosave#save">
+                            <option value="">selectionner un village</option>
+                            <option value="Sinawourarou" <%= "selected" if params[:village] == "Sinawourarou" %>>Sinawourarou</option>
+                            <option value="Bori" <%= "selected" if params[:village] == "Bori" %>>Bori</option>
+                            <option value="Pèrèrè" <%= "selected" if params[:village] == "Pèrèrè" %>>Pèrèrè</option>
+                            <option value="Bininsi" <%= "selected" if params[:village] == "Bininsi" %>>Bininsi</option>
+                        </select>
+                      </div>
+                        <div class="d-flex" style="justify-content:space-between">
+                          <div class="d-flex">
+                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                              <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+                            </div>
+                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                              <a href=<%= dashboard_list_user_path %> type="bouton" class="btn btn-light">Effacer</a>
+                            </div>
+                          </div>
+                          <div>
+                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                              <%= link_to "Télécharger PDF", export_pdf_dashboard_index_path(village: @village, format: :pdf), class: "copy-btn text-danger" %>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
   <div class="card shadow-lg border-0">
     <div class="card-header btn-cdae text-white">
       <h4><i class="fas fa-user"></i> Les utilisateurs</h4>
@@ -86,3 +127,13 @@
     </div>
   </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('.selectVillage').select2({
+            theme: 'bootstrap4',
+            language: "fr",
+            width: 'auto'
+        });
+    });
+
+</script> 

@@ -3,7 +3,11 @@ class RemboursementsController < ApplicationController
  layout 'dashboard'
   # GET /remboursements or /remboursements.json
   def index
-    @remboursements = Remboursement.page(params[:page]).per(10).order(created_at: :desc)
+    if current_user.role == "agriculteur"
+      @remboursements = Remboursement.where(user_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
+    else
+      @remboursements = Remboursement.page(params[:page]).per(10).order(created_at: :desc)
+    end
   end
 
   # GET /remboursements/1 or /remboursements/1.json

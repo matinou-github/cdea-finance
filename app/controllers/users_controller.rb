@@ -12,13 +12,15 @@ class UsersController < ApplicationController
       @user = current_user
       if @user.update(user_profile_params)
         flash[:notice] = "Profil complété avec succès !"
-        redirect_to dashboard_index_path
+        redirect_to dashboard_accueil_path
       else
         flash[:alert] = "Veuillez corriger les erreurs."
         render :complete_profile
       end
     end
+    def show
 
+    end
     def edit
 
     end
@@ -46,7 +48,62 @@ class UsersController < ApplicationController
       @user.destroy
       redirect_to dashboard_list_user_path, notice: 'Utilisateur supprimé avec succès.'
     end
-  
+
+
+    def upload_identity_card
+      uploaded_file = params[:user][:file]
+      commune = params[:user][:commune]
+      village = params[:user][:village]
+    
+      if uploaded_file.present?
+        Rails.logger.info "Fichier reçu : #{uploaded_file.original_filename}"
+    
+        # Métadonnées pour le fichier
+        file_metadata = {
+          name: "#{current_user.id}_identity_card",
+          parents: ['1r7lP6VfEEYeOLuaXa0DnWhJ5mfeSeXes'] # Placer le fichier dans le dossier cible
+        }
+
+        # Téléversement du fichier vers Google Drive
+        file = DRIVE_SERVICE.create_file(
+          file_metadata,
+          fields: 'id',
+          upload_source: uploaded_file.tempfile,
+          content_type: uploaded_file.content_type
+        )
+    
+        # Définir les permissions pour que le fichier soit accessible publiquement
+        DRIVE_SERVICE.create_permission(
+          file.id,
+          Google::Apis::DriveV3::Permission.new(
+            type: 'anyone',
+            role: 'reader'
+          )
+        )
+    
+        Rails.logger.info "Fichier envoyé à Google Drive avec l'ID : #{file.id}"
+    
+        # Générer l'URL publique et l'enregistrer
+        url = "https://drive.google.com/uc?id=#{file.id}"
+
+        current_user.update(identity_card_photo: url, commune: commune, village: village)
+    
+        redirect_to dashboard_profile_path, notice: 'Fichier téléversé avec succès.'
+      else
+        flash[:alert] = 'Aucun fichier reçu.'
+        redirect_to dashboard_profile_path
+      end
+    rescue Google::Apis::Error => e
+      Rails.logger.error "Erreur lors de l'envoi à Google Drive : #{e.message}"
+      flash[:alert] = "Une erreur s'est produite lors de l'envoi à Google Drive."
+      redirect_to dashboard_profile_path
+    rescue => e
+      Rails.logger.error "Erreur inattendue : #{e.message}"
+      flash[:alert] = "Une erreur inattendue s'est produite."
+      redirect_to dashboard_profile_path
+    end
+    
+ 
     private
 
     def set_user

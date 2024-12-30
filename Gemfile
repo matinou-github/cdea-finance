@@ -47,6 +47,9 @@ gem 'prawn'         # pour export PDF
 gem 'prawn-table'   # pour formater les tableaux dans le PDF
 gem 'csv'
 
+gem 'google-api-client', '~> 0.53.0'
+gem 'google_drive', '~> 3.0'
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
