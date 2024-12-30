@@ -5,13 +5,20 @@ class ServiceRequestsController < ApplicationController
 
   # GET /service_requests or /service_requests.json
   def index
-    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page]).per(10).order(created_at: :desc)
+    if current_user.role == "agriculteur"
+      @service_requests = ServiceRequest.includes(service_request_herbicides: :herbicide).where(user_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
+    else
+      @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page]).per(10).order(created_at: :desc)
+    end
   end
 
   # GET /service_requests/1 or /service_requests/1.json
   def show
     @service_request = ServiceRequest.find(params[:id])
     @service_request_amount = @service_request.garantie.to_i
+    @indice_setting = IndiceSetting.last
+    @frais_dossier = @indice_setting.frais_dossier
+    render json: { superficie: @service_request.superficie }
   end
 
   # GET /service_requests/new
@@ -35,7 +42,7 @@ class ServiceRequestsController < ApplicationController
     @kg_ha_laboure = @indice_setting.kg_ha_laboure
     @kg_litre_octroie = @indice_setting.kg_litre_octroi
     @service_request = ServiceRequest.find(params[:id])
-    @herbicides = @service_request.service_request_herbicides.includes(:herbicide)
+    @herbicides = @service_request.service_request_herbicides.includes(:herbicide) || [] 
     #service_request.service_request_herbicides
     @all_herbicides = Herbicide.all
   end
@@ -57,7 +64,7 @@ class ServiceRequestsController < ApplicationController
         
       end
   
-      redirect_to service_requests_path, notice: 'Demande créée avec succès.'
+      redirect_to @service_request, notice: 'Demande créée avec succès.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -68,7 +75,18 @@ class ServiceRequestsController < ApplicationController
   # PATCH/PUT /service_requests/1 or /service_requests/1.json
   def update
     respond_to do |format|
-      if @service_request.update(service_request_params)
+      if @service_request.update(service_request_params.except(:herbicides))
+
+      if params[:service_request][:herbicides]
+        @service_request.service_request_herbicides.destroy_all # Supprime les anciennes associations
+        
+        params[:service_request][:herbicides].each do |herbicide_params|
+          @service_request.service_request_herbicides.create(
+            herbicide_id: herbicide_params[:id],
+            quantite: herbicide_params[:quantite]
+          )
+        end
+      end
         format.html { redirect_to @service_request, notice: "Service request was successfully updated." }
         format.json { render :show, status: :ok, location: @service_request }
       else
@@ -99,7 +117,7 @@ class ServiceRequestsController < ApplicationController
       redirect_to dashboard_success_payment_path(demande_id: @service_request)
       flash[:success] = "Souscription faites avec succès."
     else
-      redirect_to service_request(@service_request)
+      redirect_to @service_request
       flash[:error] = "Erreur lors de la souscription; veillez reessayer svp"
     end
   end
@@ -139,6 +157,13 @@ class ServiceRequestsController < ApplicationController
       render json: { message: "Erreur lors de la mise à jour du statut." }, status: :unprocessable_entity
     end
   end
+
+  def payement_direct
+    @service_request = ServiceRequest.find(params[:id])
+    @service_request.update(status: "paid", recu_par: current_user.full_name)
+    redirect_to @service_request
+    flash[:success] = "Souscription faites avec succès"
+  end
   
 
   private
@@ -154,6 +179,7 @@ class ServiceRequestsController < ApplicationController
         :garantie, 
         :kg_paye, 
         :status, 
+        :recu_par,
         :status_request, 
         herbicides: [:id, :quantite]
       )

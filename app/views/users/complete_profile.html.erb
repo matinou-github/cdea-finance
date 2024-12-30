@@ -10,7 +10,7 @@
             <div class="col-lg-10">
                 <div class="card-box">
                     <h4 class="card-title">Information supplémentaire</h4>
-                    <%= form_with model: @user, url: update_profile_user_path(@user), local: true, class: "profile-form" do |f| %>
+                    <%= form_with model: current_user, url: upload_identity_card_user_path(current_user), method: :post, html: { enctype: 'multipart/form-data' }, local: true do |f| %>
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Votre communue</label>
                             <div class="col-md-10">
@@ -21,14 +21,14 @@
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Votre village</label>
                             <div class="col-md-10">
-                                <%= f.text_field :village, class: "form-control", placeholder: "Entrez votre village" %>
+                                <%= f.select :village, ["Bininsi", "Bori", "Pèrèrè", "Sinawourarou"], { prompt: "Choisissez votre village" }, class: "form-control" %>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Photo CIP ou acte de naissance</label>
                             <div class="col-md-10">
-                                <%= f.file_field :identity_card_photo, class: "form-control" %>
+                                <%= f.file_field :file, class: "form-control", required: true %>
                             </div>
                         
                         </div>

@@ -12,16 +12,14 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="profile-view">
-                                <div class="profile-img-wrap">
-                                    <div class="profile-img">
-                                            <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
-                                    </div>
+                                <div class="profile-img-wrap">          
+                                    <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
                                 </div>
                                 <div class="profile-basic">
                                     <div class="row">
                                         <div class="col-md-5">
                                             <div class="profile-info-left">
-                                                <h3 class="user-name m-t-0 mb-0"><%= current_user.nom.presence || "Non inscrite" %></h3>
+                                                <h3 class="user-name m-t-0 mb-0"><%= current_user.full_name%></h3>
                                                 <small class="text-muted">Actif</small>
                                                 <div class="staff-id">Status : <%=current_user.role%> </div>
                                                 <div class="staff-id">Employee ID : U-000<%=current_user.id%> </div>
@@ -31,7 +29,7 @@
                                         <div class="col-md-7">
                                             <ul class="personal-info">
                                                 <li>
-                                                    <span class="title">Numero:</span>
+                                                    <span class="title">Tél:</span>
                                                     <span class="text">
                                                         <%= current_user.phone_number.presence || "Non inscrite" %>
                                                     </span>
@@ -51,7 +49,7 @@
                                                 <br>
                                                 <li>
                                                     <span class="title">Photo:</span>
-                                                    <span class="text"><%= current_user.identity_card_photo || "Non inscrite" %></span>
+                                                    <span class="text"><%=link_to "Voir la photo CIP ou l'AN", "#{current_user.identity_card_photo}", target: "_blank", class: "text-light btn btn-primary"%></span>
                                                 </li>
                                             </ul>
                                         </div>

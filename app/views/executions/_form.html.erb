@@ -14,7 +14,7 @@
 
   <div class="form-group">
     <%= form.label :service_request_id, "Demande de service" %>
-    <%= form.collection_select :service_request_id, ServiceRequest.all, :id, :id, prompt: "-- Choisir une demande --", class: "form-control" %>
+    <%= form.collection_select :service_request_id, @demandes_validees, :id, :id, prompt: "-- Choisir une demande --", class: "form-control", id: "service_request_select"  %>
   </div>
 
   <div class="form-group">
@@ -31,3 +31,4 @@
     <%= form.submit "Enregistrer", class: "btn btn-primary" %>
   </div>
 <% end %>
+

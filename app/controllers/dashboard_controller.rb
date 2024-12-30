@@ -18,8 +18,14 @@ class DashboardController < ApplicationController
 
     def list_user
         @user = User.new 
-        @users = User.page(params[:page]).per(10).order(created_at: :desc)
+        @users = User.order(created_at: :asc)
+        @users = @users.where('LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)', "%#{params[:full_name].downcase}%", "%#{params[:full_name].downcase}%") if params[:full_name].present?
+        @users = @users.where('id = ?', params[:id]) if params[:id].present?
+        @users = @users.where(village: params[:village]) if params[:village].present?
+        @users =@users.page(params[:page]).per(10)
+        @village = params[:village]
     end
+
     def bilan
         @service_requests = ServiceRequest.includes(:remboursements).page(params[:page]).per(10).order(created_at: :desc)
         @indice_setting = IndiceSetting.last
@@ -82,6 +88,33 @@ class DashboardController < ApplicationController
         @demande_id = params[:demande_id]
     end
 
+    def export_pdf
+        @village = params[:village] 
+        if @village.present?
+          @users = User.where(village: @village)
+          pdf = Prawn::Document.new
+          pdf.text "Liste client #{@village}", size: 18, style: :bold
+          pdf.move_down 10
+          table_data = [["Client ID", "Nom & Prénom", "Commune", "Village", "Téléphone", "Email"]]
+          table_data += @users.map { |user| [user.id, user.full_name, user.commune,user.village, user.phone_number, user.email] }
+          pdf.table(table_data, header: true, row_colors: ["DDDDDD", "FFFFFF"])
+          respond_to do |format|
+            format.pdf { send_data pdf.render, filename: "list_user.pdf", type: "application/pdf" }
+          end 
+        else
+          @users = User.all
+          pdf = Prawn::Document.new
+          pdf.text "Liste des utilisateurs", size: 18, style: :bold
+          pdf.move_down 10
+          table_data = [["Client ID", "Nom & Prénom", "Commune", "Village", "Téléphone", "Email"]]
+          table_data += @users.map { |user| [user.id, user.full_name, user.commune,user.village, user.phone_number, user.email] }
+          pdf.table(table_data, header: true, row_colors: ["DDDDDD", "FFFFFF"])
+          respond_to do |format|
+            format.pdf { send_data pdf.render, filename: "list_user.pdf", type: "application/pdf" }
+          end 
+        end
+    end
+    
     
       
 end

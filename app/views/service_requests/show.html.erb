@@ -4,6 +4,9 @@
 
 <div class="container mt-5">
   <div class="row">
+    <div class="col-md-12 mb-5">
+      <a href="<%=service_requests_path%>" class="btn btn-primary">ALLEZ A LA PAGE DE DEMANDE DE SERVICE</a>
+    </div>
     <div class="col-md-6">
           <div class="card shadow-lg border-0">
         <div class="card-header btn-cdae text-white">
@@ -12,11 +15,21 @@
         <div class="card-body">
           <!-- Ligne 1 : Utilisateur et Statut -->
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-user"></i> Utilisateur :</strong> <%= @service_request.user.nom %> <%= @service_request.user.prenom %></p>
+            <div class="col-md-12">
+              <h3 class="text-center">N° CLIENT : <%=@service_request.user.code_client%></h3>
+              <hr>
             </div>
             <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> <%= @service_request.status_payement %></p>
+              <p><strong><i class="fas fa-user"></i> Nom & Prénom:</strong> <%= @service_request.user.nom %> <%= @service_request.user.prenom %></p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <p><strong><i class="fas fa-clipboard-check"></i> Statut :</strong> 
+              <%if @service_request.status == "unpaid" %>
+                <span class="text-danger"><%= @service_request.status_payement %></span>
+              <%else%>
+                <span class="text-success"><%= @service_request.status_payement %></span>
+              <%end%>
+              </p>
             </div>
           </div>
 
@@ -48,12 +61,40 @@
       <hr>    
           <!-- Ligne 4 : Garantie et Preuve -->
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <p><strong><i class="fas fa-money-check-alt"></i> Garantie :</strong> <%= @service_request.garantie  %> Fcfa</p>
+            <div class="col-md-12 mb-3 table-responsive">
+              <table class="table table-bordered mb-0">
+                <thead>
+                  <tr style=" vertical-align: baseline;">
+                    <th>Frais de dossier</th>
+                    <th>Garantie</th>
+                    <th>Total à payer</th>
+                    <th>Qté de soja à rembourser </th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <%if  @service_request.superficie.present?%>
+                        <%= @frais_dossier * @service_request.superficie %> Fcfa 
+                      <%else%>
+                        <%= @frais_dossier%> Fcfa 
+                      <%end%>
+                    </td>
+                    <td>
+                      <%if  @service_request.superficie.present?%>
+                      <%= @service_request.garantie - (@frais_dossier * @service_request.superficie)  %> Fcfa 
+                      <%else%>
+                      <%= @service_request.garantie - @frais_dossier%> Fcfa 
+                      <%end%>
+                    </td>
+                    <td><%= @service_request.garantie  %> Fcfa</td>
+                    <td><%= @service_request.kg_paye  %> Kg</td>
+                  </tr>
+                </tbody>
+              </table>
+   
             </div>
-            <div class="col-md-6 mb-3">
-               <p><strong><i class="fas fa-money-check-alt"></i> Kg de soja a rembourser :</strong> <%= @service_request.kg_paye  %> Fcfa</p>
-            </div>
+           
           </div>
 
           <!-- Bouton retour -->
@@ -66,18 +107,24 @@
             <div class="card ">
               <%if @service_request.status == "unpaid" %>
                 <div class="card-header">
+                  <%if current_user.role != "agriculteur"%>
                     <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
                         <!-- Credit card form tabs -->
+                        
                         <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+                          
                             <li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link active"> <i class="fas fa-mobile-alt mr-2"></i> MOMO </a> </li>
-                            <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fas fa-credit-card mr-2"></i> DIRECT </a> </li>
+                            
+                              <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fas fa-credit-card mr-2"></i> ESPECE </a> </li>
+                            
                         </ul>
-                    </div> <!-- End -->
+                        
+                    </div><%end%> <!-- End -->
                     <!-- Credit card form content -->
                     <div class="tab-content">
                     <!-- Paypal info -->
                     <div id="paypal" class="tab-pane fade show active pt-3">
-                        <h5 class="text-center">Cliquer sur le bouton pour payer momo</h5>
+                        <h5 class="text-center">Cliquer sur le bouton pour payer par MoMo</h5>
                         <% if @service_request.status.present? && @service_request.status == "unpaid"%>
                           <div class="row mt-3">
                             <div class="col-md-12">
@@ -85,11 +132,11 @@
                                 <%= hidden_field_tag 'amount',  @service_request_amount %>
                                 <%= hidden_field_tag 'id', @service_request.id %>
                                 <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"
-                                  data-public-key="pk_sandbox_ywrlaTQdbqll7iBWVEkbrCZe"
+                                  data-public-key="pk_sandbox_ywrlaTQdbqll7iBWVEkbrCZe" 
                                   data-button-text="EFFECTUER LE PAYEMENT"
                                   data-button-class="btn btn-primary d-block h8 w-100"
                                   data-transaction-amount="<%=  @service_request_amount %>"
-                                  data-transaction-description="Rendez-vous"
+                                  data-transaction-description="Payement des frais de dossier et garantie pour le labour ou herbicide"
                                   data-customer-email = "<%= current_user.email if current_user.present?%>"
                                   data-customer-lastname = "<%= current_user.nom if current_user.nom %>"
                                   data-customer-firstname = "<%= current_user.prenom if current_user.prenom%>"
@@ -107,12 +154,9 @@
                     </div> <!-- End -->
                     <!-- bank transfer info -->
                     <div id="net-banking" class="tab-pane fade pt-3">
-                        <div class="form-group "> <label for="Select Your Bank">
-                               <input type="file">
-                               <hr>
-                        <div class="form-group text-center">
-                            <p> <button type="button" class="btn btn-primary "><i class="fas fa-mobile-alt mr-2"></i> Envoyer preuve de payement</button> </p>
-                        </div>
+                        <%if @service_request.status.present? && @service_request.status == "unpaid" && current_user.role != "agriculteur"%>
+                          <%= button_to 'Payer', payement_direct_path(@service_request), method: :patch, class: 'btn btn-success w-100' %>
+                        <%end%>
                         <small class="text-muted"> <strong>Note:</strong> Votre status de payement sera a implayé jusqu'a ce que l'administrateur confirme le payement</small>
                     </div> <!-- End -->
                     <!-- End -->
