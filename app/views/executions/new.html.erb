@@ -46,29 +46,38 @@
 <%= javascript_include_tag 'tom_select'%> 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const serviceRequestSelect = document.getElementById("service_request_select");
-    const superficieField = document.getElementById("superficie_field");
+  const serviceRequestSelect = document.getElementById("service_request_select");
+  const superficieField = document.getElementById("superficie_field");
 
-    serviceRequestSelect.addEventListener("change", function () {
-      const selectedId = this.value;
-      console.log("ID sélectionné :", selectedId); // Vérifie l'ID sélectionné
+  serviceRequestSelect.addEventListener("change", function () {
+    const selectedId = this.value;
+    console.log("ID sélectionné :", selectedId); // Vérifie l'ID sélectionné
 
-      if (selectedId) {
-        fetch(`/service_requests/${selectedId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Données reçues :", data); // Affiche les données reçues
-            if (data.superficie) {
-              superficieField.value = data.superficie;
-            }
-          })
-          .catch((error) => {
-            console.error("Erreur AJAX :", error);
-          });
-      } else {
-        superficieField.value = "";
-      }
-    });
-
+    if (selectedId) {
+      fetch(`/service_requests/${selectedId}`, {
+        headers: {
+          "Accept": "application/json", // Indique au serveur que vous attendez une réponse JSON
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erreur réseau ou serveur");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Données reçues :", data); // Affiche les données reçues
+          if (data.superficie) {
+            superficieField.value = data.superficie;
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur AJAX :", error);
+        });
+    } else {
+      superficieField.value = ""; // Réinitialise le champ si aucune option n'est sélectionnée
+    }
   });
+});
+
 </script>

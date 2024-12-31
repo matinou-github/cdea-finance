@@ -69,11 +69,17 @@ end
 
 
 resources :balances do
-  member do
-    post :convertir_garantie
-    post :appliquer_majoration
-    post :reporter_valeur
+  # member do
+  #   post :convertir_garantie
+  #   post :appliquer_majoration
+  #   post :reporter_valeur
+  # end
+
+  collection do
+    post :traiter_toutes_balances
   end
 end
+
+
 
 end

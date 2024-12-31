@@ -56,7 +56,7 @@ belongs_to :balance, optional: true
   private
 
   def update_balance_if_paid
-    update_balance if saved_change_to_status? && status == "paid" && status_request == "execute"
+    update_balance if status_request == "execute"
   end
 
 

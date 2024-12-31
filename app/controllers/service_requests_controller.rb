@@ -18,7 +18,10 @@ class ServiceRequestsController < ApplicationController
     @service_request_amount = @service_request.garantie.to_i
     @indice_setting = IndiceSetting.last
     @frais_dossier = @indice_setting.frais_dossier
-    render json: { superficie: @service_request.superficie }
+    respond_to do |format|
+      format.html # Rend la vue 'show.html.erb'
+      format.json { render json: { superficie: @service_request.superficie } }
+    end
   end
 
   # GET /service_requests/new

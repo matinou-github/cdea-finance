@@ -12,7 +12,7 @@ class ExecutionsController < ApplicationController
 
   # GET /executions/new
   def new
-    @demandes_validees = ServiceRequest.where(status_request: "confirm")
+    @demandes_validees = ServiceRequest.where(status_request: "execute")
     @execution = Execution.new
   end
 
