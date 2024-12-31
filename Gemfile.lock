@@ -131,6 +131,10 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    dotenv (3.1.7)
+    dotenv-rails (3.1.7)
+      dotenv (= 3.1.7)
+      railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.0)
     execjs (2.10.0)
@@ -491,6 +495,7 @@ DEPENDENCIES
   csv
   debug
   devise
+  dotenv-rails
   faraday (~> 1.8)
   fedapay!
   google-api-client (~> 0.53.0)
