@@ -4,7 +4,8 @@ require 'json'
 require 'dotenv/load' # Charge les variables depuis .env
 
 # Charge les informations d'identification JSON depuis la variable d'environnement
-credentials = JSON.parse(ENV['GOOGLE_DRIVE_CREDENTIALS'])
+credentials = JSON.parse(ENV['GOOGLE_DRIVE_CREDENTIALS'] || '{}')
+
 
 # Crée un service Google Drive
 DRIVE_SERVICE = Google::Apis::DriveV3::DriveService.new
