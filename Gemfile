@@ -48,7 +48,7 @@ gem 'prawn-table'   # pour formater les tableaux dans le PDF
 gem 'csv'
 
 
-gem 'google-apis-drive_v3', '~> 0.5.0'
+gem 'google-apis-drive_v3', '~> 0.46.0'
 gem 'google_drive', '~> 3.0'
 gem 'dotenv-rails'
 # gem 'google-api-client', '~> 0.53.0'
