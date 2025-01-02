@@ -1,30 +1,29 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'json'
-require 'dotenv/load' if Rails.env.development? || Rails.env.test?
+require 'dotenv/load' # Charge les variables depuis .env
 
-# Vérifiez si GOOGLE_DRIVE_CREDENTIALS est définie
-google_drive_credentials = Rails.application.credentials.dig(:google_drive, :credentials)
+# Charge les informations d'identification JSON depuis la variable d'environnement
+credentials = JSON.parse(ENV['GOOGLE_DRIVE_CREDENTIALS'] || '{}')
 
+client_email = google_drive_credentials['client_email']
+private_key = google_drive_credentials['private_key']
 
-
-begin
-  # Charge et parse le contenu de GOOGLE_DRIVE_CREDENTIALS
-  google_drive_credentials = JSON.parse(ENV['GOOGLE_DRIVE_CREDENTIALS'])
-rescue JSON::ParserError => e
-  raise "Erreur de parsing du JSON dans GOOGLE_DRIVE_CREDENTIALS : #{e.message}"
-end
-
-# Configure le service Google Drive
+# Crée un service Google Drive
 DRIVE_SERVICE = Google::Apis::DriveV3::DriveService.new
 
-begin
-  DRIVE_SERVICE.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
-    json_key_io: StringIO.new(ENV['GOOGLE_DRIVE_CREDENTIALS']),
-    scope: ['https://www.googleapis.com/auth/drive']
-  )
-rescue => e
-  raise "Erreur lors de la configuration des credentials Google Drive : #{e.message}"
-end
+# Autorisation via les informations d'identification de service
+DRIVE_SERVICE.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
+  json_key_io: StringIO.new(credentials.to_json),  # Passe les informations d'identification sous forme de JSON
+  scope: ['https://www.googleapis.com/auth/drive']  # Définissez les autorisations requises
+)
 
-puts "Service Google Drive configuré avec succès."
+# Test pour vérifier la connexion
+begin
+  # Demander la liste des fichiers pour vérifier si l'autorisation fonctionne
+  response = DRIVE_SERVICE.list_files(page_size: 10)
+  puts "Fichiers récupérés avec succès:"
+  response.files.each { |file| puts "#{file.name} (#{file.id})" }
+rescue Google::Apis::Error => e
+  puts "Erreur lors de l'appel à l'API Google Drive: #{e.message}"
+end
