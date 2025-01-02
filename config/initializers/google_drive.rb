@@ -1,12 +1,13 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'json'
-require 'dotenv/load' # Charge les variables d'environnement
+require 'dotenv/load' if Rails.env.development? || Rails.env.test?
 
 # Vérifiez si GOOGLE_DRIVE_CREDENTIALS est définie
-if ENV['GOOGLE_DRIVE_CREDENTIALS'].nil? || ENV['GOOGLE_DRIVE_CREDENTIALS'].strip.empty?
-  raise "La variable d'environnement GOOGLE_DRIVE_CREDENTIALS est absente ou vide."
-end
+google_drive_credentials = ENV['GOOGLE_DRIVE_CREDENTIALS']
+raise 'GOOGLE_DRIVE_CREDENTIALS is missing or empty' if google_drive_credentials.blank?
+
+
 
 begin
   # Charge et parse le contenu de GOOGLE_DRIVE_CREDENTIALS
