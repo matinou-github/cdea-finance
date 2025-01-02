@@ -4,8 +4,7 @@ require 'json'
 require 'dotenv/load' if Rails.env.development? || Rails.env.test?
 
 # Vérifiez si GOOGLE_DRIVE_CREDENTIALS est définie
-google_drive_credentials = ENV['GOOGLE_DRIVE_CREDENTIALS']
-raise 'GOOGLE_DRIVE_CREDENTIALS is missing or empty' if google_drive_credentials.blank?
+google_drive_credentials = Rails.application.credentials.dig(:google_drive, :credentials)
 
 
 
