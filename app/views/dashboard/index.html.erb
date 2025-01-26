@@ -20,16 +20,6 @@
     }
         </style>
                 <div class="row">
-                    <div class="col-md-12">
-                        <% if user_signed_in? && current_user == "agriculteur" && (current_user.commune.blank? || current_user.village.blank? || current_user.identity_card_photo.blank?) %>
-                            <div class="alert alert-warning">
-                                Votre profil est incomplet. Veuillez <%= link_to "le compléter ici", complete_profile_user_path(current_user) %>.
-                            </div>
-                        <% end %>
-                    </div>
-                </div>
-
-                <div class="row">
                     <div class="col-md-6 ">
                         <div class="bg-success statut">
                             <h3>Total des Clients</h3>
@@ -37,53 +27,174 @@
                         </div>
                     </div>
                     <div class="col-md-6 ">
-                        <div class="deposit statut">
-                            <h3>Total zones</h3>
-                            <h1> <span id="digit"><%=@zone%></span> </h1>
-                        </div>
-                    </div>
-                    <div class="col-md-6 ">
                         <div class="bg-secondary statut">
-                            <h3>Total demande</h3>
+                            <h3>Total demande de service</h3>
                             <h1> <span id="digit"><%=@total_demande%></span> </h1>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="withdraw statut">
-                            <h3>Demandes en attente</h3>
-                            <h1> <span id="digit"><%=@demande_attente%></span> </h1>
+                            <h3>Demandes en attente de validation</h3>
+                            <h1> <span id="digit"><%=@demande_attente%></span> 
+                            </h1>
                         </div>
                     </div>
-                    <!--<div class="col-md-6 ">
-                        <div class="bg-info statut">
-                            <h3>Total Dette client (Kg)</h3>
-                            <h1><span id="digit">00</span></h1>
+                    <div class="col-md-6 ">
+                        <div class="deposit statut">
+                            <h3>Dette globale due</h3>
+                            <h1> <span id="digit"><%=@dette_total_due%></span> 
+                            <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#exampleModalCenter2">
+                                <i class="fa fa-info"></i>
+                            </button>
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="col-md-6 ">
+                        <div class="statut" style="background-color:#8b084a">
+                            <h3>Total Soja recu (Kg)</h3>
+                            <h1><span id="digit"><%= @Total_soja_recu%></span>
+                            <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#exampleModalCenter">
+                                <i class="fa fa-info"></i>
+                            </button>
+                            </h1>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-6 ">
+                        <div class="statut" style="background-color:#8b084a">
+                            <h3>Total Soja restant (Kg)</h3>
+                            <h1><span id="digit"><%= @total_soja_restants %></span>
+                            <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#exampleModalCenter3">
+                                <i class="fa fa-info"></i>
+                            </button>
+                            </h1>
+                            
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="statut" style="background-color:#7b811a">
-                            <h3>Total Dette client (Fcfa)</h3>
+                            <h3>-------------</h3>
                             <h1><span id="digit"> 00</span></h1>
-                        </div>
-                    </div>-->
-                    <div class="col-md-6 ">
-                        <div class="statut" style="background-color:#8b084a">
-                            <h3>Total Soja recu (Kg)</h3>
-                            <h1><span id="digit"><%= @Total_soja_recu%></span></h1>
                         </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="statut" style="background-color:#085d3c">
-                            <h3>Total remboursement client</h3>
-                            <h1><span id="digit"><%=@Total_numeraire_recu%></span></h1>
+                            <h3>-------------</h3>
+                            <h1><span id="digit">00</span></h1>
                         </div>
                     </div>
                  
                 </div>
 
-  
 
+<!-- Modal dette global-->
+<div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Kg dû par village</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th scope="col">Village</th>
+                <th scope="col">KG dû</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @total_du_par_village.each do |village, total_remboursement| %>
+                <tr>
+                <td><%= village.present? ? village : 'Non spécifié' %></td>
+                <td><%= total_remboursement %></td>
+                </tr>
+                <%end%>
+            </tbody>
+            </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermé</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Modal soja recu-->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Kg recu par village</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th scope="col">Village</th>
+                <th scope="col">KG recu</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @total_remboursement_par_village.each do |village, total_remboursement| %>
+                <tr>
+                <td><%= village.present? ? village : 'Non spécifié' %></td>
+                <td><%= total_remboursement %></td>
+                </tr>
+                <%end%>
+            </tbody>
+            </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermé</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal soja restant-->
+<div class="modal fade" id="exampleModalCenter3" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Kg restant par village</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Village</th>
+                    <th>Total KG dû</th>
+                    <th>Total Remboursé</th>
+                    <th>Kg restant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @difference_par_village.each do |village, difference| %>
+                    <tr>
+                        <td><%= village.present? ? village : 'Non spécifié' %></td>
+                        <td><%= @total_du_par_village[village] %></td>
+                        <td><%= @total_remboursement_par_village[village] || 0 %></td>
+                        <td><%= difference %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+            </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermé</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

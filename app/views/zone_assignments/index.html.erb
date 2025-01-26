@@ -15,14 +15,14 @@
       <th>Date d'Assignation</th>
       <th class="text-center">Actions</th> <!-- Colonne pour les actions -->
     </tr>
-  </thead>
+  </thead> 
   <tbody>
     <% @zone_assignments.each_with_index do |assignment, index| %>
       <tr>
         <td><%= index + 1 %></td>
-        <td><%= assignment.user.nom %></td>
+        <td><%= assignment.user.full_name %></td>
         <td><%= assignment.zone %></td>
-        <td><%= assignment.assigned_by.nom %></td>
+        <td><%= assignment.assigned_by.full_name %></td>
         <td><%= assignment.created_at.strftime("%d/%m/%Y %H:%M") %></td>
         <td class="text-right">
           <div class="dropdown">
@@ -30,11 +30,6 @@
               <i class="fas fa-cogs"></i>
             </button>
             <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= assignment.id %>">
-              <li>
-                <%= link_to zone_assignment_path(assignment), class: 'dropdown-item' do %>
-                  <i class="fas fa-eye"></i> Voir
-                <% end %>
-              </li>
               <li>
                 <%= link_to edit_zone_assignment_path(assignment), class: 'dropdown-item' do %>
                   <i class="fas fa-edit"></i> Modifier

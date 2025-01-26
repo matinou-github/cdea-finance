@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  fonctionnement: one
+  intitule: MyString
+  cout_unitaire: 9.99
+  montant_total: 9.99
+
+two:
+  fonctionnement: two
+  intitule: MyString
+  cout_unitaire: 9.99
+  montant_total: 9.99

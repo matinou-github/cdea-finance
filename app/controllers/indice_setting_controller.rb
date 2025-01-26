@@ -20,6 +20,6 @@ class IndiceSettingController < ApplicationController
 	private
 
 	def indice_setting_params
-		params.require(:indice_setting).permit(:kg_ha_laboure, :kg_litre_octroi, :valeur_soja, :taux_majoration, :garantie_ha, :garantie_litre, :frais_dossier) 
+		params.require(:indice_setting).permit(:valeur_superficie, :gerant_name, :kg_ha_laboure, :kg_mais_par_soja, :valeur_soja, :taux_majoration, :garantie_ha, :frais_dossier) 
 	end
 end

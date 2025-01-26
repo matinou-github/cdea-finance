@@ -46,6 +46,10 @@ gem 'caxlsx_rails'   # pour export Excel
 gem 'prawn'         # pour export PDF
 gem 'prawn-table'   # pour formater les tableaux dans le PDF
 gem 'csv'
+gem 'cloudinary'
+gem 'carrierwave'
+gem 'numbers_and_words'
+
 
 
 gem 'google-apis-drive_v3', '~> 0.5.0'

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  machine_info: MyString
+  superficie: 9.99
+  preuve: MyString
+  execution: one
+
+two:
+  machine_info: MyString
+  superficie: 9.99
+  preuve: MyString
+  execution: two

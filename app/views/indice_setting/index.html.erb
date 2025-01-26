@@ -14,25 +14,42 @@
           <div class="card-body"> 
               <div class="form-group row">
                 <div class="col-md-12">
+                  <h5><strong>Gérant</strong></h5>
+                  <hr>
+                </div>
+                <div class="col-md-4">
+                  <h5>Nom du Gérant</h5>   
+                </div>
+                <div class="col-md-8 mb-3">  
+                  <%= f.text_field :gerant_name, autofocus: true, placeholder: "Nom du responsable" , class: "form-control" %>
+                </div> 
+                <div class="col-md-12">
                   <h5><strong>Information indice remboursement</strong></h5>
                   <hr>
                 </div>
                 <div class="col-md-4">
                   <h5>Kg percu par Ha labouré</h5>   
-                  
                 </div>
                 <div class="col-md-8">  
                   <%= f.text_field :kg_ha_laboure, autofocus: true, autocomplete: " kg_ha_laboure" , class: "form-control" %>
                 </div> 
 
-
                 <div style="height:25px"></div>
                   <div class="col-md-4">
-                  <h5>Kg percu par Litre Octroyé</h5>   
+                  <h5>Prix du labour par ha</h5>
                   
                 </div>
                 <div class="col-md-8">  
-                  <%= f.text_field :kg_litre_octroi, autofocus: true, autocomplete: "kg_litre_octroi" , class: "form-control" %>
+                  <%= f.text_field :valeur_superficie, autofocus: true, autocomplete: "kg maïs par Kg de soja" , class: "form-control" %>
+                </div> 
+
+                <div style="height:25px"></div>
+                  <div class="col-md-4">
+                  <h5>Kg maïs percu pour 1kg de soja</h5>   
+                  
+                </div>
+                <div class="col-md-8">  
+                  <%= f.text_field :kg_mais_par_soja, autofocus: true, autocomplete: "kg maïs par Kg de soja" , class: "form-control" %>
                 </div> 
 
 
@@ -69,15 +86,6 @@
                   <%= f.number_field :garantie_ha, autofocus: true, autocomplete: "garantie_kg" , class: "form-control" %>
                 </div> 
 
-
-                <div style="height:25px"></div>
-                  <div class="col-md-4">
-                  <h5>Taux/Litre pour garantie (Fcfa)</h5>   
-                  
-                </div>
-                <div class="col-md-8">  
-                  <%= f.text_field :garantie_litre, autofocus: true, autocomplete: "garantie_litre:decimal" , class: "form-control" %>
-                </div> 
 
 
                 <div style="height:25px"></div>

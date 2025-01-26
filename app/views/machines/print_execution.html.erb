@@ -1,0 +1,91 @@
+<style>
+  @media print {
+  /* Cache les éléments de navigation ou autres éléments non nécessaires */
+  .btn {
+    display: none;
+  }
+
+  /* Ajustez la mise en page pour l'impression */
+  body {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+</style>
+
+<%= button_to 'Imprimer cette page', '#', onclick: 'window.print(); return false;', class: 'btn btn-primary text-end' %>
+
+<div class="text-center">
+  <%= image_tag 'logo.png', width:"75px" %>
+</div>
+<h3 class="text-center">BILAN EXECUTION
+  <%if params[:year].present?%>
+  CAMPAGNE
+  <%=params[:year]%>
+  <%end%>
+  <%if params[:machine_info].present?%>
+  POUR 
+  <%=params[:machine_info]%>
+  <%end%>
+
+</h3>
+  <table class="table table-striped table-bordered table-hover">
+        <thead >
+          <tr>
+            <th>#</th>
+            <th>Demande ID</th>
+            <th>Agriculteur</th>
+            <th>Campagne</th>
+            <th>Superficie labourée</th>
+            <th>Superficie demandée</th>
+            <th>suivi par</th>
+            <th>Tracteur</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @executions.each_with_index do |execution, index| %>
+                <!-- The Modal -->
+              <div id="imageModal" class="modal">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <img class="modal-content" id="modalImage">
+                <div class="caption">
+                    <a href="<%= execution.preuve.url %>" download>Telecharger</a> 
+                </div>
+              </div> 
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= execution.service_request_id %></td>
+              <td><%=execution.user.full_name%></td>
+              <td><%=execution.year%></td>
+              <td><%= execution.superficie %></td>
+              <td><%= execution.service_request.superficie %></td>
+              
+              <td><%= execution.user.full_name %></td>
+              <td><%=execution.machine_info%></td>
+              
+            </tr>
+          <% end %>
+          <tr>
+            <td colspan="4" style="font-weight: bold;"> Total superficie <%if params[:machine_info].present?%> :
+               <span>
+                <%=params[:machine_info]%> 
+                </span> <%end%></td>
+            <td style="font-weight: bold;"><%= @total_superficie %></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+<div class="text-end me-3">
+  <p>
+    <u>GERANT</u>,
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <i><%=@manager_name%></i>
+  </p>
+</div>

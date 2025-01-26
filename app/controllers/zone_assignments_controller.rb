@@ -4,7 +4,12 @@ class ZoneAssignmentsController < ApplicationController
   # GET /zone_assignments or /zone_assignments.json
   def index
     @users = User.where(role: 'agriculteur')
-    @zone_assignments = ZoneAssignment.page(params[:page]).per(10).order(created_at: :desc)
+    if current_user.role == "technicien"
+      @zone_assignments = ZoneAssignment.where(assigned_by_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
+    else
+      @zone_assignments = ZoneAssignment.page(params[:page]).per(10).order(created_at: :desc)
+    end
+    
   end
 
   # GET /zone_assignments/1 or /zone_assignments/1.json
@@ -42,7 +47,7 @@ class ZoneAssignmentsController < ApplicationController
   def update
     respond_to do |format|
       if @zone_assignment.update(zone_assignment_params)
-        format.html { redirect_to @zone_assignment, notice: "Zone assignment was successfully updated." }
+        format.html { redirect_to zone_assignments_path, notice: "Zone assignment was successfully updated." }
         format.json { render :show, status: :ok, location: @zone_assignment }
       else
         format.html { render :edit, status: :unprocessable_entity }

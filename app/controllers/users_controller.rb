@@ -112,7 +112,7 @@ class UsersController < ApplicationController
   
     # Strong parameters pour les champs supplémentaires
     def user_profile_params
-      params.require(:user).permit(:nom, :prenom, :email, :phone_number, :commune, :role, :village, :identity_card_photo, :zone, :password, :password_confirmation)
+      params.require(:user).permit(:nom, :prenom, :email, :phone_number, :commune, :role, :village, :identity_card_photo, :zone, :password, :password_confirmation, :identification, :photo_courte, :photo_complete)
     end
   end
   

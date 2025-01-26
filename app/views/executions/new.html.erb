@@ -3,24 +3,21 @@
 
   <div class="card shadow-sm">
     <div class="card-body">
-      <%= form_with url:upload_identity_card_executions_path, method: :post, html: { enctype: 'multipart/form-data' }, local: true do |form| %>
-
-        <% if @execution.errors.any? %>
-          <div class="alert alert-danger">
-            <h4>Erreurs</h4>
-            <ul>
-              <% @execution.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
-
+      <%= form_with(model: @execution, local: true, class: "needs-validation") do |form| %>
+  <% if @execution.errors.any? %>
+  <div class="alert alert-danger">
+    <ul>
+      <% @execution.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
         <div class="mb-3">
           <%= form.label :service_request_id, "Demande de Service", class: "form-label" %>
         
           <%= form.select :service_request_id, 
-                      options_for_select(@demandes_validees.map { |h| [h.id, h.id] }), 
+                     options_for_select(@demandes_validees&.map { |h| [h.id, h.id] } || []), 
                       { prompt: "-- Sélectionnez une demande --" }, 
                       { class: "form-select shadow-sm select-beast", id: "service_request_select"  } %>
         </div>
@@ -30,9 +27,22 @@
           <%= form.number_field :superficie, step: 0.01, class: "form-control", id: "superficie_field"  %>
         </div>
 
+  <div id="machines-container">
+          <%= form.fields_for :machines do |machine_form| %>
+            <%= render "machine_fields", f: machine_form %>
+          <% end %>
+        </div>
+
+        <a href="#" id="add-machine" class="btn btn-secondary">Ajouter un tracteur</a>
+        <template id="machine-template">
+          <%= form.fields_for :machines, Machine.new, child_index: "NEW_RECORD" do |machine_form| %>
+            <%= render "machine_fields", f: machine_form %>
+          <% end %>
+        </template>
+       
         <div class="mb-3">
-          <%= form.label :preuve, "Image de Preuve", class: "form-label" %>
-           <%= form.file_field :file, class: "form-control", required: true %>
+          <%= form.label :year, "Année campagne", class: "form-label" %>
+           <%= form.text_field :year, value: Date.today.year, class: "form-control", readonly: true %>
         </div>
 
         <div class="d-flex justify-content-between">
@@ -43,7 +53,45 @@
       </div>
   </div>
 </div>
+
 <%= javascript_include_tag 'tom_select'%> 
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const addMachineButton = document.getElementById("add-machine");
+  const machinesContainer = document.getElementById("machines-container");
+  const machineTemplate = document.getElementById("machine-template");
+
+  if (addMachineButton && machineTemplate) {
+    addMachineButton.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const newMachineFields = machineTemplate.innerHTML.replace(/NEW_RECORD/g, new Date().getTime());
+      machinesContainer.insertAdjacentHTML("beforeend", newMachineFields);
+    });
+  }
+
+  machinesContainer.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-machine")) {
+      e.preventDefault();
+
+      const fieldset = e.target.closest(".machine-fields");
+      if (fieldset) {
+        const destroyFlag = fieldset.querySelector(".destroy-flag");
+        if (destroyFlag) {
+          destroyFlag.value = "1";
+          fieldset.style.display = "none";
+        } else {
+          fieldset.remove();
+        }
+      }
+    }
+  });
+});
+
+
+</script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
   const serviceRequestSelect = document.getElementById("service_request_select");

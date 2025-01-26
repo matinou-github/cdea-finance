@@ -16,6 +16,9 @@ belongs_to :balance, optional: true
 
 
 
+after_update :assign_user_identification, if: :status_request_executed?
+
+
 
 
 
@@ -55,6 +58,8 @@ belongs_to :balance, optional: true
   
   private
 
+  
+
   def update_balance_if_paid
     update_balance if status_request == "execute"
   end
@@ -72,8 +77,18 @@ belongs_to :balance, optional: true
     year = self.created_at.year
     balance = Balance.find_or_create_by(user_id: self.user_id, year: year)
     balance.total_kg_paye += self.kg_paye.to_f
+    balance.service_request = self.id
     balance.total_garantie += self.garantie - frais_dossier
     balance.save
+  end
+
+  def status_request_executed?
+    saved_change_to_status_request? && status_request == 'execute'
+  end
+  
+  def assign_user_identification
+    user.send(:set_identification) unless user.identification.present?
+    user.save
   end
 
  

@@ -1,0 +1,5 @@
+<div id="machine-template" style="display: none;">
+  <%= form.fields_for :machines, Machine.new, child_index: "NEW_RECORD" do |machine_form| %>
+    <%= render partial: "machine_fields", locals: { machine_form: machine_form } %>
+  <% end %>
+</div>

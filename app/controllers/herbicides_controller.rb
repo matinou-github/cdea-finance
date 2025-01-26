@@ -65,6 +65,6 @@ class HerbicidesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def herbicide_params
-      params.require(:herbicide).permit(:nom, :prix, :garantie_par_litre, :soja_par_litre)
+      params.require(:herbicide).permit(:nom, :prix, :garantie_par_litre, :soja_par_litre, :prix_achat)
     end
 end

@@ -1,14 +1,30 @@
 Rails.application.routes.draw do
+  resources :soldes do
+    collection do
+      get :fetch_tractor_data
+    end
+  end
+  resources :fonctionnements
+  resources :tractors
+  resources :stocks
+  resources :restitutions do
+    collection do
+      get :print_restitution
+    end
+  end
   resources :remboursements
   resources :executions do
     collection do
-      post 'upload_identity_card'
+      get :print_execution
     end
   end
   resources :zone_assignments
   resources :service_requests do
     member do
       patch :update_status
+    end
+    collection do
+      get :print_service_request
     end
   end
   resources :herbicides
@@ -56,6 +72,7 @@ Rails.application.routes.draw do
   get 'dashboard/success_payment', to: 'dashboard#success_payment'
   get 'indice_setting', to: 'indice_setting#index', as: 'indice_setting'
 put 'indice_setting/update', to: 'indice_setting#update', as: 'indice_setting_update'
+get 'synoptique/', to: 'service_requests#synoptique', as: 'synoptique'
 post 'service_payement/', to: 'service_requests#service_payement', as: 'service_payement'
 patch '/service_requests/:id/payement_direct', to: 'service_requests#payement_direct', as: 'payement_direct'
 #post 'service_requests/:id/convertir_garantie', to: 'service_requests#convertir_garantie', as: 'convertir_garantie'
@@ -67,18 +84,15 @@ resources :service_requests do
   end
 end
 
-
+get 'balances/kg_restants', to: 'balances#kg_restants'
 resources :balances do
-  # member do
-  #   post :convertir_garantie
-  #   post :appliquer_majoration
-  #   post :reporter_valeur
-  # end
-
   collection do
     post :traiter_toutes_balances
+    get :print_balances
   end
 end
+resources :machines
+
 
 
 

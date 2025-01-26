@@ -10,7 +10,7 @@
             <div class="col-lg-10">
                 <div class="card-box">
                     <h4 class="card-title">Information supplémentaire</h4>
-                    <%= form_with model: current_user, url: upload_identity_card_user_path(current_user), method: :post, html: { enctype: 'multipart/form-data' }, local: true do |f| %>
+                    <%= form_for @user, url: user_path(@user), method: :patch, html: { multipart: true } do |f| %>
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Votre communue</label>
                             <div class="col-md-10">
@@ -28,10 +28,20 @@
                         <div class="form-group row">
                             <label class="col-form-label col-md-2">Photo CIP ou acte de naissance</label>
                             <div class="col-md-10">
-                                <%= f.file_field :file, class: "form-control", required: true %>
+                                <%= f.file_field :identity_card_photo, class: "form-control", required: true %>
                             </div>
-                        
                         </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <%= f.label "Photo courte" %>
+                                <%= f.file_field :photo_courte, class: "form-control" %>
+                            </div>
+                            <div class="col-md-6">
+                                 <%= f.label "Photo complete" %>
+                                <%= f.file_field :photo_complete, class: "form-control" %>
+                            </div>
+                        </div>
+
 
                         <div class="form-actions text-end">
                         <%= f.submit "Enregistrer", class: "btn btn-primary btn-lg" %>

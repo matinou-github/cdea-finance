@@ -1,0 +1,104 @@
+<style>
+  @media print {
+  /* Cache les éléments de navigation ou autres éléments non nécessaires */
+  .btn {
+    display: none;
+  }
+
+  /* Ajustez la mise en page pour l'impression */
+  body {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+</style>
+
+<%= button_to 'Imprimer cette page', '#', onclick: 'window.print(); return false;', class: 'btn btn-primary text-end' %>
+
+<div class="text-center">
+  <%= image_tag 'logo.png', width:"75px" %>
+</div>
+<h3 class="text-center">Les demandes de services
+  <%if params[:id].present?%>
+  <%=params[:id]%>
+  <%end%>
+</h3>
+<table class="table table-striped table-bordered table-hover" style="font-size: x-small;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Utilisateur</th>
+            <th>Superficie (ha)</th>
+            <th>Herbicides et Quantités</th>
+            <th>Garantie totale (FCFA)</th>
+            <th>Kg Soja remboursé</th>
+            <th>Payement</th>
+            <th>Recepteur payement</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @service_requests.each do |service_request| %>
+            <tr>
+              <td><%= service_request.id %></td>
+              <td><%= service_request.user.full_name %></td>
+              <td><%= service_request.superficie %></td>
+              <td>
+                <% if service_request.service_request_herbicides.any? %>
+                  <ul>
+                    <% service_request.service_request_herbicides.each do |sr_herbicide| %>
+                      <li>
+                        <strong>Nom :</strong> <%= sr_herbicide.herbicide.nom %>,
+                        <strong>Quantité :</strong> <%= sr_herbicide.quantite %> L
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  Aucun herbicide associé
+                <% end %>
+              </td>
+              <td>
+                <%= number_to_currency(
+                      service_request.garantie, 
+                      unit: "FCFA"
+                    ) %>
+              </td>
+              <td>
+                <%= service_request.kg_paye %> Kg
+              </td>
+              <td><%= service_request.status_payement %></td>
+              <td>
+                <%if service_request.status == "paid"  %>
+                  <%=service_request.recu_par%>
+                <%else%>
+                <p>----</p>
+                <%end%>
+              </td>
+            
+              <td>
+                <%if service_request.status_request == 'pending'%>
+                <span class="badge badge-warning"> En attente </span>
+              <% elsif service_request.status_request == 'confirm'%>
+                  <span class="badge badge-primary">Validé</span>
+              <% elsif service_request.status_request ==  'execute'%>
+                  <span class="badge badge-success"> Executé</span>
+              <% else%>
+                  <span class="badge badge-danger">Rejeté</span>
+                <%end%>
+            </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+<div class="text-end me-3">
+  <p>
+    <u>GERANT</u>,
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <i><%=@manager_name%></i>
+  </p>
+</div>

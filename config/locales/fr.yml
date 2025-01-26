@@ -1,0 +1,15 @@
+fr:
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      long: "%d %B %Y" # Exemple: 14 novembre 2024
+      short: "%d %b"   # Exemple: 14 nov
+      only_date: "%d/%m/%Y"
+      ony_month: "%B"       # Exemple: novembre
+      month_year: "%B %Y"   # Exemple: novembre 2024
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      time: "%H:%M"
+      long: "%d %B %Y à %H:%M"
+      only_date: "%d/%m/%Y"

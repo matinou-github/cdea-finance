@@ -1,75 +1,180 @@
+<style>
+    /* Style the Modal */
+.modal {
+  display: none;
+    position: absolute;
+    z-index: 1;
+    padding-top: 100px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: -webkit-fill-available;
+    height: auto;
+    /* overflow: auto; */
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+}
 
-                <div class="row mt-3">
-                    <div class="col-sm-10 col-6">
-                        <h4 class="page-title">Profile</h4>
-                    </div>
+/* Modal Content */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 50%;
+  max-width: 700px;
+}
 
-                    <div class="col-sm-2 col-6 text-right m-b-30">
-                        <%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary btn-rounded' %>
-                    </div>
+/* Caption text */
+.caption {
+  text-align: center;
+  color: #ccc;
+  padding: 10px 20px;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+media only screen and (max-width: 575.98px) {
+    .profile-view .profile-img-wrap {
+    width: initial!important;
+	height: initial!important;
+    }
+}
+
+</style>
+               
+               
+<div class="row mt-3">
+    <div class="col-sm-10 col-6">
+        <h4 class="page-title">Profile</h4>
+    </div>
+
+    <div class="col-sm-2 col-6 text-right m-b-30">
+        <%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary btn-rounded' %>
+    </div>
+</div>
+    <!-- The Modal -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div class="caption">
+        <a href="<%= current_user.photo_courte.url %>" download>Telecharger</a> 
+        <%if current_user.photo_complete.url.present?%>
+            <%= button_tag "Photo complete", class: "btn btn-danger", onclick: "openModal2()" %>
+        <%end%>
+    </div>
+</div>  
+<!-- The Modal2 -->
+<div id="imageModal2" class="modal">
+    <span class="close" onclick="closeModal2()">&times;</span>
+    <img class="modal-content" id="modalImage2">
+    <div class="caption">
+        <a href="<%= current_user.photo_complete.url %>" download>Telecharger</a>
+    </div>
+</div> 
+<div class="card-box profile-header">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="profile-view">
+                <div class="profile-img-wrap">
+                    <% if @user.photo_courte.url.present? %>
+                        <div class="profile-img">
+                            <%= image_tag(@user.photo_courte.url, class: "avatar") %>
+                        </div>
+                    <%else%>
+                        <div class="profile-img">
+                                <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
+                        </div>
+                    <%end%>
                 </div>
-                <div class="card-box profile-header">
+                <div class="profile-basic">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="profile-view">
-                                <div class="profile-img-wrap">
-                                    <% if @user.identity_card_photo.present? %>
-                                        <div class="profile-img">
-                                            <img src="<%= @user.identity_card_photo %>" alt="Photo d'identité de <%= @user.full_name %>" style="max-width: 200px;"/>
-                                            <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
-                                    </div>
-                                    <%else%>
-                                        <div class="profile-img">
-                                                <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
-                                        </div>
-                                    <%end%>
-                                </div>
-                                <div class="profile-basic">
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <div class="profile-info-left">
-                                                <h3 class="user-name m-t-0 mb-0"><%= @user.full_name%></h3>
-                                                <small class="text-muted">Actif</small>
-                                                <div class="staff-id">Status : <%=@user.role%> </div>
-                                                <div class="staff-id">N° CLIENT : <%=@user.code_client%> </div>
-                                                <div class="staff-msg"><%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary' %></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <ul class="personal-info">
-                                                <li>
-                                                    <span class="title">Tél:</span>
-                                                    <span class="text">
-                                                        <%= @user.phone_number.presence || "Non inscrite" %>
-                                                    </span>
-                                                </li>
-                                                <li>
-                                                    <span class="title">Email:</span>
-                                                    <span class="text"><a href="#"><%= @user.email.presence || "Non inscrite" %></a></span>
-                                                </li>
-                                                <li>
-                                                    <span class="title">Village:</span>
-                                                    <span class="text"><%= @user.village.presence || "Non inscrite" %></span>
-                                                </li>
-                                                <li>
-                                                    <span class="title">Commune:</span>
-                                                    <span class="text"><%= @user.commune || "Non inscrite" %></span>
-                                                </li>
-                                                <br>
-                                                <li>
-                                                    <span class="title">Photo:</span>
-                                                    <span class="text"><%= @user.identity_card_photo || "Non inscrite" %></span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                        
+                        <div class="col-md-5">
+                            <div class="profile-info-left">
+                                <h3 class="user-name m-t-0 mb-0"><%= @user.full_name%></h3>
+                                <small class="text-muted">Actif</small>
+                                <div class="staff-id">Status : <%=@user.role%> </div>
+                                <div class="staff-id">N° CLIENT : <%=@user.code_client%> </div>
+                                <div class="staff-msg"><%= link_to 'Modifier Profile', edit_user_path(@user), class: 'btn btn-primary' %></div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <ul class="personal-info">
+                                <li>
+                                    <span class="title">Tél:</span>
+                                    <span class="text">
+                                        <%= @user.phone_number.presence || "Non inscrite" %>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span class="title">Email:</span>
+                                    <span class="text"><a href="#"><%= @user.email.presence || "Non inscrite" %></a></span>
+                                </li>
+                                <li>
+                                    <span class="title">Village:</span>
+                                    <span class="text"><%= @user.village.presence || "Non inscrite" %></span>
+                                </li>
+                                <li>
+                                    <span class="title">Commune:</span>
+                                    <span class="text"><%= @user.commune || "Non inscrite" %></span>
+                                </li>
+                                <br>
+                                <li>
+                                    <span class="title">Photo:</span>
+                                    <span class="text"><%= @user.identity_card_photo || "Non inscrite" %></span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="mb-5"></div>
+            </div>                        
+        </div>
+    </div>
+</div>
+<div class="mb-5"></div>
 
-				
+<script>
+    function openModal() {
+    var modal = document.getElementById("imageModal");
+    var modalImg = document.getElementById("modalImage");
+    var img = document.querySelector('.avatar');
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    }
+
+    function closeModal() {
+    var modal = document.getElementById("imageModal");
+    modal.style.display = "none";
+    }
+
+    function openModal2() {
+    var modal = document.getElementById("imageModal2");
+    var modalImg = document.getElementById("modalImage2");
+    var img = document.querySelector('.avatar2');
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    }
+
+    function closeModal2() {
+    var modal = document.getElementById("imageModal2");
+    modal.style.display = "none";
+    }
+</script>				
+                
+            				
                 
             

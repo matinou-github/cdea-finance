@@ -1,4 +1,61 @@
+<style>
+    /* Style the Modal */
+.modal {
+  display: none;
+    position: absolute;
+    z-index: 1;
+    padding-top: 100px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: -webkit-fill-available;
+    height: auto;
+    /* overflow: auto; */
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+}
 
+/* Modal Content */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 50%;
+  max-width: 700px;
+}
+
+/* Caption text */
+.caption {
+  text-align: center;
+  color: #ccc;
+  padding: 10px 20px;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+media only screen and (max-width: 575.98px) {
+    .profile-view .profile-img-wrap {
+    width: initial!important;
+	height: initial!important;
+    }
+}
+
+</style>
                 <div class="row">
                     <div class="col-sm-10 col-6">
                         <h4 class="page-title">Profile</h4>
@@ -8,13 +65,47 @@
                         <%= link_to 'Modifier Profile', edit_user_path(current_user), class: 'btn btn-primary btn-rounded' %>
                     </div>
                 </div>
+                <!-- The Modal -->
+                <div id="imageModal" class="modal">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <img class="modal-content" id="modalImage">
+                    <div class="caption">
+                        <a href="<%= current_user.photo_courte.url %>" download>Telecharger</a> 
+                        <%if current_user.photo_complete.url.present?%>
+                            <%= button_tag "Photo complete", class: "btn btn-danger", onclick: "openModal2()" %>
+                        <%end%>
+                    </div>
+                </div>  
+                <!-- The Modal2 -->
+                <div id="imageModal2" class="modal">
+                    <span class="close" onclick="closeModal2()">&times;</span>
+                    <img class="modal-content" id="modalImage2">
+                    <div class="caption">
+                        <a href="<%= current_user.photo_complete.url %>" download>Telecharger</a>
+                    </div>
+                </div> 
+                <!-- The Modal3 -->
+                <div id="imageModal3" class="modal">
+                    <span class="close" onclick="closeModal3()">&times;</span>
+                    <img class="modal-content" id="modalImage3">
+                    <div class="caption">
+                        <a href="<%= current_user.identity_card_photo.url %>" download>Telecharger</a>
+                    </div>
+                </div> 
                 <div class="card-box profile-header">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="profile-view">
-                                <div class="profile-img-wrap">          
-                                    <%= image_tag "user.jpg", alt: "Image de profil", class: "avatar"%>
+                                <div class="profile-img-wrap avatar-container">          
+                                    <%= image_tag(current_user.photo_courte.url, class: "avatar", onclick: "openModal()") %>
+                                    <%if current_user.photo_complete.url.present?%>
+                                    <%= image_tag(current_user.photo_complete.url, class: "avatar2 d-none") %>
+                                    <%end%>
+                                    <%if current_user.identity_card_photo.url.present?%>
+                                    <%= image_tag(current_user.identity_card_photo.url, class: "cip_photo d-none") %>
+                                    <%end%>
                                 </div>
+                                
                                 <div class="profile-basic">
                                     <div class="row">
                                         <div class="col-md-5">
@@ -49,18 +140,60 @@
                                                 <br>
                                                 <li>
                                                     <span class="title">Photo:</span>
-                                                    <span class="text"><%=link_to "Voir la photo CIP ou l'AN", "#{current_user.identity_card_photo}", target: "_blank", class: "text-light btn btn-primary"%></span>
+                                                    <%= button_tag "Voir la photo CIP ou l'AN", class: "text-light btn btn-primary", onclick: "openModal3()" %>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
-                            </div>                        
+                            </div>       
+                                           
                         </div>
                     </div>
                 </div>
                 <div class="mb-5"></div>
 
-				
+<script>
+    function openModal() {
+    var modal = document.getElementById("imageModal");
+    var modalImg = document.getElementById("modalImage");
+    var img = document.querySelector('.avatar');
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    }
+
+    function closeModal() {
+    var modal = document.getElementById("imageModal");
+    modal.style.display = "none";
+    }
+
+    function openModal2() {
+    var modal = document.getElementById("imageModal2");
+    var modalImg = document.getElementById("modalImage2");
+    var img = document.querySelector('.avatar2');
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    }
+
+    function closeModal2() {
+    var modal = document.getElementById("imageModal2");
+    modal.style.display = "none";
+    }
+
+
+    function openModal3() {
+    var modal = document.getElementById("imageModal3");
+    var modalImg = document.getElementById("modalImage3");
+    var img = document.querySelector('.cip_photo');
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    }
+
+    function closeModal3() {
+    var modal = document.getElementById("imageModal3");
+    modal.style.display = "none";
+    }
+
+</script>				
                 
             

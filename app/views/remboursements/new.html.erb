@@ -1,6 +1,6 @@
 <h1 class="text-center">Nouveau Remboursement</h1>
 
-<%= form_with(model: @remboursement, local: true) do |form| %>
+<%= form_with(model: @remboursement, local: true, id: 'remboursement-form') do |form| %>
   <% if @remboursement.errors.any? %>
     <div class="alert alert-danger">
       <h4>Erreurs</h4>
@@ -8,28 +8,28 @@
         <% @remboursement.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
-      </ul>
+      </ul> 
     </div>
   <% end %>
 
   <div class="mb-3">
     <%= form.label :user_id, "Agriculteur", class: "form-label" %>
-    <%= form.collection_select :user_id, User.all, :id, :nom, { prompt: "Sélectionnez un utilisateur" }, class: "form-select shadow-sm select-beast" %>
+    <%= form.collection_select :user_id, User.all, :id, :full_name, { prompt: "Sélectionnez un utilisateur" }, { class: "form-select shadow-sm select-beast", id: 'user-select' } %>
   </div>
 
   <div class="mb-3">
     <%= form.label :year, "Année", class: "form-label" %>
-    <%= form.collection_select :year, Balance.all, :year, :year, { prompt: "Sélectionnez l'année" }, class: "form-select shadow-sm select-beast" %>
+    <%= form.collection_select :year, Balance.all, :year, :year, { prompt: "Sélectionnez l'année" }, { class: "form-select shadow-sm select-beast", id: 'year-select' } %>
   </div>
 
   <div class="mb-3">
     <%= form.label :type_remboursement, "Type de remboursement", class: "form-label" %>
-    <%= form.select :type_remboursement, options_for_select([["Nature", "nature"], ["Numéraire", "numeraire"]]), { include_blank: "Choisir un type" }, class: "form-select" %>
+    <%= form.select :type_remboursement, options_for_select([["Nature", "nature"], ["Numéraire", "numeraire"], ["Remb/surplus", "Remb/surplus"]]), { include_blank: "Choisir un type" }, class: "form-select" %>
   </div>
 
   <div class="mb-3">
     <%= form.label :valeurs, "Valeur", class: "form-label" %>
-    <%= form.number_field :valeurs, step: 0.01, class: "form-control" %>
+    <%= form.number_field :valeurs, step: 0.01, class: "form-control", id: 'valeurs-field'%>
   </div>
 
   <div class="d-flex justify-content-between">
@@ -37,4 +37,45 @@
     <%= form.submit "Créer", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const userSelect = document.getElementById('user-select');
+    const yearSelect = document.getElementById('year-select');
+    const valeursField = document.getElementById('valeurs-field');
+
+    function updateValeursField() {
+      const userId = userSelect.value;
+      const year = yearSelect.value;
+
+      if (userId && year) {
+        fetch(`/balances/kg_restants?user_id=${userId}&year=${year}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.kg_restants !== undefined) {
+              valeursField.value = data.kg_restants;
+            } else {
+              valeursField.value = '';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching kg_restants:', error);
+            valeursField.value = '';
+          });
+      } else {
+        valeursField.value = '';
+      }
+    }
+
+
+    userSelect.addEventListener('change', updateValeursField);
+    yearSelect.addEventListener('change', updateValeursField);
+  });
+</script>
+
 <%= javascript_include_tag 'tom_select'%> 

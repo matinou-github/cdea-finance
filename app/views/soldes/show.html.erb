@@ -1,0 +1,112 @@
+<style>
+  .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+  /* Styles pour l'impression */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .printable-area, .printable-area * {
+      visibility: visible;
+    }
+    .printable-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="container my-5">
+  <!-- Bouton retour -->
+  <%= link_to 'Retour', soldes_path, class: 'btn btn-primary mb-4' %>
+
+  <!-- Bouton imprimer -->
+  <button onclick="printCard()" class="btn btn-success mb-4">Imprimer</button>
+
+  <!-- Facture -->
+  <div class="card border-secondary printable-area">
+    <div class="card-header text-center">
+      <h3>Facture N°<%= @solde.id %></h3>
+      <div class="d-flex" style="justify-content: space-around;">
+        <p><strong>Campagne :</strong> <%= @solde.campagne %></p>
+        <p><strong>Date :</strong> <%= Date.today.strftime('%d-%m-%Y') %></p>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Informations générales -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <h3><u>Objet:</u> Facture de solde</h3> <br>
+          <strong>Proprietaire du tracteur :</strong> <%= @solde.user.full_name %><br>
+          <strong>Tracteur :</strong> <%= @solde.tractor.name %><br>
+        </div>
+      </div>
+
+      <!-- Détail des dépenses -->
+      <table class="table table-bordered mt-4">
+        <thead class="table-light">
+          <tr>
+            <th>Désignation</th>
+            <th>Quantité</th>
+            <th>Prix Unitaire</th>
+            <th>Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Superficie totale labourée</td>
+            <td><%= @solde.superficie_labouree %></td>
+            <td><%= number_to_currency(@solde.cout_unitaire, unit: "FCFA", delimiter: " ") %></td>
+            <td><%= number_to_currency(@solde.montant_prestation, unit: "FCFA", delimiter: " ") %></td>
+          </tr>
+          <tr>
+            <td>Montant de la facture d'avance N° <%= Fonctionnement.find_by(tractor_id: @solde.tractor.id, campagne: @solde.campagne).id %></td>
+            <td>1</td>
+            <td><%= number_to_currency(@solde.depenses, unit: "FCFA", delimiter: " ") %></td>
+            <td>(<%= number_to_currency(@solde.depenses, unit: "FCFA", delimiter: " ") %>)</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="font-weight: bolder;">NET A PAYER</td>
+            <td style="font-weight: bolder;">
+              <strong><%= number_to_currency(@solde.solde_total, unit: "FCFA", delimiter: " ") %></strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Arrêté la présente facture des soldes à la somme de
+        <% if @solde.solde_total < 0 %> Moins <% end %>
+        <%= @solde.solde_total.to_i.to_words(locale: :fr) %> Francs CFA
+        (<%= number_to_currency(@solde.solde_total, unit: "FCFA", delimiter: " ") %>).
+      </p>
+
+      <!-- Signature -->
+      <div class="d-flex mt-5" style="justify-content: space-between;">
+        <div>
+          <p>Observation de la CDAE-FINANCE</p>
+        </div>
+        <div class="text-end">
+          <p>Proprietaire du tracteur,</p>
+          <br>
+          <br>
+          <p><strong><%= @solde.user.full_name %></strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printCard() {
+    window.print();
+  }
+</script>

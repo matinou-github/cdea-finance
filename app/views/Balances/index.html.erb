@@ -1,17 +1,115 @@
 
 <div class="container mt-2 mb-4">
-  <div class="row mb-4">
-    <div class="col text-end">
-      <%= link_to "Nouveau remboursement", new_remboursement_path, class: "btn btn-primary" %>
+  <%if current_user.role == "admin"%>
+    <div class="row mb-4">
+      <div class="mb-2 col-md-3 col-6 text-center">
+        <%= link_to "Nouveau remboursement", new_remboursement_path, class: "btn btn-primary" %>
+      </div>
+      <div class="mb-2 col-md-3  col-6 text-center">
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalLong">
+              Restitution de garantie
+          </button>
+        </div>
+        <div class="mb-2 col-md-3 col-6 text-center">
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalProduit">
+              remboursement par maïs
+          </button>
+        </div>
+        <div class="mb-2 col-md-3  col-6 text-center">
+        <button 
+          class="btn btn-danger btn-sm"
+          onclick="traiterToutesBalances()">
+          Traiter toutes les balances
+        </button>
+      </div>
+
+      <!-- Modal restitution-->
+          <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">RESTITUTION DE  GARANTIE</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+                  </div>
+                  <div class="modal-body" style="text-align: justify;">
+                      <!-- Description détaillée -->
+                    <%= render "restitutions/form", restitution: @restitution %>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+              </div>
+              </div>
+          </div>
+
+          <!-- Modal convertion soja mais-->
+          <div class="modal fade" id="exampleModalProduit" tabindex="-1" role="dialog" aria-labelledby="exampleModalProduitTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalProduitTitle">REMBOURSSEMENT PAR MAIS</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+                  </div>
+                  <div class="modal-body" style="text-align: justify;">
+                      <!-- Description détaillée -->
+                    <%= render "remboursements/form_convertion", remboursement: @remboursement %>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  </div>
+              </div>
+              </div>
+          </div>
+      
     </div>
-    <div class="text-center">
-      <button 
-        class="btn btn-success btn-sm"
-        onclick="traiterToutesBalances()">
-        Traiter toutes les balances
-      </button>
+  <%end%>
+  <%if current_user.role != "agriculteur"%>
+    <div class="row justify-content-center">
+      <div class="col-12">
+          <div class="main-card mb-3 card">
+              <div class="card-body">
+                  <%= form_with url: balances_path, method: :get, local: true, class: "formSearch form-inline" do %>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <%= text_field_tag :id, params[:id], class: "search_id form-control", placeholder: "Recherche par ID" %>
+                      </div>
+                    </div>
+                    
+                  <div class="col-md-6">
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <%= text_field_tag :search, params[:search], class: "search_id form-control", placeholder: "Recherche par nom et prénom" %>
+                      </div>
+                    </div>
+                  </div>
+
+                
+                    <div class="d-flex" style="justify-content:space-between">
+                      <div class="d-flex">
+                        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                          <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+                        </div>
+                        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                          <a href=<%= balances_path %> type="bouton" class="btn btn-light">Effacer</a>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                  <div>
+                        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                          <%= link_to 'Imprimer les balances', print_balances_balances_path(request.query_parameters), class: 'btn btn-primary', target: '_blank' %>
+                          <%#= link_to "Télécharger PDF", export_pdf_dashboard_index_path(village: @village, format: :pdf), class: "copy-btn text-danger" %>
+                        </div>
+                      </div>
+              </div>
+          </div>
+      </div>
     </div>
-  </div>
+  <%end%>
   <div class="card shadow-lg border-0">
     <div class="card-header btn-cdae text-white">
       <h4><i class="fas fa-seedling"></i> BILAN</h4>
@@ -32,12 +130,16 @@
           <tr>
             <th scope="col">#</th>
             <th scope="col">Campagne</th>
+            <th scope="col">Client ID</th>
             <th scope="col">Client</th>
+            <th scope="col">Superficie</th>
+            <th scope="col">Herbicide</th>
             <th scope="col">Qte Soja due</th>
             <th scope="col">Qte Soja remb</th>
             <th scope="col">Qte Soja rest</th>
             <th scope="col">Soja rest. Numeraire</th>
             <th scope="col">Garantie</th>
+            <th scope="col"> Etat de garantie</th>
             <th scope="col">Valeur majorée (Kg)</th>
             <th scope="col">Valeur majorée (F)</th>
             <th scope="col">Status</th>
@@ -45,26 +147,45 @@
         </thead>
         <tbody>
             <% @balances.each_with_index do |balance, index| %>
-            <% garantie_disponible = balance.total_garantie%>
-            <% soja_restant = balance.kg_restants%>
-            <% valeur_kg = (garantie_disponible / @valeur_soja.to_f).round(3) %>
-            <% kg_converti = [soja_restant, valeur_kg].min %>
-            <% garantie_utilisee = (kg_converti * @valeur_soja.to_f).round(3) %>
-
-
+            <% balance_service_request_superficie = ServiceRequest.find_by(id: balance.service_request)%>
+           <% balance_service_request_herbicide = ServiceRequestHerbicide.where(service_request: balance.service_request)%>
                 <tr>
                     <td><%= index + 1 %></td>
                     <td><%= balance.year %></td>
+                    <td><%= balance.user.identification %></td>
                     <td><%= balance.user.full_name %></td>
+                    <td>
+                      <%if balance_service_request_superficie.present?%>
+                        <%= balance_service_request_superficie.superficie %>
+                      <%else%>
+                      ---
+                      <%end%>
+                    </td>
+                    <td>
+                      <%if balance_service_request_herbicide.present?%>
+                        <%balance_service_request_herbicide.each do |bilan_herbicide| %>
+                          - <%= bilan_herbicide.herbicide.nom %> (<%=bilan_herbicide.quantite%>L) <br> 
+                        <%end%>
+                      <%else%>
+                      ---
+                      <%end%>
+                    </td>
                     <td><%= balance.total_kg_paye %></td>
                     <td><%= balance.total_remboursement %></td>
                     <td><%= balance.kg_restants %></td>
                     <td><%= balance.valeur_restants %></td>
-                    <td><%= garantie_disponible %></td>
+                    <td><%= balance.total_garantie %></td>
+                    <td>
+                      <% if balance.etat_garantie.present? %>
+                        <%= balance.etat_garantie%>
+                      <%else%>
+                        <p>--</p>
+                      <%end%>
+                      </td>
                     <td><%= balance.valeur_majoree_kg %></td>
                     <td><%= balance.valeur_majoree_numeraire %></td>
                     <td>
-                        <%if balance.total_remboursement > 0 && balance.kg_restants == 0 %>
+                        <%if balance.total_kg_paye == balance.total_remboursement %>
                         <span class="text-success"> <%= balance.status%> </span>  
                         <%else%>
                         <% if balance.status == "en cours"%>

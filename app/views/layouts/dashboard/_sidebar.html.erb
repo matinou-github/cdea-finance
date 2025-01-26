@@ -4,60 +4,94 @@
 
           <ul>
                 <li class="menu-title text-light">Menu</li>
-            <%if current_user.role == "agriculteur"%>
-                 <li class="active">
-                    <a href="<%=dashboard_accueil_path%>"><i class="fa fa-user-o"></i> <span>Accueil</span></a>
-                </li>
-                <li>
-                    <a href="<%=service_requests_path%>"><i class="fa fa-calendar"></i> <span>Mes demandes de service</span></a>
-                </li>
-                <li>
-                    <a href="<%=remboursements_path%>"><i class="fa fa-calendar-check-o"></i> <span>Mes Remboursements</span></a>
-                </li>
-                <li>
-                    <a href="<%=balances_path%>"><i class="fa fa-calendar-check-o"></i> <span>Mes Bilans de campagne</span></a>
-                </li>
-            <%elsif current_user.role == "technicien"%>
-                <li class="active">
-                    <a href="<%=dashboard_index_path%>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
-                </li>
-            <%else%>
+
+                <%if current_user.role == "agriculteur"%>
+                    <li class="active">
+                        <a href="<%=dashboard_accueil_path%>"><i class="fa fa-user"></i> <span>Accueil</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=service_requests_path%>"><i class="fas fa-seedling"></i> <span>Mes demandes de service</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=remboursements_path%>"><i class="fas fa-seedling"></i></i> <span>Mes Remboursements</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=stocks_path%>"><i class="fas fa-seedling"></i></i> <span>Surplus stock client</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=restitutions_path%>"><i class="fa fa-user-o"></i> <span>Restitutions de garantie</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=balances_path%>"><i class="fas fa-seedling"></i></i> <span>Mes Bilans de campagne</span></a>
+                    </li>
+                <%elsif current_user.role == "technicien"%>
+                    <li class="active">
+                        <a href="<%=dashboard_accueil_path%>"><i class="fa fa-user"></i> <span>Accueil</span></a>
+                    </li>
+                     <li>
+                        <a href="<%=dashboard_list_user_path%>"><i class="fa fa-user"></i> <span>Tous les clients</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=service_requests_path%>"><i class="fas fa-seedling"></i> <span>Liste des demandes</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=balances_path%>"><i class="fas fa-seedling"></i></i> <span>Bilan Client</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=remboursements_path%>"><i class="fas fa-seedling"></i></i> <span>Remboursement</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=stocks_path%>"><i class="fas fa-seedling"></i></i> <span>Surplus stock client</span></a>
+                    </li>
+                     <li>
+                        <a href="<%=zone_assignments_path%>"><i class="fas fa-seedling"></i></i> <span>Zone agriculteur</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=executions_path%>"><i class="fas fa-seedling"></i></i> <span>Taches executées</span></a>
+                    </li>
+                <%else%>
                 
-                <li class="active">
-                    <a href="<%=dashboard_index_path%>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
-                </li>
-                <li>
-                    <a href="<%=dashboard_list_user_path%>"><i class="fa fa-user-o"></i> <span>Tous les clients</span></a>
-                </li>
-                <li>
-                    <a href="<%=service_requests_path%>"><i class="fa fa-calendar"></i> <span>Liste des demandes</span></a>
-                </li>
-                <li>
-                    <a href="<%=remboursements_path%>"><i class="fa fa-calendar-check-o"></i> <span>Remboursement</span></a>
-                </li>
-                <li>
-                    <a href="<%=balances_path%>"><i class="fa fa-calendar-check-o"></i> <span>Bilan Client</span></a>
-                </li>
-                <li>
-                    <a href="<%=herbicides_path%>"><i class="fa fa-calendar-check-o"></i> <span>Les herbicides</span></a>
-                </li>
-                <%if current_user.role != "secretaire"%>
-                <li>
-                    <a href="<%=indice_setting_path%>"><i class="fa fa-calendar-check-o"></i> <span>Indice de calcule</span></a>
-                </li>
-                <%end%>
-                <li>
-                    <a href="<%=zone_assignments_path%>"><i class="fa fa-calendar-check-o"></i> <span>Zone agriculteur</span></a>
-                </li>
-                <li>
-                    <a href="<%=executions_path%>"><i class="fa fa-calendar-check-o"></i> <span>Taches executées</span></a>
-                </li>
+                    <li class="active">
+                        <a href="<%=dashboard_index_path%>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=dashboard_list_user_path%>"><i class="fa fa-user"></i> <span>Tous les clients</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=herbicides_path%>"><i class="fas fa-seedling"></i></i> <span>Les herbicides</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=service_requests_path%>"><i class="fas fa-seedling"></i> <span>Liste des demandes</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=balances_path%>"><i class="fas fa-seedling"></i></i> <span>Bilan Client</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=remboursements_path%>"><i class="fas fa-seedling"></i></i> <span>Remboursement</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=restitutions_path%>"><i class="fa fa-user-o"></i> <span>Restitutions de garantie</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=stocks_path%>"><i class="fas fa-seedling"></i></i> <span>Surplus stock client</span></a>
+                    </li>
+                    <%if current_user.role == "admin"%>
+                        <li>
+                            <a href="<%=indice_setting_path%>"><i class="fas fa-seedling"></i></i> <span>Indice de calcule</span></a>
+                        </li>
+                    <%end%>
+                    <li>
+                        <a href="<%=zone_assignments_path%>"><i class="fas fa-seedling"></i></i> <span>Zone agriculteur</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=executions_path%>"><i class="fas fa-seedling"></i></i> <span>Taches executées</span></a>
+                    </li>
                 <%end%>
                 <li class="text-center">
                 <hr>
                     <% if user_signed_in? %>
-                                <%= button_to "Se déconnecter", destroy_user_session_path, method: :delete, class: "btn btn-danger text-end" %>
-                        <% end %>
+                        <%= button_to "Se déconnecter", destroy_user_session_path, method: :delete, class: "btn btn-danger text-end" %>
+                    <% end %>
                 </li>
             </ul>
             

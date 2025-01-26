@@ -1,8 +1,106 @@
+<style>
+    /* Style the Modal */
+.modal {
+  display: none;
+    position: absolute;
+    z-index: 1;
+    padding-top: 100px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: -webkit-fill-available;
+    height: auto;
+    /* overflow: auto; */
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+}
 
+/* Modal Content */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 50%;
+  max-width: 700px;
+}
+
+/* Caption text */
+.caption {
+  text-align: center;
+  color: #ccc;
+  padding: 10px 20px;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+media only screen and (max-width: 575.98px) {
+    .profile-view .profile-img-wrap {
+    width: initial!important;
+	height: initial!important;
+    }
+}
+
+</style>
 <div class="container mt-2">
+ 
   <div class="row mb-4">
     <div class="col text-end">
       <%= link_to "Nouvelle execution", new_execution_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-12">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <%= form_with url: executions_path, method: :get, local: true, class: "formSearch form-inline" do %>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <%= text_field_tag :machine_info, params[:machine_info], class: "search_nom form-control", placeholder: "Recherche machine" %>
+                    </div>
+                  </div>      
+                    <div class="col-md-6">
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <select name="year" class="form-control search selectyear" data-action="autosave#save">
+                            <option value="">selectionner une année</option>
+                            <option value="2025" <%= "selected" if params[:year] == "2025" %>>2025</option>
+                        </select>
+                      </div>
+                    </div>
+                </div>
+                <div class="d-flex" style="justify-content:space-between">
+                  <div class="d-flex">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                      <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+                    </div>
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                      <a href=<%= executions_path %> type="bouton" class="btn btn-light">Effacer</a>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                      <%= link_to 'Imprimer Restitution', print_execution_executions_path(request.query_parameters), class: 'copy-btn text-danger'%>
+                    </div>
+                  </div>
+                </div>
+                <% end %>
+            </div>
+        </div>
     </div>
   </div>
   <div class="card shadow-lg border-0">
@@ -10,42 +108,98 @@
       <h4><i class="fas fa-seedling"></i> Les taches executées</h4>
     </div>
     <div class="card-body table-responsive">
-      <table class="table table-hover ">
+      <table class="table table-striped table-bordered table-hover">
         <thead >
           <tr>
             <th>#</th>
             <th>Demande ID</th>
-            <th>Superficie labourée</th>
-            <th>Superficie demandée</th>
-            <th>Preuve</th>
-            <th>Exécuté par</th>
+            <th>Agriculteur</th>
+            <th>Campagne</th>
+            <th>Superficie Labourée</th>
+            <th>Superficie Demandée</th>
+            <th>Suivi par</th>
+            <th>Tracteur</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @executions.each_with_index do |execution, index| %>
+                <!-- The Modal -->   
             <tr>
               <td><%= index + 1 %></td>
               <td><%= execution.service_request_id %></td>
+              <td><%=execution.user.full_name%></td>
+              <td><%=execution.year%></td>
               <td><%= execution.superficie %></td>
               <td><%= execution.service_request.superficie %></td>
+              <td><%= execution.user.full_name %></td>
+                <!-- Column "Tracteur" with Sub-columns -->
               <td>
-                <% if execution.preuve.present? %>
-                  <%=link_to "Voir la preuve", "#{execution.preuve}", target: "_blank", class: "text-light btn btn-primary"%>
-                <% else %>
-                  <span class="text-muted">Aucune image</span>
-                <% end %>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Machine Info</th>
+                      <th>Preuve</th>
+                      <th>Superficie Labourée</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <% execution.machines.each do |tractor| %>
+                      <tr>
+                        <td>
+                          <tr>
+                        <td><%= tractor.tractor&.name || "Non défini" %></td>
+                        <td>
+                          <% if tractor.preuve.attached? %>  <!-- Assure-toi que l'image est bien attachée -->
+                            <!-- Modal Image -->
+                            <div id="imageModal" class="modal">
+                              <span class="close" onclick="closeModal()">&times;</span>
+                              <img class="modal-content" id="modalImage">
+                              <div class="caption">
+                                <a href="<%= cloudinary_url(tractor.preuve.key) %>" download>Télécharger</a> 
+                              </div>
+                            </div> 
+
+                            <!-- Image cachée qui sera utilisée dans le modal -->
+                            <img src="<%= cloudinary_url(tractor.preuve.key) %>" class="d-none execution_photo">
+
+                            <!-- Bouton pour ouvrir le modal -->
+                            <%= button_tag "Preuve d'exécution", class: "btn btn-sm btn-primary", style: "font-size:x-small;", onclick: "openModal()" %>
+                          <% else %>
+                            <span class="text-muted">Aucune image</span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <%= tractor.superficie %>
+                        </td>
+                      </tr>
+                      <% end %>
+                      </tbody>
+                </table>
               </td>
-              <td><%= execution.user.nom %></td>
               <td>
                 <div class="btn-group" role="group">
-                  <%= link_to 'Voir', execution_path(execution), class: "btn btn-info btn-sm" %>
+                  <%#= link_to 'Voir', execution_path(execution), class: "btn btn-info btn-sm" %>
                   <%= link_to 'Modifier', edit_execution_path(execution), class: "btn btn-warning btn-sm" %>
                   <%= link_to 'Supprimer', execution_path(execution), method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn btn-danger btn-sm" %>
                 </div>
               </td>
             </tr>
           <% end %>
+
+          <tr>
+            <td colspan="4" style="font-weight: bold;"> Total superficie <%if params[:machine_info].present?%> :
+               <span>
+                <%=params[:machine_info]%> 
+                </span> <%end%></td>
+            <td style="font-weight: bold;"><%= @total_superficie %></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
         </tbody>
       </table>
         </div>
@@ -60,3 +214,21 @@
   </div>
 </div>
 
+<script>
+  function openModal() {
+    var modal = document.getElementById("imageModal");
+    var modalImg = document.getElementById("modalImage");
+
+    // Sélectionne l'image cachée dans la page
+    var img = document.querySelector('.execution_photo');
+    
+    // Ouvre le modal et affiche l'image
+    modal.style.display = "block";
+    modalImg.src = img.src;  // Utilise la source de l'image cachée
+  }
+
+  function closeModal() {
+    var modal = document.getElementById("imageModal");
+    modal.style.display = "none";
+  }
+</script>

@@ -5,13 +5,14 @@
   </div>
 
   <% if @herbicides.any? %>
+  <div class="card-body table-responsive">
     <table class="table table-striped table-bordered">
       <thead class="table-success">
         <tr>
           <th>#</th>
           <th>Nom</th>
-          <th>Prix (F CFA)</th>
-          <th>Garentie (F CFA)</th>
+          <th>Prix d'achat(F CFA)</th>
+          <th>Garantie (F CFA)</th>
           <th>Soja par litre (kg)</th>
           <th class="text-center">Actions</th>
         </tr>
@@ -21,11 +22,11 @@
           <tr>
             <td><%= index + 1 %></td>
             <td><%= herbicide.nom %></td>
-            <td><%= number_to_currency(herbicide.prix, unit: "", separator: ".", delimiter: ",") %></td>
+            <td><%= number_to_currency(herbicide.prix_achat, unit: "", separator: ".", delimiter: ",") %></td>
             <td><%= herbicide.garantie_par_litre %></td>
             <td><%= herbicide.soja_par_litre %></td>
             <td class="text-center">
-              <%= link_to "Voir", herbicide_path(herbicide), class: "btn btn-primary btn-sm me-2" %>
+              <%#= link_to "Voir", herbicide_path(herbicide), class: "btn btn-primary btn-sm me-2" %>
               <%= link_to "Modifier", edit_herbicide_path(herbicide), class: "btn btn-warning btn-sm me-2" %>
               <%= link_to "Supprimer", herbicide_path(herbicide), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer cet herbicide ?" }, class: "btn btn-danger btn-sm" %>
             </td>
@@ -33,6 +34,7 @@
         <% end %>
       </tbody>
     </table>
+  </div>
   <% else %>
     <div class="alert alert-info">Aucun herbicide trouvé. <%= link_to "Ajouter un herbicide", new_herbicide_path %></div>
   <% end %>

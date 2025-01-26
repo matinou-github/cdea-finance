@@ -41,7 +41,7 @@ class Users::SessionsController < Devise::SessionsController
   # Redirection après connexion
   def after_sign_in_path_for(resource)
     # Exemple : redirige vers une page spécifique ou le dashboard
-    if current_user.role == "agriculteur"
+    if current_user.role == "agriculteur" || current_user.role == "technicien"
       dashboard_accueil_path
     else
       dashboard_index_path

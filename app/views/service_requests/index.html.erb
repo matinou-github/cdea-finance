@@ -5,104 +5,181 @@
       <%= link_to "Nouvelle service", new_service_request_path, class: "btn btn-primary" %>
     </div>
   </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <%= form_with url: service_requests_path, method: :get, local: true, class: "formSearch form-inline" do %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                      <%= text_field_tag :search, params[:search], class: "search_nom form-control", placeholder: "Recherche par nom/prénom" %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                    <select name="status_request" class="form-control search selectStatusRequest" data-action="autosave#save">
+                        <option value="">Status de la demande</option>
+                        <option value="pending" <%= "selected" if params[:status_request] == "pending" %>>En attente</option>
+                        <option value="confirm" <%= "selected" if params[:status_request] == "confirm" %>>Confirmé</option>
+                        <option value="execute" <%= "selected" if params[:status_request] == "execute" %>>Executé</option>
+                        <option value="rejected" <%= "selected" if params[:status_request] == "rejected" %>>Rejeté</option>
+                    </select>
+                  </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                    <select name="status" class="form-control search selectStatus" data-action="autosave#save">
+                        <option value="">Status de payement</option>
+                        <option value="paid" <%= "selected" if params[:status] == "paid" %>>Payé</option>
+                        <option value="unpaid" <%= "selected" if params[:status] == "unpaid" %>>Non payé</option>
+                    </select>
+                  </div>
+                  </div>
+                </div>
+
+                  <div class="d-flex" style="justify-content:space-between">
+                    <div class="d-flex">
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                        <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+                      </div>
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <a href=<%= service_requests_path %> type="bouton" class="btn btn-light">Effacer</a>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                        <%= link_to "Télécharger PDF", print_service_request_service_requests_path(request.query_parameters), class: "copy-btn text-danger" %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+  </div>
+
   <div class="card shadow-lg border-0">
     <div class="card-header btn-cdae text-white">
       <h4><i class="fas fa-seedling"></i> Demandes de Service</h4>
     </div>
     <div class="card-body table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Utilisateur</th>
+            <th>Superficie (ha)</th>
+            <th>Herbicides et Quantités</th>
+            <th>Garantie totale (FCFA)</th>
+            <th>Kg Soja remboursé</th>
+            <th>Payement</th>
+            <th>Recepteur payement</th>
+            <th>Status</th>
+            <th>Actions</th>
+            <% if current_user.role != "agriculteur"  && current_user.role != "technicien" %>
+            <th>#</th>
+            <%end%>
+          </tr>
+        </thead>
+        <tbody>
+          <% @service_requests.each do |service_request| %>
+            <tr>
+              <td><%= service_request.id %></td>
+              <td><%= service_request.user.full_name %></td>
+              <td><%= service_request.superficie %></td>
+              <td>
+                <% if service_request.service_request_herbicides.any? %>
+                  <ul>
+                    <% service_request.service_request_herbicides.each do |sr_herbicide| %>
+                      <li>
+                        <strong>Nom :</strong> <%= sr_herbicide.herbicide.nom %>,
+                        <strong>Quantité :</strong> <%= sr_herbicide.quantite %> L
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  Aucun herbicide associé
+                <% end %>
+              </td>
+              <td>
+                <%= number_to_currency(
+                      service_request.garantie, 
+                      unit: "FCFA"
+                    ) %>
+              </td>
+              <td>
+                <%= service_request.kg_paye %> Kg
+              </td>
+              <td><%= service_request.status_payement %></td>
+              <td>
+                <%if service_request.status == "paid"  %>
+                  <%=service_request.recu_par%>
+                <%else%>
+                <p>----</p>
+                <%end%>
+              </td>
+            
+              <td>
+                <%if service_request.status_request == 'pending'%>
+                <span class="badge badge-warning"> En attente </span>
+              <% elsif service_request.status_request == 'confirm'%>
+                  <span class="badge badge-primary">Validé</span>
+              <% elsif service_request.status_request ==  'execute'%>
+                  <span class="badge badge-success"> Executé</span>
+              <% else%>
+                  <span class="badge badge-danger">Rejeté</span>
+                <%end%>
+            </td>
 
+              <td class="text-right">
+                <div class="dropdown">
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown<%= service_request.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-cogs"></i> 
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= service_request.id %>">
+                    <li><%= link_to service_request_path(service_request), class: 'dropdown-item' do %>
+                        <i class="fas fa-eye"></i> Détail
+                      <% end %></li>
+                    <%if current_user.role == "agriculteur" && service_request.status_request == 'pending' %>
+                      <li><%= link_to edit_service_request_path(service_request), class: 'dropdown-item' do %>
+                          <i class="fas fa-edit"></i> Modifier
+                        <% end %></li>
+                      <li><%= link_to service_request_path(service_request), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'dropdown-item text-danger' do %>
+                          <i class="fas fa-trash-alt"></i> Supprimer
+                        <% end %></li>
+                    <%elsif current_user.role != "agriculteur"%>
+                      <li><%= link_to edit_service_request_path(service_request), class: 'dropdown-item' do %>
+                          <i class="fas fa-edit"></i> Modifier
+                        <% end %></li>
+                      <li><%= link_to service_request_path(service_request), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'dropdown-item text-danger' do %>
+                          <i class="fas fa-trash-alt"></i> Supprimer
+                        <% end %></li>
+                    <%end%>
+                  </ul>
+                </div>
+              </td>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Utilisateur</th>
-      <th>Superficie (ha)</th>
-      <th>Herbicides et Quantités</th>
-      <th>Garantie totale (FCFA)</th>
-      <th>Kg Soja remboursé</th>
-      <th>Payement</th>
-      <th>Recepteur payement</th>
-      <th>Status</th>
-      <th>Actions</th>
-       <%if current_user.role != "agriculteur" %>
-      <th>#</th>
-      <%end%>
-    </tr>
-  </thead>
-  <tbody>
-    <% @service_requests.each do |service_request| %>
-      <tr>
-        <td><%= service_request.id %></td>
-        <td><%= service_request.user.full_name %></td>
-        <td><%= service_request.superficie %></td>
-        <td>
-          <% if service_request.service_request_herbicides.any? %>
-            <ul>
-              <% service_request.service_request_herbicides.each do |sr_herbicide| %>
-                <li>
-                  <strong>Nom :</strong> <%= sr_herbicide.herbicide.nom %>,
-                  <strong>Quantité :</strong> <%= sr_herbicide.quantite %> L
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            Aucun herbicide associé
+               <% if current_user.role != "agriculteur"  && current_user.role != "technicien" %>
+              <td>
+                <%= form_with(model: service_request, url: update_status_service_request_path(service_request), method: :patch, remote: true, class: "update-status-form") do |form| %>
+                  <%if service_request.status == "paid"  %>
+                    <%if service_request.status_request == 'pending'%>
+                      <%= form.select :status_request, options_for_select([['En attente', 'pending'], ['Validé', 'confirm'], ['Rejeté', 'rejected']], service_request.status_request), { class: 'form-control' }, { onchange: 'this.form.submit()' } %>
+                    <%else%>
+                      <%= form.select :status_request, options_for_select([['En attente', 'pending'], ['Validé', 'confirm'], ['Executé', 'execute'], ['Rejeté', 'rejected']], service_request.status_request), { class: 'form-control' }, { onchange: 'this.form.submit()' } %>
+                    <%end%>
+                  <%else%>
+                  <p class="text-danger">En attente de payement</p>
+                  <%end%>
+                <% end %>
+              </td>
+              <%end%>
+            </tr>
           <% end %>
-        </td>
-        <td>
-          <%= number_to_currency(
-                service_request.garantie, 
-                unit: "FCFA"
-              ) %>
-        </td>
-        <td>
-          <%= service_request.kg_paye %> Kg
-        </td>
-        <td><%= service_request.status_payement %></td>
-        <td>
-          <%if service_request.status == "paid"  %>
-            <%=service_request.recu_par%>
-          <%else%>
-          <p>----</p>
-          <%end%>
-        </td>
-       
-        <td>
-           <%if service_request.status_request == 'pending'%>
-           <span class="badge badge-warning"> En attente </span>
-         <% elsif service_request.status_request == 'confirm'%>
-            <span class="badge badge-primary">Validé</span>
-         <% elsif service_request.status_request ==  'execute'%>
-             <span class="badge badge-success"> Executé</span>
-         <% else%>
-            <span class="badge badge-danger">Rejeté</span>
-          <%end%>
-       </td>
-
-        <td class="text-center">
-          
-          <%= link_to 'Détail', service_request_path(service_request), class: 'btn btn-sm btn-primary' %>
-          <%if current_user.role == "agriculteur" && service_request.status_request == 'pending' %>
-            <%= link_to 'Editer', edit_service_request_path(service_request), class: 'btn btn-sm btn-warning' %>
-          <%else%>
-            <%= link_to 'Editer', edit_service_request_path(service_request), class: 'btn btn-sm btn-warning' %>
-          <%end%>
-          <%= link_to 'Supprimer', service_request_path(service_request), 
-                      method: :delete, 
-                      data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'btn btn-sm btn-danger' %>
-        </td>
-        <%if current_user.role != "agriculteur" %>
-         <td>
-          <%= form_with(model: service_request, url: update_status_service_request_path(service_request), method: :patch, remote: true, class: "update-status-form") do |form| %>
-            <%= form.select :status_request, options_for_select([['En attente', 'pending'], ['Validé', 'confirm'], ['Executé', 'execute'], ['Rejeté', 'rejected']], service_request.status_request), { class: 'form-control' }, { onchange: 'this.form.submit()' } %>
-          <% end %>
-        </td>
-        <%end%>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+        </tbody>
+      </table>
     </div>
   </div>
   <div class="d-flex mt-4" style="justify-content:space-between;">

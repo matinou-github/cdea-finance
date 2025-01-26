@@ -1,0 +1,45 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Liste des Tracteurs</h1>
+  <div class="d-flex justify-content-between mb-3">
+    <%= link_to 'Ajouter un Tracteur', new_tractor_path, class: "btn btn-primary" %>
+    <%= form_with url: tractors_path, method: :get, local: true, class: "d-flex" do %>
+      <%= search_field_tag :q, params[:q], placeholder: "Rechercher un tracteur", class: "form-control me-2" %>
+      <%= submit_tag "Rechercher", class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>#</th>
+        <th>Nom du Tracteur</th>
+        <th>Propriétaire</th>
+        <th>Date de Création</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @tractors.each_with_index do |tractor, index| %>
+        <tr>
+          <td class="text-center"><%= index + 1 %></td>
+          <td><%= tractor.name %></td>
+          <td><%= tractor.user.full_name %></td>
+          <td><%= tractor.created_at.strftime('%d/%m/%Y') %></td>
+          <td class="text-center">
+            <%= link_to 'Modifier', edit_tractor_path(tractor), class: "btn btn-sm btn-warning" %>
+            <%= link_to 'Supprimer', tractor_path(tractor), method: :delete, data: { confirm: 'Êtes-vous sûr ?' }, class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="d-flex mt-4" style="justify-content:space-between;">
+    <div>
+      <%= page_entries_info @tractors, entry_name: "tracteur" %>
+    </div>
+    <div>
+      <%= paginate @tractors %>
+    </div>
+  </div>
+</div>

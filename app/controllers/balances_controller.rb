@@ -1,18 +1,30 @@
 class BalancesController < ApplicationController
     before_action :authenticate_user!  # Si tu utilises Devise pour l'authentification
     layout 'dashboard'
+    before_action :set_filtered_balances, only: [:index, :print_balances]
     def index
+      @restitution = Restitution.new
+      @remboursement = Remboursement.new
+      
       if current_user.role == "agriculteur"
         @balances = Balance.where(user_id: current_user.id).page(params[:page]).per(10).order(:year)
+      elsif current_user.role == "technicien"
+        # Trouver les utilisateurs associés au technicien courant
+        user_ids = User.where(commune: current_user.commune, village: current_user.village).pluck(:id)
+
+        # Récupérer les demandes de service de ces utilisateurs
+        @balances = Balance.where(user_id: user_ids).page(params[:page]).per(10).order(:year)
       else
-        @balances = Balance.page(params[:page]).per(10).order(:year)
+        @balances = @balances.page(params[:page]).per(10)
       end
 
       @indice_setting = IndiceSetting.last
       @frais_dossier = @indice_setting.frais_dossier
       @valeur_soja = @indice_setting.valeur_soja
       @indice_pourcentage = @indice_setting.taux_majoration.to_f
+      @kg_mais_par_soja = @indice_setting.kg_mais_par_soja
     end
+
 
     # def convertir_garantie
     #     balance_request = Balance.find(params[:id])
@@ -89,9 +101,25 @@ class BalancesController < ApplicationController
     #   flash[:success] = "Valeur majorée reportée avec succès à l'année #{next_year}."
     #   redirect_to balances_path
     # end
+
+
+    def kg_restants
+      balance = Balance.find_by(user_id: params[:user_id], year: params[:year])
+      if balance
+        if balance.total_remboursement > 0
+        render json: { kg_restants: balance.kg_restants }
+        else
+          render json: { kg_restants: balance.total_kg_paye }
+        end
+      else
+        render json: { kg_restants: nil }, status: :not_found
+      end
+    end
+
       
     def traiter_toutes_balances
-      balances = Balance.where("kg_restants > 0")
+      #balances = Balance.where("kg_restants > 0")
+      balances = Balance.where(status: 'en cours')
       @indice_setting = IndiceSetting.last
       @indice_pourcentage = @indice_setting.taux_majoration
       @valeur_soja = @indice_setting.valeur_soja
@@ -99,25 +127,38 @@ class BalancesController < ApplicationController
       ActiveRecord::Base.transaction do
         balances.each do |balance|
           # Étape 1 : Conversion de la garantie en kg
-          kg_to_convert = [balance.kg_restants, balance.total_garantie / @valeur_soja].min
+          if balance.kg_restants > 0
+            kg_to_convert = [balance.kg_restants, balance.total_garantie / @valeur_soja].min
+          else
+            kg_to_convert = [balance.kg_restants, balance.total_garantie / @valeur_soja].max
+          end
           guarantee_to_deduct = kg_to_convert * @valeur_soja
-    
-          if balance.total_garantie >= guarantee_to_deduct
+          
+          if balance.total_garantie >= guarantee_to_deduct 
             Remboursement.create!(
               user: balance.user,
               year: balance.year,
-              type_remboursement: "nature",
+              type_remboursement: "Remb/garantie", 
               valeurs: kg_to_convert,
               credite_par: current_user
             )
-    
-            balance.update!(total_garantie: balance.total_garantie - guarantee_to_deduct)
+            guarantee_restant = balance.total_garantie - guarantee_to_deduct
+            balance.update!(
+              total_garantie: guarantee_restant, 
+              status: 'Terminé'
+              )
           else
             next # Si la garantie est insuffisante, passer à la balance suivante
           end
     
           # Étape 2 : Appliquer la majoration
-          kg_restants = balance.kg_restants - kg_to_convert # Soustraire les kg convertis
+          kg_restants = [balance.kg_restants - kg_to_convert, 0].max
+
+          if balance.kg_restants > 0
+            kg_restants = balance.kg_restants - kg_to_convert # Soustraire les kg convertis
+          else
+            kg_restants =balance.total_kg_paye - kg_to_convert
+          end
           if kg_restants > 0
             valeur_majoree_kg = kg_restants + (kg_restants * @indice_pourcentage * 0.01)
             balance.valeur_majoree_kg = valeur_majoree_kg.round
@@ -136,7 +177,8 @@ class BalancesController < ApplicationController
             kg_restants: kg_restants,
             valeur_majoree_kg: 0,
             valeur_majoree_numeraire: 0,
-            status: kg_restants > 0 ? 'Reporté' : 'Terminé'
+            status: kg_restants > 0 ? 'Reporté' : 'Terminé',
+            etat_garantie: "Remb/Garantie"
           )
         end
     
@@ -148,6 +190,33 @@ class BalancesController < ApplicationController
       render json: { error: "Une erreur s'est produite : #{e.message}" }, status: :unprocessable_entity
       
     end
+
+    def print_balances
+      # @balances = Balance.order(:year)
+      # if params[:user_id].present?
+      #   @balances = @balances.where(user_id: params[:user_id])
+      # end
+    
+      # if params[:search].present?
+      #   @balances = @balances.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: "%#{params[:search]}%")
+      # end
+      @indice_setting = IndiceSetting.last
+        @manager_name = @indice_setting.gerant_name
+      render layout: 'print' # Utiliser le layout d'impression
+    end
     
     
-  end
+    private
+
+    def set_filtered_balances
+      @balances = Balance.order(:year)
+      if params[:id].present?
+        id_term = "%#{params[:id]}%"
+        @balances = @balances.joins(:user).where("users.identification ILIKE :id", id: id_term)
+      elsif params[:search].present?
+        search_term = "%#{params[:search]}%"
+        @balances = @balances.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: search_term)
+      end
+    end
+
+end

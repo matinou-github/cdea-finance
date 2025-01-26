@@ -1,0 +1,153 @@
+<div class="container">
+  <h2 class="text-center my-4">Nouvelle execution</h2>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <%= form_with(model: @execution, local: true, class: "needs-validation") do |form| %>
+
+        <div class="mb-3">
+          <%= form.label :service_request_id, "Demande de Service", class: "form-label" %>
+        
+          <%= form.select :service_request_id, 
+                      options_for_select(@demandes_validees.map { |h| [h.id, h.id] }), 
+                      { prompt: "-- Sélectionnez une demande --" }, 
+                      { class: "form-select shadow-sm select-beast", id: "service_request_select"  } %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :superficie, "Superficie Labourée (Ha)", class: "form-label" %>
+          <%= form.number_field :superficie, step: 0.01, class: "form-control", id: "superficie_field"  %>
+        </div>
+
+<div id="tractors-fields">
+  <%= form.fields_for :machines, @machine || Machine.new do |machine_form| %>
+    <div class="tractor-fieldset" id="tractor-fieldset-<%= machine_form.object.object_id %>">
+      <div class="mb-3">
+        <%= machine_form.label :machine_info, "Information tracteur", class: "form-label" %>
+        <%= machine_form.text_field :machine_info, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= machine_form.label :superficie, "Superficie Labourée (Ha)", class: "form-label" %>
+        <%= machine_form.number_field :superficie, step: 0.01, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= machine_form.label :preuve, "Image de Preuve", class: "form-label" %>
+        <%= machine_form.file_field :preuve, class: "form-control" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<a href="#" id="add-tractor" class="btn btn-secondary">Ajouter un autre tracteur</a>
+
+        <div class="mb-3">
+          <%= form.label :year, "Année campagne", class: "form-label" %>
+           <%= form.text_field :year, value: Date.today.year, class: "form-control", readonly: true %>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <%= link_to 'Retour', executions_path, class: "btn btn-secondary" %>
+          <%= form.submit "Créer", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+      </div>
+  </div>
+</div>
+<%= javascript_include_tag 'tom_select'%> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const addTractorButton = document.getElementById('add-tractor');
+  const tractorsFields = document.getElementById('tractors-fields');
+
+  addTractorButton.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Vérification si le premier fieldset existe
+    const firstFieldset = tractorsFields.querySelector('.tractor-fieldset');
+    if (!firstFieldset) {
+      console.error('Aucun fieldset trouvé dans le DOM pour clonage.');
+      return; // Si aucun fieldset trouvé, on arrête la fonction
+    }
+
+    // Cloner le premier fieldset pour créer un nouveau champ tracteur
+    const newFields = firstFieldset.cloneNode(true);
+
+    // Calculer l'index pour les nouveaux champs
+    const currentTractorsCount = tractorsFields.querySelectorAll('.tractor-fieldset').length;
+
+    // Mise à jour des noms des champs pour chaque nouveau fieldset
+    newFields.querySelectorAll('input').forEach((input) => {
+      const name = input.getAttribute('name');
+      const newName = name.replace(/\[\d+\]/, `[${currentTractorsCount}]`); // Remplacer l'index
+      input.setAttribute('name', newName);
+      input.setAttribute('id', newName); // Optionnel : mettre à jour l'id
+      input.value = ''; // Réinitialiser la valeur
+    });
+
+    // Ajouter un gestionnaire pour le bouton de suppression dans le nouveau fieldset
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-danger remove-tractor';
+    removeButton.textContent = 'Supprimer';
+    removeButton.addEventListener('click', function() {
+      newFields.remove();
+    });
+
+    // Ajouter le bouton de suppression au nouveau fieldset
+    newFields.appendChild(removeButton);
+
+    // Ajouter le nouveau champ tracteur dans le formulaire
+    tractorsFields.appendChild(newFields);
+  });
+
+  // Gestionnaire pour les boutons de suppression existants
+  tractorsFields.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-tractor')) {
+      e.preventDefault();
+      e.target.closest('.tractor-fieldset').remove();
+    }
+  });
+});
+
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const serviceRequestSelect = document.getElementById("service_request_select");
+  const superficieField = document.getElementById("superficie_field");
+
+  serviceRequestSelect.addEventListener("change", function () {
+    const selectedId = this.value;
+    console.log("ID sélectionné :", selectedId); // Vérifie l'ID sélectionné
+
+    if (selectedId) {
+      fetch(`/service_requests/${selectedId}`, {
+        headers: {
+          "Accept": "application/json", // Indique au serveur que vous attendez une réponse JSON
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erreur réseau ou serveur");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Données reçues :", data); // Affiche les données reçues
+          if (data.superficie) {
+            superficieField.value = data.superficie;
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur AJAX :", error);
+        });
+    } else {
+      superficieField.value = ""; // Réinitialise le champ si aucune option n'est sélectionnée
+    }
+  });
+});
+
+</script>

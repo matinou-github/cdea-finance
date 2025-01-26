@@ -1,0 +1,24 @@
+<div class="machine-fields border p-3 mb-3">
+  <%= f.hidden_field :_destroy, class: "destroy-flag" %>
+
+  <div class="mb-3">
+    <%= f.label :tractor_id, "Information tracteur", class: "form-label" %>
+    <%= f.collection_select :tractor_id, Tractor.all, :id, :name, { prompt: "-- Sélectionnez un tracteur --" }, { class: "form-select" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :superficie, "Superficie Labourée (Ha)", class: "form-label" %>
+    <%= f.number_field :superficie, step: 0.01, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :preuve, "Image de Preuve", class: "form-label" %>
+    <%= f.file_field :preuve, class: "form-control" %>
+  </div>
+
+  <div class="d-none">
+      <%= f.text_field :year, value: Date.today.year, class: "form-control", readonly: true %>
+  </div>
+
+  <a href="#" class="btn btn-danger remove-machine">Supprimer</a>
+</div>

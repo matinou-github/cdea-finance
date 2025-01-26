@@ -1,0 +1,39 @@
+<%= form_with(model: restitution) do |form| %>
+  <% if restitution.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(restitution.errors.count, "error") %> prohibited this restitution from being saved:</h2>
+
+      <ul>
+        <% restitution.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :user_id, "Agriculteur", class: "form-label" %>
+    <%= form.collection_select :user_id, User.all, :id, :full_name, { prompt: "Sélectionnez un utilisateur" }, class: "form-select shadow-sm select-beast" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :year, "Campagne", class: "form-label" %>
+    <%= form.collection_select :year, Balance.all, :year, :year, { prompt: "Sélectionnez l'année" }, class: "form-select shadow-sm select-beast" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :garantie, style: "display: block", class: "form-label"  %>
+    <%= form.text_field :garantie, class: "form-control" %>
+  </div>
+
+  <div style="display:none;">
+    <%= form.text_field :restitué_par, value: current_user.full_name %>
+  </div>
+
+  <div>
+    <%= form.submit "Valider", class: "btn btn-primary w-100" %>
+  </div>
+<% end %>
+
+
+<%= javascript_include_tag 'tom_select'%> 

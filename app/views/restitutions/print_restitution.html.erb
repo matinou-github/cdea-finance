@@ -1,0 +1,70 @@
+<style>
+  @media print {
+  /* Cache les éléments de navigation ou autres éléments non nécessaires */
+  .btn {
+    display: none;
+  }
+
+  /* Ajustez la mise en page pour l'impression */
+  body {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+</style>
+
+<%= button_to 'Imprimer cette page', '#', onclick: 'window.print(); return false;', class: 'btn btn-primary text-end' %>
+
+<div class="text-center">
+  <%= image_tag 'logo.png', width:"75px" %>
+</div>
+<h3 class="text-center">RESTITUTION CLIENT VILLAGE DE 
+  <%if params[:village].present?%>
+  <%=params[:village]%>
+  <%end%>
+
+  CAMPAGNE
+  <%if params[:year].present?%>
+  <%=params[:year]%>
+  <%end%>
+</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Identifiant</th>
+            <th>Agriculteur</th>
+            <th>Garantie campagne</th>
+            <th>Garantie Restituée</th>
+            <th>Restituée par</th>
+            <th>Date</th>
+            <th>Signature Client</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @restitutions.each_with_index do |restitution, index| %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= restitution.user.identification %></td>
+              <td><%= restitution.user.full_name %></td>
+              <td><%= restitution.year %></td>
+              <td><%= restitution.garantie %></td>
+              <td><%= restitution.restitué_par %></td>
+              <td><%= restitution.created_at %></td>
+              <td></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+<div class="text-end me-3">
+  <p>
+    <u>GERANT</u>,
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <i><%=@manager_name%></i>
+  </p>
+</div>

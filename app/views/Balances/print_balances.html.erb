@@ -1,0 +1,113 @@
+<style>
+  @media print {
+  /* Cache les éléments de navigation ou autres éléments non nécessaires */
+  .btn {
+    display: none;
+  }
+
+  /* Ajustez la mise en page pour l'impression */
+  body {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+</style>
+
+<%= button_to 'Imprimer cette page', '#', onclick: 'window.print(); return false;', class: 'btn btn-primary text-end' %>
+
+<div class="text-center">
+  <%= image_tag 'logo.png', width:"75px" %>
+</div>
+<h3 class="text-center">Bilan
+  <%if params[:id].present?%>
+  <%=params[:id]%>
+  <%end%>
+</h3>
+<table class="table table-striped table-bordered table-hover" style="font-size: x-small;">
+  <thead class="thead-light">
+        <tr>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Campagne</th>
+      <th scope="col">Client ID</th>
+      <th scope="col">Client</th>
+      <th scope="col">Superficie</th>
+      <th scope="col">Herbicide</th>
+      <th scope="col">Qte Soja due</th>
+      <th scope="col">Qte Soja remb</th>
+      <th scope="col">Qte Soja rest</th>
+      <th scope="col">Soja rest. Numeraire</th>
+      <th scope="col">Garantie</th>
+      <th scope="col"> Etat de garantie</th>
+      <th scope="col">Valeur majorée (Kg)</th>
+      <th scope="col">Valeur majorée (F)</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+      <% @balances.each_with_index do |balance, index| %>
+      <% balance_service_request_superficie = ServiceRequest.find_by(id: balance.service_request)%>
+      <% balance_service_request_herbicide = ServiceRequestHerbicide.where(service_request: balance.service_request)%>
+          <tr>
+              <td><%= index + 1 %></td>
+              <td><%= balance.year %></td>
+              <td><%= balance.user.identification %></td>
+              <td><%= balance.user.full_name %></td>
+              <td>
+                <%if balance_service_request_superficie.present?%>
+                  <%= balance_service_request_superficie.superficie %>
+                <%else%>
+                ---
+                <%end%>
+              </td>
+              <td>
+                <%if balance_service_request_herbicide.present?%>
+                  <%balance_service_request_herbicide.each do |bilan_herbicide| %>
+                    - <%= bilan_herbicide.herbicide.nom %> (<%=bilan_herbicide.quantite%>L) <br> 
+                  <%end%>
+                <%else%>
+                ---
+                <%end%>
+              </td>
+              <td><%= balance.total_kg_paye %></td>
+              <td><%= balance.total_remboursement %></td>
+              <td><%= balance.kg_restants %></td>
+              <td><%= balance.valeur_restants %></td>
+              <td><%= balance.total_garantie %></td>
+              <td>
+                <% if balance.etat_garantie.present? %>
+                  <%= balance.etat_garantie%>
+                <%else%>
+                  <p>--</p>
+                <%end%>
+                </td>
+              <td><%= balance.valeur_majoree_kg %></td>
+              <td><%= balance.valeur_majoree_numeraire %></td>
+              <td>
+                  <%if balance.total_remboursement > 0 && balance.kg_restants == 0 %>
+                  <span class="text-success"> <%= balance.status%> </span>  
+                  <%else%>
+                  <% if balance.status == "en cours"%>
+                      <span class="text-warning"><%= balance.status%></span>
+                      <%else%>
+                      <span class="text-danger"><%= balance.status%></span>
+                      <%end%>
+                  <%end%>
+              </td>
+          </tr>
+
+      <% end %>
+  </tbody>
+</table>
+
+<div class="text-end me-3">
+  <p>
+    <u>GERANT</u>,
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <i><%=@manager_name%></i>
+  </p>
+</div>

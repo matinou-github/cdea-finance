@@ -26,8 +26,24 @@
           <!-- Profile Image -->
           <div class="col-md-3 text-center">
             <div class="mb-3">
+              <%if @user.photo_courte.url.present?%>
+              <%= image_tag(current_user.photo_courte.url, class: "img-thumbnil rounded-circle", style: "width: 150px; height: 150px; object-fit: cover;
+" ) %>
+              <%else%>
               <%= image_tag "user.jpg", alt: "Image de profil", class: "img-thumbnail rounded-circle", style: "width: 150px; height: 150px;" %>
+              <%end%>
             </div>
+             <div class="row">
+          <div class="col-md-12 mb-3">
+            <%= f.label :photo_courte %>
+            <%= f.file_field :photo_courte, class: "form-control" %>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <%= f.label :photo_complete %>
+            <%= f.file_field :photo_complete, class: "form-control" %>
+          </div>
+        </div>
           </div>
           
           <!-- Personal Information -->
@@ -63,13 +79,20 @@
                 <%= f.select :village, ["Bininsi", "Bori", "Pèrèrè", "Sinawourarou"], { prompt: "Choisissez votre village" }, class: "form-control" %>
               </div>
               <%if current_user.role == "admin"%>
-                <div class="col-sm-12">
-                  <div class="form-group">
-                    <label class="mb-3">Role</label>
+                <div class="col-sm-12 mt-3">
+                  
+                    <label class="form-label">Role</label>
                     <%= f.select :role, User.roles.keys.map { |role| [role.humanize, role] }, { include_blank: "Sélectionnez un rôle" }, class: "form-control select" %>
-                  </div>
+                  
                 </div>
+
+                <div class="col-md-12 mt-3">
+                <%= f.label :identification, "identification", class: "form-label" %>
+                <%= f.text_field :identification, value: @user.identification, class: "form-control" %>
+              </div>
+
               <%end%>
+              
             </div>
           </div>
         </div>

@@ -1,0 +1,72 @@
+<h1 class="text-center">Nouveau Stock</h1>
+<%= form_with(model: @stock, local: true, id: 'remboursement-form') do |form| %>
+  <% if @stock.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@stock.errors.count, "error") %> prohibited this stock from being saved:</h2>
+
+      <ul>
+        <% @stock.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+   <div class="mb-3">
+    <%= form.label :user_id, "Agriculteur", class: "form-label" %>
+    <%= form.collection_select :user_id, User.all, :id, :full_name, { prompt: "Sélectionnez un utilisateur" }, { class: "form-select shadow-sm select-beast", id: 'user-select' } %>
+  </div>
+
+
+  <div class="mb-3">
+    <%= form.label :produit, "Type de stock", class: "form-label" %>
+    <%= form.select :produit, options_for_select([["Soja", "soja"], ["Maïs", "mais"], ["Cash", "cash"]]), { include_blank: "Choisir un type" }, class: "form-select" %>
+  </div>
+  <div class="row">
+    <div class="mb-3 col-md-6">
+      <%= form.label :debit, "Entrée", class: "form-label" %>
+      <%= form.number_field :debit, step: 0.01, class: "form-control", id: 'debit-field'%>
+    </div>
+
+    <div class="mb-3 col-md-6">
+      <%= form.label :credit, "Sortie", class: "form-label" %>
+      <%= form.number_field :credit, step: 0.01, class: "form-control", id: 'credit-field'%>
+    </div>
+  </div>
+  <div class="mb-3">
+    <%= form.label :valeur, "Valeur", class: "form-label" %>
+    <%= form.number_field :valeur, step: 0.01, class: "form-control", id: 'valeurs-field'%>
+  </div>
+
+  <div class="d-none">
+    <%= form.text_field :save_by, value: current_user.full_name%>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= link_to 'Retour', stocks_path, class: "btn btn-secondary" %>
+    <%= form.submit "Créer", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const debitSelect = document.getElementById('debit-field');
+    const creditSelect = document.getElementById('credit-field');
+    const valeursField = document.getElementById('valeurs-field');
+
+    function updateValeursField() {
+      const debitId = parseFloat(debitSelect.value) || 0;
+      const creditId = parseFloat(creditSelect.value) || 0;
+
+      if (debitId || creditId) {
+        valeursField.value = debitId - creditId
+      } else {
+        valeursField.value = 0;
+      }
+    }
+
+
+    debitSelect.addEventListener('input', updateValeursField);
+    creditSelect.addEventListener('input', updateValeursField);
+  });
+</script>

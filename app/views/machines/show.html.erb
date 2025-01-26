@@ -1,0 +1,22 @@
+<h1 class="text-center">Détails de l'Exécution</h1>
+
+<div class="card mt-4">
+  <div class="card-header">
+    Exécution #<%= @execution.id %>
+  </div>
+  <div class="card-body">
+    <p><strong>Demande de Service :</strong> <%= @execution.service_request_id %></p>
+    <p><strong>Superficie (Ha) :</strong> <%= @execution.superficie %></p>
+    <p><strong>Preuve :</strong></p>
+    <% if @execution.preuve.attached? %>
+      <%= image_tag @execution.preuve, style: "max-width: 100%;" %>
+    <% else %>
+      <p class="text-muted">Aucune image disponible</p>
+    <% end %>
+  </div>
+  <div class="card-footer text-end">
+    <%= link_to 'Retour', executions_path, class: "btn btn-secondary" %>
+    <%= link_to 'Modifier', edit_execution_path(@execution), class: "btn btn-warning" %>
+    <%= link_to 'Supprimer', execution_path(@execution), method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn btn-danger" %>
+  </div>
+</div>

@@ -7,8 +7,24 @@ class ServiceRequestsController < ApplicationController
   def index
     if current_user.role == "agriculteur"
       @service_requests = ServiceRequest.includes(service_request_herbicides: :herbicide).where(user_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
+    elsif current_user.role == "technicien"
+    # Trouver les utilisateurs associés au technicien courant
+    user_ids = User.where(commune: current_user.commune, village: current_user.village).pluck(:id)
+
+    # Récupérer les demandes de service de ces utilisateurs
+    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(user_id: user_ids).page(params[:page]).per(10).order(created_at: :desc)
     else
       @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page]).per(10).order(created_at: :desc)
+
+      if params[:search].present?
+        search_term = "%#{params[:search]}%"
+        @service_requests = @service_requests.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: search_term)
+      end
+
+      @service_requests = @service_requests.where(status_request: params[:status_request]) if params[:status_request].present?
+      @service_requests = @service_requests.where(status: params[:status]) if params[:status].present?
+
+      @service_requests = @service_requests.per(10)
     end
   end
 
@@ -29,9 +45,7 @@ class ServiceRequestsController < ApplicationController
     @indice_setting = IndiceSetting.last
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
-    @garantie_litre = @indice_setting.garantie_litre
     @kg_ha_laboure = @indice_setting.kg_ha_laboure
-    @kg_litre_octroie = @indice_setting.kg_litre_octroi
     @service_request = ServiceRequest.new
     @service_request.service_request_herbicides.build
   end
@@ -41,9 +55,8 @@ class ServiceRequestsController < ApplicationController
     @indice_setting = IndiceSetting.last
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
-    @garantie_litre = @indice_setting.garantie_litre
+
     @kg_ha_laboure = @indice_setting.kg_ha_laboure
-    @kg_litre_octroie = @indice_setting.kg_litre_octroi
     @service_request = ServiceRequest.find(params[:id])
     @herbicides = @service_request.service_request_herbicides.includes(:herbicide) || [] 
     #service_request.service_request_herbicides
@@ -167,7 +180,30 @@ class ServiceRequestsController < ApplicationController
     redirect_to @service_request
     flash[:success] = "Souscription faites avec succès"
   end
+
+  def print_service_request
+    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).order(created_at: :desc)
+
+      if params[:search].present?
+        search_term = "%#{params[:search]}%"
+        @service_requests = @service_requests.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: search_term)
+      end
+
+    @service_requests = @service_requests.where(status_request: params[:status_request]) if params[:status_request].present?
+    @service_requests = @service_requests.where(status: params[:status]) if params[:status].present?
+    
+    @indice_setting = IndiceSetting.last
+    @manager_name = @indice_setting.gerant_name
+    render layout: 'print' # Utiliser le layout d'impression
+  end
   
+ def synoptique
+  @indice_setting = IndiceSetting.last
+
+    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(status_request: "execute").page(params[:page]).per(10).order(created_at: :desc)
+
+
+ end
 
   private
     # Use callbacks to share common setup or constraints between actions.

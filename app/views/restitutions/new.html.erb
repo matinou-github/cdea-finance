@@ -1,0 +1,11 @@
+<% content_for :title, "New restitution" %>
+
+<h3>Nouveau restitution</h3>
+
+<%= render "form", restitution: @restitution %>
+
+<br>
+
+<div>
+  <%= link_to "Retour", restitutions_path %>
+</div>

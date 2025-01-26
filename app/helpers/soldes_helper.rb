@@ -1,0 +1,2 @@
+module SoldesHelper
+end

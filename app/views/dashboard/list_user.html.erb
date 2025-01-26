@@ -8,46 +8,58 @@
     </div>
   </div>
   <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="main-card mb-3 card">
-                <div class="card-body">
-                    <%= form_with url: dashboard_list_user_path, method: :get, local: true, class: "formSearch form-inline" do %>
+    <div class="col-12">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <%= form_with url: dashboard_list_user_path, method: :get, local: true, class: "formSearch form-inline" do %>
+                <div class="row">
+                  <div class="col-md-6">
                     <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
                       <%= text_field_tag :id, params[:id], class: "search_id form-control", placeholder: "Recherche par ID" %>
                     </div>
-                     <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                         <%= text_field_tag :full_name, params[:full_name], class: "search_nom form-control", placeholder: "Recherche par nom/prénom" %>
-                      </div>
-
-                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                        <select name="village" class="form-control search selectVillage" data-action="autosave#save">
-                            <option value="">selectionner un village</option>
-                            <option value="Sinawourarou" <%= "selected" if params[:village] == "Sinawourarou" %>>Sinawourarou</option>
-                            <option value="Bori" <%= "selected" if params[:village] == "Bori" %>>Bori</option>
-                            <option value="Pèrèrè" <%= "selected" if params[:village] == "Pèrèrè" %>>Pèrèrè</option>
-                            <option value="Bininsi" <%= "selected" if params[:village] == "Bininsi" %>>Bininsi</option>
-                        </select>
-                      </div>
-                        <div class="d-flex" style="justify-content:space-between">
-                          <div class="d-flex">
-                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
-                              <%= submit_tag "Rechercher", class: "btn btn-primary" %>
-                            </div>
-                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                              <a href=<%= dashboard_list_user_path %> type="bouton" class="btn btn-light">Effacer</a>
-                            </div>
-                          </div>
-                          <div>
-                            <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
-                              <%= link_to "Télécharger PDF", export_pdf_dashboard_index_path(village: @village, format: :pdf), class: "copy-btn text-danger" %>
-                            </div>
-                          </div>
-                        </div>
-                      <% end %>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <%= text_field_tag :full_name, params[:full_name], class: "search_nom form-control", placeholder: "Recherche par nom/prénom" %>
+                    </div>
+                  </div>
                 </div>
+
+                  <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                    <select name="village" class="form-control search selectVillage" data-action="autosave#save">
+                        <option value="">selectionner un village</option>
+                        <option value="Sinawourarou" <%= "selected" if params[:village] == "Sinawourarou" %>>Sinawourarou</option>
+                        <option value="Bori" <%= "selected" if params[:village] == "Bori" %>>Bori</option>
+                        <option value="Pèrèrè" <%= "selected" if params[:village] == "Pèrèrè" %>>Pèrèrè</option>
+                        <option value="Bininsi" <%= "selected" if params[:village] == "Bininsi" %>>Bininsi</option>
+                    </select>
+                  </div>
+                  <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                        <div class="custom-control custom-switch">
+                          <input class="custom-control-input" id="customSwitch2" type="checkbox" name="agri" <%= checked= "checked" if params[:agri] == "on" %>>
+                          <label class="custom-control-label" for="customSwitch2">Rechercher uniquement agriculteur</label>
+                        </div>
+                      </div>
+                  <div class="d-flex" style="justify-content:space-between">
+                    <div class="d-flex">
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                        <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+                      </div>
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                        <a href=<%= dashboard_list_user_path %> type="bouton" class="btn btn-light">Effacer</a>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
+                        <%= link_to "Télécharger PDF", export_pdf_dashboard_index_path(village: @village, format: :pdf), class: "copy-btn text-danger" %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
             </div>
         </div>
     </div>
+  </div>
   <div class="card shadow-lg border-0">
     <div class="card-header btn-cdae text-white">
       <h4><i class="fas fa-user"></i> Les utilisateurs</h4>
@@ -68,36 +80,48 @@
           </tr>
         </thead>
         <tbody>
-          <% @users.each_with_index do |user, index| %>
-            <tr>
-              <td><%= index + 1 %></td>
-              <td><%= user.id %></td>
-              <td><%= user.nom %> <%= user.prenom %></td>
-              <td><%= user.commune%>/<%=user.village%></td>
-              <td><%= user.zone == nil ? "N/A" : user.zone  %></td>
-              <td><%= user.phone_number %></td>
-              <td><%= user.email == nil ?  "N/A" :user.email %></td>
-              <td><%=user.role%></td>
-              <td class="text-right">
-                <div class="dropdown">
-                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown<%= user.id %>" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-cogs"></i> 
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= user.id %>">
-                    <li><%= link_to user_path(user), class: 'dropdown-item' do %>
-                        <i class="fas fa-eye"></i> Voir
-                      <% end %></li>
-                    <li><%= link_to edit_user_path(user), class: 'dropdown-item' do %>
-                        <i class="fas fa-edit"></i> Modifier
-                      <% end %></li>
-                    <li><%= link_to user_path(user), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?' }, class: 'dropdown-item text-danger' do %>
-                        <i class="fas fa-trash-alt"></i> Supprimer
-                      <% end %></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          <% end %>
+          
+             <% @users.each_with_index do |user, index| %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td>
+                  <% if user.identification.present?%>
+                  <%= user.identification %>
+                  <%else%>
+                    <%if user.role == "agriculteur"%>
+                    Pas encore client
+                    <%else%>
+                    --
+                    <%end%>
+                  <%end%>
+                  </td> 
+                <td><%= user.nom %> <%= user.prenom %></td>
+                <td><%= user.commune%>/<%=user.village%></td>
+                <td><%= user.zone == nil ? "N/A" : user.zone  %></td>
+                <td><%= user.phone_number %></td>
+                <td><%= user.email == nil ?  "N/A" :user.email %></td>
+                <td><%=user.role%></td>
+                <td class="text-right">
+                  <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown<%= user.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fas fa-cogs"></i> 
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="actionsDropdown<%= user.id %>">
+                      <li><%= link_to user_path(user), class: 'dropdown-item' do %>
+                          <i class="fas fa-eye"></i> Voir
+                        <% end %></li>
+                      <li><%= link_to edit_user_path(user), class: 'dropdown-item' do %>
+                          <i class="fas fa-edit"></i> Modifier
+                        <% end %></li>
+                      <li><%= link_to user_path(user), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?' }, class: 'dropdown-item text-danger' do %>
+                          <i class="fas fa-trash-alt"></i> Supprimer
+                        <% end %></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            
+          <%end%>
         </tbody>
       </table>
     </div>

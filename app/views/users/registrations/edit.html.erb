@@ -35,6 +35,17 @@
             <div class="mb-3">
               <%= image_tag "user.jpg", alt: "Image de profil", class: "img-thumbnail rounded-circle", style: "width: 150px; height: 150px;" %>
             </div>
+            <div class="row">
+              <div class="col-md-12">
+                <%= f.label :photo_courte %>
+                <%= f.file_field :photo_courte, class: "form-control" %>
+              </div>
+
+              <div class="col-md-12">
+                <%= f.label :photo_complete %>
+                <%= f.file_field :photo_complete, class: "form-control" %>
+              </div>
+            </div>
           </div>
           
           <!-- Personal Information -->

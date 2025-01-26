@@ -1,0 +1,161 @@
+<%= form_with(model: fonctionnement, local: true, class: "shadow p-4 rounded bg-white") do |form| %>
+  <% if fonctionnement.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h4 class="alert-heading">
+        <%= pluralize(fonctionnement.errors.count, "erreur") %> empêchent cet enregistrement :
+      </h4>
+      <ul class="mb-0">
+        <% fonctionnement.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Section des informations principales -->
+  <h3 class="text-primary">Informations Générales</h3>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <%= form.label :user_id, "Utilisateur", class: "form-label fw-bold" %>
+      <%= form.collection_select :user_id, User.all, :id, :full_name, 
+          { prompt: "-- Sélectionnez un utilisateur --" }, 
+          class: "form-select" %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :tractor_id, "Tracteur", class: "form-label fw-bold" %>
+      <%= form.collection_select :tractor_id, Tractor.all, :id, :name, 
+          { prompt: "-- Sélectionnez un tracteur --" }, 
+          class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <%= form.label :campagne, "Campagne (année)", class: "form-label fw-bold" %>
+      <%= form.number_field :campagne, value: Time.current.year, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :cout_unitaire, "Coût unitaire de prestation", class: "form-label fw-bold" %>
+      <%= form.number_field :cout_unitaire, step: 0.01, class: "form-control" %>
+    </div>
+  </div>
+
+  <!-- Section des dépenses -->
+  <h3 class="text-primary mt-4">Dépenses</h3>
+  <div id="expenses-fields" class="border p-3 rounded bg-light">
+    <%= form.fields_for :depenses do |expense_fields| %>
+      <div class="expense-fieldset mb-3 p-3 border rounded bg-white">
+        <div class="row">
+          <div class="col-md-3">
+            <%= expense_fields.label :intitule, "Intitulé" %>
+          <%= expense_fields.text_field :intitule, class: "form-control expense-intitule" %>
+          </div>
+          <div class="col-md-3">
+            <%= expense_fields.label :cout_unitaire, "Coût unitaire" %>
+          <%= expense_fields.number_field :cout_unitaire, step: 0.01, class: "form-control expense-cout-unitaire" %>
+          </div>
+          <div class="col-md-3">
+            <%= expense_fields.label :quantite, "Quantité" %>
+            <%= expense_fields.number_field :quantite, step: 1, min: 1, class: "form-control expense-quantite" %>
+          </div>
+          <div class="col-md-3">
+            <%= expense_fields.label :montant_total, "Montant total" %>
+          <%= expense_fields.number_field :montant_total, step: 0.01, readonly: true, class: "form-control expense-montant-total" %>
+          </div>
+        </div>
+        <div class="text-end mt-2">
+          <a href="#" class="remove-expense btn btn-sm btn-danger">Supprimer</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+      <strong>Total Dépenses :</strong> <span id="total-depense" class="text-success fw-bold"><%= @fonctionnement.total_depense%></span> FCFA
+    </div>
+    <a href="#" id="add-expense" class="btn btn-sm btn-primary">Ajouter une dépense</a>
+  </div>
+
+  <!-- Bouton d'enregistrement -->
+  <div class="text-end mt-4">
+    <%= form.submit "Enregistrer", class: "btn btn-primary btn-lg" %>
+  </div>
+<% end %>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const addExpenseButton = document.getElementById("add-expense");
+  const expensesFields = document.getElementById("expenses-fields");
+  const totalDepenseElement = document.getElementById("total-depense");
+
+  if (addExpenseButton && expensesFields) {
+    const template = expensesFields.querySelector(".expense-fieldset");
+    if (!template) {
+      console.error("Aucun modèle d'exemple de champ de dépense trouvé.");
+      return;
+    }
+
+    // Calcul du total des dépenses
+    const calculateTotalDepense = () => {
+      let totalDepense = 0;
+      document.querySelectorAll(".expense-montant-total").forEach((input) => {
+        const value = parseFloat(input.value) || 0;
+        totalDepense += value;
+      });
+      totalDepenseElement.textContent = totalDepense.toFixed(2); // Mettre à jour l'affichage
+    };
+
+    // Calcul du montant total pour une dépense
+    const calculateMontantTotal = (fieldset) => {
+      const coutUnitaire = parseFloat(fieldset.querySelector(".expense-cout-unitaire").value) || 0;
+      const quantite = parseInt(fieldset.querySelector(".expense-quantite").value) || 0;
+      const montantTotal = coutUnitaire * quantite;
+      fieldset.querySelector(".expense-montant-total").value = montantTotal.toFixed(2);
+      calculateTotalDepense(); // Recalculer le total global
+    };
+
+    // Ajout d'une dépense
+    addExpenseButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const newFieldset = template.cloneNode(true);
+
+      // Réinitialisation des champs
+      newFieldset.querySelectorAll("input").forEach((input) => {
+        input.value = "";
+        const name = input.getAttribute("name");
+        if (name) {
+          const newName = name.replace(/\[\d+\]/, `[${Date.now()}]`);
+          input.setAttribute("name", newName);
+        }
+      });
+
+      // Ajout des gestionnaires d'événements pour les calculs
+      newFieldset.querySelector(".expense-cout-unitaire").addEventListener("input", () => calculateMontantTotal(newFieldset));
+      newFieldset.querySelector(".expense-quantite").addEventListener("input", () => calculateMontantTotal(newFieldset));
+      newFieldset.querySelector(".remove-expense").addEventListener("click", (e) => {
+        e.preventDefault();
+        newFieldset.remove();
+        calculateTotalDepense();
+      });
+
+      expensesFields.appendChild(newFieldset);
+    });
+
+    // Gestion des champs existants
+    expensesFields.querySelectorAll(".expense-fieldset").forEach((fieldset) => {
+      fieldset.querySelector(".expense-cout-unitaire").addEventListener("input", () => calculateMontantTotal(fieldset));
+      fieldset.querySelector(".expense-quantite").addEventListener("input", () => calculateMontantTotal(fieldset));
+      fieldset.querySelector(".remove-expense").addEventListener("click", (e) => {
+        e.preventDefault();
+        fieldset.remove();
+        calculateTotalDepense();
+      });
+    });
+  }
+});
+
+
+</script>

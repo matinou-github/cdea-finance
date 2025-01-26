@@ -1,0 +1,111 @@
+<style>
+  .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+  /* Styles pour l'impression */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .printable-area, .printable-area * {
+      visibility: visible;
+    }
+    .printable-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="container my-5">
+    <!-- Bouton retour -->
+  <%= link_to 'Retour', soldes_path, class: 'btn btn-primary mb-4' %>
+
+  <!-- Bouton imprimer -->
+  <button onclick="printCard()" class="btn btn-success mb-4">Imprimer</button>
+
+  <div class="card border-secondary  printable-area">
+    <div class="card-header text-center">
+      <h3>Facture N° <%= @fonctionnement.id %></h3>
+      <div class="d-flex" style="justify-content: space-around;">
+         <p><strong>Campagne :</strong> <%= @fonctionnement.campagne %> </p>
+          <p><strong>Date : </strong><%= Date.today.strftime('%d-%m-%Y') %></p>
+      </div>
+     
+    </div>
+    <div class="card-body">
+      <!-- Informations générales -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <h3><u>Objet:</u> Facture d'avance</h3> <br>
+          <strong>Proprietaire du tracteur :</strong> <%= @fonctionnement.user.full_name %><br>
+          <strong>Tracteur :</strong> <%= @fonctionnement.tractor.name %><br>
+          
+        </div>
+      </div>
+
+      <!-- Détail des dépenses -->
+      <table class="table table-bordered mt-4">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Désignation</th>
+            <th>Coût Unitaire</th>
+            <th>Quantité</th>
+            <th>Montant Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @fonctionnement.depenses.each_with_index do |depense, index| %>
+            <tr>
+              <td><%= depense.created_at.strftime('%d/%m/%Y %H:%M') %></td>
+              <td><%= depense.intitule %></td>
+              <td><%= number_to_currency(depense.cout_unitaire, unit: "FCFA", delimiter: " ") %></td>
+              <td><%= depense.quantite %></td>
+              <td><%= number_to_currency(depense.montant_total, unit: "FCFA", delimiter: " ") %></td>
+            </tr>
+          <% end %>
+           <tr>
+              <td colspan="4" style="font-weight: bolder;" class="text-center"> TOTAL</td>
+              <td style="font-weight: bolder;">
+                <strong> <%= number_to_currency(@fonctionnement.depenses.sum(&:montant_total), unit: "FCFA", delimiter: " ") %></strong>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+
+  <p>
+  Arrêté la présente facture des dépenses à la somme de 
+<%= @fonctionnement.depenses.sum(&:montant_total).to_i.to_words(locale: :fr) %> (<%= number_to_currency(@fonctionnement.depenses.sum(&:montant_total), unit: "FCFA", delimiter: " ") %>).
+</p>
+
+
+      <!-- Signature -->
+      <div class="d-flex mt-5" style="justify-content: space-between;">
+        <div>
+          <p>Observation de la CDAE-FINANCE</p>
+        </div>
+        <div class="text-end">
+        <p>Proprietaire du tracteur,</p>
+        <br>
+        <br>
+        <p><strong><%= @fonctionnement.user.full_name %></strong></p>
+      </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  function printCard() {
+    window.print();
+  }
+</script>

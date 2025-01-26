@@ -2,5 +2,5 @@
 
 require 'fedapay'
 
-FedaPay.api_key = "sk_sandbox_X3UIqIM2_wt4CLMUVxAtMYoy" # Your secret api key
-FedaPay.environment = 'sandbox' # sandbox or live
+FedaPay.api_key = "pk_live_dtwrLM-l-EIFoWAMGsQirGEX" # Your secret api key
+FedaPay.environment = 'live' # sandbox or live

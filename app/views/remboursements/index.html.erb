@@ -2,7 +2,7 @@
 <div class="container mt-2">
   <div class="row mb-4">
     <div class="col text-end">
-      <%= link_to "Nouvel remboursement", new_remboursement_path, class: "btn btn-primary" %>
+      <%= link_to "Nouveau remboursement", new_remboursement_path, class: "btn btn-primary" %>
     </div>
   </div>
   <div class="card shadow-lg border-0">
@@ -17,7 +17,8 @@
             <th>Agriculteur</th>
             <th>Campagne</th>
             <th>Type de Remboursement</th>
-            <th>Valeur</th>
+            <th>Quantité Soja</th>
+            <th>Quantité Maïs</th>
             <th>Crédité par</th>
             <th>Remboursé le</th>
             <th>Actions</th>
@@ -29,15 +30,30 @@
               <td><%= index + 1 %></td>
               <td><%= remboursement.user.full_name %></td>
               <td><%=remboursement.year%></td>
-              <td><%= remboursement.type_remboursement.capitalize %></td>
-              <td><%= remboursement.valeurs %> <%= remboursement.type_remboursement == "nature" ? "Kg de soja" : "FCFA" %></td>
+              <td>
+                <%if remboursement.type_remboursement == "Remb/mais"%>
+                  Remb/maïs
+                <%else%>
+                  <%= remboursement.type_remboursement.capitalize %>
+                <%end%>
+              </td>
+              <td>
+                 <%if remboursement.type_remboursement == "Remb/mais"%>
+                  <del class="text-danger">
+                    <%= remboursement.valeurs %> <%= remboursement.type_remboursement == "numeraire" ? "FCFA" : "Kg de soja" %>
+                  </del> 
+                <%else%>
+                <%= remboursement.valeurs %> <%= remboursement.type_remboursement == "numeraire" ? "FCFA" : "Kg de soja" %>
+                <%end%>
+              </td>
+              <td> <%=remboursement.mais_recuperer%> <%if remboursement.mais_recuperer.present?%>Kg de maïs<%else%>-- <%end%></td>
               <td><%= remboursement.credite_par.full_name %></td>
               <td><%= remboursement.created_at %></td>
               <td>
                 <div class="btn-group" role="group">
-                  <%= link_to 'Voir', remboursement_path(remboursement), class: "btn btn-info btn-sm" %>
+                  <%#= link_to 'Voir', remboursement_path(remboursement), class: "btn btn-info btn-sm" %>
                   <%= link_to 'Modifier', edit_remboursement_path(remboursement), class: "btn btn-warning btn-sm" %>
-                  <%= link_to 'Supprimer', remboursement_path(remboursement), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ce remboursement ?' }, class: "btn btn-danger btn-sm" %>
+                  <%#= link_to 'Supprimer', remboursement_path(remboursement), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ce remboursement ?' }, class: "btn btn-danger btn-sm" %>
                 </div>
               </td>
             </tr>

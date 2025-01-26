@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  tractor: one
+  campagne: 1
+  cout_unitaire: 9.99
+  total_depense: 9.99
+
+two:
+  user: two
+  tractor: two
+  campagne: 1
+  cout_unitaire: 9.99
+  total_depense: 9.99

@@ -1,0 +1,37 @@
+<div class="container my-5">
+  <h2 class="text-center mb-4">Dépenses de fonctionnement des tracteurs</h2>
+
+  <div class="text-end">
+    <%= link_to 'Nouvelles depenses de fonctionnement', new_fonctionnement_path, class: 'btn btn-primary mb-4' %>
+  </div>
+  <table class="table table-striped table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>N° de facture d'avance</th>
+        <th>Propriétaire du tracteur</th>
+        <th>Tracteur</th>
+        <th>Campagne</th>
+        <th>Dépense Totale (FCFA)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @fonctionnements.each_with_index do |fonctionnement, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= fonctionnement.id %></td>
+          <td><%= fonctionnement.user.full_name %></td>
+          <td><%= fonctionnement.tractor.name %></td>
+          <td><%= fonctionnement.campagne %></td>
+          <td><%= number_to_currency(fonctionnement.depenses.sum(&:montant_total), unit: "FCFA", delimiter: " ") %></td>
+          <td>
+            <%= link_to "Voir", fonctionnement_path(fonctionnement), class: "btn btn-sm btn-info" %>
+            <%= link_to "Modifier", edit_fonctionnement_path(fonctionnement), class: "btn btn-sm btn-warning" %>
+            <%= link_to "Supprimer", fonctionnement, method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

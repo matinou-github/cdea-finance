@@ -15,16 +15,23 @@
   <% end %>
 
   <div class="card-body">
+
+    
     <!-- Nom -->
     <div class="mb-3">
       <%= form.label :nom, "Nom de l'Herbicide", class: "form-label" %>
       <%= form.text_field :nom, class: "form-control", placeholder: "Ex: Roundup" %>
     </div>
 
-    <!-- Prix -->
-    <div class="mb-3">
-      <%= form.label :prix, "Prix de l'Herbicide (F CFA)", class: "form-label" %>
+    <div class="row">
+      <div class="col-md-6">
+          <%= form.label :prix, "Prix d'achat de l'Herbicide (F CFA)", class: "form-label" %>
+      <%= form.number_field :prix_achat, step: 0.01, class: "form-control", placeholder: "Ex: 2500" %>
+      </div>
+      <div class="col-md-6">
+        <%= form.label :prix, "Prix de cession de l'Herbicide (F CFA)", class: "form-label" %>
       <%= form.number_field :prix, step: 0.01, class: "form-control", placeholder: "Ex: 2500" %>
+      </div>
     </div>
 
   <!-- Garantie -->

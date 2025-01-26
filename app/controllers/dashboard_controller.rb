@@ -1,16 +1,35 @@
 class DashboardController < ApplicationController
-    
+    before_action :authorize_secretaire_or_admin, only: [:index]
     def accueil
         
     end
     
     def index  
-        @user_count = User.all.count
+        @user_count = User.where.not(identification: [nil, '']).count
         @zone = ZoneAssignment.all.count
         @total_demande = ServiceRequest.all.count
         @demande_attente = ServiceRequest.where(status_request: "pending").count
-        @Total_soja_recu = Remboursement.where(type_remboursement: 'nature').sum(:valeurs)
-        @Total_numeraire_recu = Remboursement.where(type_remboursement: 'numeraire').sum(:valeurs)
+        @dette_total_due = Balance.sum(:total_kg_paye)
+        @total_du_par_village = Balance.joins(:user)
+                                          .group('users.village')
+                                          .sum(:total_kg_paye)
+        @Total_soja_recu = Balance.sum(:total_remboursement)
+        @total_remboursement_par_village = Balance.joins(:user)
+                                          .group('users.village')
+                                          .sum(:total_remboursement)
+        @total_soja_restants = @dette_total_due - @Total_soja_recu
+        
+        @total_soja_restants_par_village = Balance.joins(:user)
+                                        .group('users.village')
+                                        .sum(:kg_restants)
+
+    @difference_par_village = {}
+
+    # Itération sur les villages pour lesquels il y a des données
+    @total_du_par_village.each do |village, total_kg_paye|
+    total_remboursement = @total_remboursement_par_village[village] || 0
+    @difference_par_village[village] = total_kg_paye - total_remboursement
+    end
 
         @service_requests = ServiceRequest.all
 
@@ -18,14 +37,24 @@ class DashboardController < ApplicationController
 
     def list_user
         @user = User.new 
-        @users = User.order(created_at: :asc)
+        if current_user.role == "technicien"
+            # Récupérer la commune et le village du technicien
+            commune = current_user.commune
+            village = current_user.village
+
+            # Trouver les utilisateurs dans la même commune et le même village
+            @users = User.where(commune: commune, village: village) 
+        else  
+        @users = User.order(created_at: :asc)    
+        end
+        @users = @users.where(role: "agriculteur") if params[:agri].present?
         @users = @users.where('LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)', "%#{params[:full_name].downcase}%", "%#{params[:full_name].downcase}%") if params[:full_name].present?
         @users = @users.where('id = ?', params[:id]) if params[:id].present?
         @users = @users.where(village: params[:village]) if params[:village].present?
         @users =@users.page(params[:page]).per(10)
         @village = params[:village]
     end
-
+ 
     def bilan
         @service_requests = ServiceRequest.includes(:remboursements).page(params[:page]).per(10).order(created_at: :desc)
         @indice_setting = IndiceSetting.last
@@ -89,32 +118,53 @@ class DashboardController < ApplicationController
     end
 
     def export_pdf
+        @indice_setting = IndiceSetting.last
+        manager_name = @indice_setting.gerant_name
+        
         @village = params[:village] 
         if @village.present?
-          @users = User.where(village: @village)
+          @users = User.where(village: @village, role: "agriculteur")
           pdf = Prawn::Document.new
-          pdf.text "Liste client #{@village}", size: 18, style: :bold
+          pdf.image Rails.root.join('public', 'logo.png'), width: 75, position: :center
+          pdf.text "LISTE DES CLIENTS DE #{@village}", size: 18, style: :bold, align: :center
           pdf.move_down 10
           table_data = [["Client ID", "Nom & Prénom", "Commune", "Village", "Téléphone", "Email"]]
-          table_data += @users.map { |user| [user.id, user.full_name, user.commune,user.village, user.phone_number, user.email] }
+          table_data += @users.map { |user| [user.identification, user.full_name, user.commune,user.village, user.phone_number, user.email] }
           pdf.table(table_data, header: true, row_colors: ["DDDDDD", "FFFFFF"])
+          pdf.move_cursor_to(pdf.bounds.bottom + 60) # Ajustez la valeur pour le positionnement
+          # Ajouter le texte du gérant de manière dynamique
+          pdf.text "GERANT,", size: 10, align: :right, style: :italic
+          pdf.move_down 35
+          pdf.text "#{manager_name}", size: 10, align: :right, style: :italic
           respond_to do |format|
-            format.pdf { send_data pdf.render, filename: "list_user.pdf", type: "application/pdf" }
+            format.pdf { send_data pdf.render, filename: "list_client_#{@village}.pdf", type: "application/pdf" }
           end 
         else
           @users = User.all
           pdf = Prawn::Document.new
-          pdf.text "Liste des utilisateurs", size: 18, style: :bold
+          pdf.image Rails.root.join('public', 'logo.png'), width: 75, position: :center
+          pdf.text "Liste des utilisateurs", size: 18, style: :bold, align: :center
           pdf.move_down 10
           table_data = [["Client ID", "Nom & Prénom", "Commune", "Village", "Téléphone", "Email"]]
-          table_data += @users.map { |user| [user.id, user.full_name, user.commune,user.village, user.phone_number, user.email] }
+          table_data += @users.map { |user| [user.identification, user.full_name, user.commune,user.village, user.phone_number, user.email] }
           pdf.table(table_data, header: true, row_colors: ["DDDDDD", "FFFFFF"])
+          pdf.move_cursor_to(pdf.bounds.bottom + 60) # Ajustez la valeur pour le positionnement
+          # Ajouter le texte du gérant de manière dynamique
+          pdf.text "GERANT,", size: 10, align: :right, style: :italic
+          pdf.move_down 35
+          pdf.text "#{manager_name}", size: 10, align: :right, style: :italic
           respond_to do |format|
             format.pdf { send_data pdf.render, filename: "list_user.pdf", type: "application/pdf" }
           end 
         end
     end
     
-    
+private
+
+def authorize_secretaire_or_admin
+    unless current_user.admin? || current_user.secretaire?
+      redirect_to root_path, alert: "Vous n'avez pas la permission d'accéder à cette page."
+    end
+  end
       
 end

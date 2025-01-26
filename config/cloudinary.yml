@@ -1,0 +1,20 @@
+---
+development:
+  cloud_name: cdae
+  api_key: '812923897776882'
+  api_secret: rPl85HI8dbOdU5fNjMYKDwTE-Ng
+  enhance_image_tag: true
+  static_file_support: false
+production:
+  cloud_name: cdae
+  api_key: '812923897776882'
+  api_secret: rPl85HI8dbOdU5fNjMYKDwTE-Ng
+  enhance_image_tag: true
+  static_file_support: true
+test:
+  cloud_name: cdae
+  api_key: '812923897776882'
+  api_secret: rPl85HI8dbOdU5fNjMYKDwTE-Ng
+  enhance_image_tag: true
+  static_file_support: false
+ 

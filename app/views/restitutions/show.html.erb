@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @restitution %>
+
+<div>
+  <%= link_to "Edit this restitution", edit_restitution_path(@restitution) %> |
+  <%= link_to "Back to restitutions", restitutions_path %>
+
+  <%= button_to "Destroy this restitution", @restitution, method: :delete %>
+</div>

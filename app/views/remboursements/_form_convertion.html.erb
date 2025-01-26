@@ -1,0 +1,102 @@
+<%= form_with(model: @remboursement, local: true) do |form| %>
+  <% if @remboursement.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Erreurs</h4>
+      <ul>
+        <% @remboursement.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :user_id, "Agriculteur", class: "form-label" %>
+    <%= form.collection_select :user_id, User.all, :id, :full_name, { prompt: "Sélectionnez un utilisateur" }, { class: "form-select shadow-sm select-beast", id: 'user-select' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :year, "Année", class: "form-label" %>
+    <%= form.collection_select :year, Balance.all, :year, :year, { prompt: "Sélectionnez l'année" }, { class: "form-select shadow-sm select-beast", id: 'year-select' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :type_remboursement, "Type de remboursement", class: "form-label" %>
+    <%= form.text_field :type_remboursement, value: "Remb/mais", class: "form-control", readonly: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :valeurs, "Dette de soja", class: "form-label" %>
+    <%= form.number_field :valeurs, step: 0.01, class: "form-control", id: "valeurs-field" %>
+  </div>
+
+  <div class="mb-3">
+    <label class= "form-label">Equivalent Maïs</label>
+    
+    <%= form.number_field :mais_recuperer, step: 0.01, class: "form-control", id: "valeur-convertie-field" %>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= link_to 'Retour', remboursements_path, class: "btn btn-secondary" %>
+    <%= form.submit "Créer", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const userSelect = document.getElementById('user-select');
+    const yearSelect = document.getElementById('year-select');
+    const valeursField = document.getElementById('valeurs-field');
+
+    function updateValeursField() {
+      const userId = userSelect.value;
+      const year = yearSelect.value;
+
+      if (userId && year) {
+        fetch(`/balances/kg_restants?user_id=${userId}&year=${year}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.kg_restants !== undefined) {
+              valeursField.value = data.kg_restants;
+            } else {
+              valeursField.value = '';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching kg_restants:', error);
+            valeursField.value = '';
+          });
+      } else {
+        valeursField.value = '';
+      }
+    }
+
+
+    userSelect.addEventListener('change', updateValeursField);
+    yearSelect.addEventListener('change', updateValeursField);
+
+    //const valeursField = document.getElementById('valeurs-field');
+    const valeurConvertieField = document.getElementById('valeur-convertie-field');
+
+    const updateConversion = () => {
+      const valeurs = parseFloat(valeursField.value) || 0;
+      valeurConvertieField.value = (valeurs * <%=@kg_mais_par_soja%>).toFixed(2);
+    };
+  console
+    const updateOriginal = () => {
+      const valeurConvertie = parseFloat(valeurConvertieField.value) || 0;
+      valeursField.value = (valeurConvertie / <%=@kg_mais_par_soja%>).toFixed(2);
+    };
+
+    valeursField.addEventListener('input', updateConversion);
+    valeurConvertieField.addEventListener('input', updateOriginal);
+  });
+</script>
+
+<%= javascript_include_tag 'tom_select'%> 
+
