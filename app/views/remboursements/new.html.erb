@@ -27,6 +27,21 @@
     <%= form.select :type_remboursement, options_for_select([["Nature", "nature"], ["Numéraire", "numeraire"], ["Remb/surplus", "Remb/surplus"]]), { include_blank: "Choisir un type" }, class: "form-select" %>
   </div>
 
+  <!-- Section des champs dynamiques -->
+  <div class="mb-3">
+    <label for="dynamic-fields" class="form-label">Sacs et Valeur en KG</label>
+    <div id="dynamic-fields">
+      <%= form.fields_for :remboursement_details do |detail| %>
+        <div class="dynamic-field d-flex align-items-center mb-2">
+          <%= detail.text_field :sac, placeholder: "Sacs", class: "form-control me-2 sac-field" %>
+          <%= detail.number_field :valeur_kg, step: 0.01, placeholder: "Valeur (kg)", class: "form-control me-2 valeur-kg-field" %>
+          <button type="button" class="btn btn-danger remove-field">Retirer</button>
+        </div>
+      <% end %>
+    </div>
+    <button type="button" id="add-field" class="btn btn-success mt-2">Ajouter</button>
+  </div>
+
   <div class="mb-3">
     <%= form.label :valeurs, "Valeur", class: "form-label" %>
     <%= form.number_field :valeurs, step: 0.01, class: "form-control", id: 'valeurs-field'%>
@@ -37,6 +52,65 @@
     <%= form.submit "Créer", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const dynamicFieldsContainer = document.getElementById("dynamic-fields");
+  const addFieldButton = document.getElementById("add-field");
+  const valeursField = document.getElementById("valeurs-field");
+
+  // Initialiser l'index basé sur le nombre de champs existants
+  let fieldIndex = dynamicFieldsContainer.children.length;
+
+  // Ajouter un nouveau champ
+  addFieldButton.addEventListener("click", () => {
+    const newField = document.createElement("div");
+    newField.className = "dynamic-field d-flex align-items-center mb-2";
+    newField.innerHTML = `
+      <input type="text" name="remboursement[remboursement_details_attributes][${fieldIndex}][sac]" 
+             placeholder="Sacs" class="form-control me-2 sac-field" />
+      <input type="number" name="remboursement[remboursement_details_attributes][${fieldIndex}][valeur_kg]" 
+             step="0.01" placeholder="Valeur (kg)" class="form-control me-2 valeur-kg-field" />
+      <button type="button" class="btn btn-danger remove-field">Retirer</button>
+    `;
+    dynamicFieldsContainer.appendChild(newField);
+    attachRemoveHandler(newField.querySelector(".remove-field"));
+    attachValueChangeHandler(newField.querySelector(".valeur-kg-field"));
+
+    // Incrémenter l'index pour le prochain champ
+    fieldIndex++;
+  });
+
+  // Supprimer un champ
+  const attachRemoveHandler = (button) => {
+    button.addEventListener("click", (e) => {
+      e.target.closest(".dynamic-field").remove();
+      updateTotalValeur();
+    });
+  };
+
+  // Mettre à jour la somme des champs valeur_kg
+  const attachValueChangeHandler = (input) => {
+    input.addEventListener("input", updateTotalValeur);
+  };
+
+  // Calculer la somme totale des champs valeur_kg
+  const updateTotalValeur = () => {
+    let total = 0;
+    document.querySelectorAll(".valeur-kg-field").forEach((field) => {
+      total += parseFloat(field.value) || 0;
+    });
+    valeursField.value = total.toFixed(2);
+  };
+
+  // Initialiser les gestionnaires pour les champs existants
+  document.querySelectorAll(".remove-field").forEach(attachRemoveHandler);
+  document.querySelectorAll(".valeur-kg-field").forEach(attachValueChangeHandler);
+});
+
+
+</script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {

@@ -7,7 +7,8 @@ class Remboursement < ApplicationRecord
   
   # Validation du type de remboursement
   #validates :type_remboursement, inclusion: { in: ['nature', 'numeraire'] }
-
+  has_many :remboursement_details, dependent: :destroy
+  accepts_nested_attributes_for :remboursement_details, allow_destroy: true
   # Callbacks
   after_create :update_balance
   after_update :update_balance

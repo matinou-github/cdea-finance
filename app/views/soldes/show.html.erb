@@ -36,7 +36,7 @@
     <div class="card-header text-center">
       <h3>Facture N°<%= @solde.id %></h3>
       <div class="d-flex" style="justify-content: space-around;">
-        <p><strong>Campagne :</strong> <%= @solde.campagne %></p>
+        <p><strong>Campagne :</strong> <%= @solde.campagne %>- <%= @solde.campagne + 1%></p>
         <p><strong>Date :</strong> <%= Date.today.strftime('%d-%m-%Y') %></p>
       </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="col-md-6">
           <h3><u>Objet:</u> Facture de solde</h3> <br>
           <strong>Proprietaire du tracteur :</strong> <%= @solde.user.full_name %><br>
-          <strong>Tracteur :</strong> <%= @solde.tractor.name %><br>
+          <strong>Nom du conducteur :</strong> <%= @solde.tractor.name %><br>
         </div>
       </div>
 
@@ -63,7 +63,7 @@
         <tbody>
           <tr>
             <td>Superficie totale labourée</td>
-            <td><%= @solde.superficie_labouree %></td>
+            <td><%= @solde.superficie_labouree - @solde.reduction%></td>
             <td><%= number_to_currency(@solde.cout_unitaire, unit: "FCFA", delimiter: " ") %></td>
             <td><%= number_to_currency(@solde.montant_prestation, unit: "FCFA", delimiter: " ") %></td>
           </tr>

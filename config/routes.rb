@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :village_settings
   resources :soldes do
     collection do
       get :fetch_tractor_data
@@ -72,6 +73,9 @@ Rails.application.routes.draw do
   get 'dashboard/success_payment', to: 'dashboard#success_payment'
   get 'indice_setting', to: 'indice_setting#index', as: 'indice_setting'
 put 'indice_setting/update', to: 'indice_setting#update', as: 'indice_setting_update'
+
+
+
 get 'synoptique/', to: 'service_requests#synoptique', as: 'synoptique'
 post 'service_payement/', to: 'service_requests#service_payement', as: 'service_payement'
 patch '/service_requests/:id/payement_direct', to: 'service_requests#payement_direct', as: 'payement_direct'

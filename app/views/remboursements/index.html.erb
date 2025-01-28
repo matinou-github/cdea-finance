@@ -26,6 +26,30 @@
         </thead>
         <tbody>
           <% @remboursements.each_with_index do |remboursement, index| %>
+          <!-- Modal dette global-->
+<div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Détail des sacs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <% remboursement.remboursement_details.each do |detail| %>
+        <div>
+        <%= detail.sac %> :  <%= detail.valeur_kg %> kg
+        </div>
+        <hr>
+        <%end%>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermé</button>
+      </div>
+    </div>
+  </div>
+</div>
             <tr>
               <td><%= index + 1 %></td>
               <td><%= remboursement.user.full_name %></td>
@@ -45,6 +69,13 @@
                 <%else%>
                 <%= remboursement.valeurs %> <%= remboursement.type_remboursement == "numeraire" ? "FCFA" : "Kg de soja" %>
                 <%end%>
+
+                  <% if remboursement.remboursement_details.any? %>
+                    <button type="button" class="btn btn-xs btn-secondary" data-toggle="modal" data-target="#exampleModalCenter2">
+                        <i class="fa fa-info"></i>
+                    </button>
+                  <%end%>
+
               </td>
               <td> <%=remboursement.mais_recuperer%> <%if remboursement.mais_recuperer.present?%>Kg de maïs<%else%>-- <%end%></td>
               <td><%= remboursement.credite_par.full_name %></td>
@@ -57,6 +88,7 @@
                 </div>
               </td>
             </tr>
+            
           <% end %>
         </tbody>
       </table>

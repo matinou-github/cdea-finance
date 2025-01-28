@@ -60,103 +60,132 @@ media only screen and (max-width: 575.98px) {
  
   <div class="row mb-4">
     <div class="col text-end">
-      <%= link_to "Nouvelle machine", new_machine_path, class: "btn btn-primary" %>
+      <%= link_to "Nouvelle execution", new_execution_path, class: "btn btn-primary" %>
     </div>
   </div>
   <div class="row justify-content-center">
     <div class="col-12">
         <div class="main-card mb-3 card">
             <div class="card-body">
-                <%= form_with url: executions_path, method: :get, local: true, class: "formSearch form-inline" do %>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                        <%= text_field_tag :machine_info, params[:machine_info], class: "search_nom form-control", placeholder: "Recherche machine" %>
-                    </div>
-                  </div>      
-                    <div class="col-md-6">
-                      <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                        <select name="year" class="form-control search selectyear" data-action="autosave#save">
-                            <option value="">selectionner une année</option>
-                            <option value="2025" <%= "selected" if params[:year] == "2025" %>>2025</option>
-                        </select>
-                      </div>
-                    </div>
-                </div>
-                <div class="d-flex" style="justify-content:space-between">
-                  <div class="d-flex">
-                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
-                      <%= submit_tag "Rechercher", class: "btn btn-primary" %>
-                    </div>
-                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
-                      <a href=<%= executions_path %> type="bouton" class="btn btn-light">Effacer</a>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
-                      <%= link_to 'Imprimer Restitution', print_execution_executions_path(request.query_parameters), class: 'copy-btn text-danger'%>
-                    </div>
-                  </div>
-                </div>
-                <% end %>
-            </div>
+  <%= form_with url: machines_path, method: :get, local: true, class: "formSearch form-inline" do %>
+    <div class="row">
+      <!-- Recherche par conducteur -->
+      <div class="col-md-6">
+        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+          <%= text_field_tag :conducteur_info, params[:conducteur_info], class: "search_nom form-control", placeholder: "Recherche conducteur" %>
+        </div>
+      </div>
+
+      <!-- Sélection de l'année -->
+      <div class="col-md-6">
+        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+          <%= text_field_tag :year, params[:year], class: "search_nom form-control", placeholder: "Recherche par campagne" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons Rechercher, Effacer, Imprimer -->
+    <div class="d-flex" style="justify-content: space-between">
+      <div class="d-flex">
+        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2 me-2">
+          <%= submit_tag "Rechercher", class: "btn btn-primary" %>
+        </div>
+        <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+          <a href=<%= machines_path %> type="button" class="btn btn-light">Effacer</a>
+        </div>
+      </div>
+      <div>
+        
+      </div>
+    </div>
+  <% end %>
+</div>
+
         </div>
     </div>
   </div>
   <div class="card shadow-lg border-0">
     <div class="card-header btn-cdae text-white">
-      <h4><i class="fas fa-seedling"></i> Activité Machine</h4>
+      <h4><i class="fas fa-seedling"></i> Les Activités executées</h4>
     </div>
     <div class="card-body table-responsive">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Campagne</th>
-            <th>Machine Info</th>
-            <th>Preuve</th>
-            <th>Superficie Labourée</th>
-          </tr>
-        </thead>
-        <tbody>
-            <% @machines.each do |tractor| %>
-            <tr>
-              <td><%= tractor.year%></td>
-              <td><%= tractor.tractor.name %></td>
+      <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>N°</th>
+      <th>Campagne</th>
+      <th>Conducteur</th>
+      <th>Agriculteur</th>
+      <th>Superficie Labourée (ha)</th>
+      <th>Preuve</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% total_superficie = 0 %> <!-- Initialisation du total de superficie -->
+    <% @executions.each_with_index do |execution, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= execution.year %> - <%= execution.year + 1 %></td>
+        <td><%= execution.machines.first&.tractor&.name || "Non défini" %></td>
+        <td><%= execution.user.full_name %></td>
+        
+        <!-- Gérer les sous-données des machines -->
+        <% if execution.machines.any? %>
+          <% execution.machines.each_with_index do |tractor, sub_index| %>
+            <% if sub_index > 0 %>
+              <!-- Ajouter une ligne pour chaque machine supplémentaire -->
+              <tr>
+                <td></td> <!-- Cellule vide pour compenser l'index -->
+                <td></td> <!-- Cellule vide pour compenser l'utilisateur -->
+                <td></td> <!-- Cellule vide pour compenser l'année -->
+                <td><%= tractor.superficie %></td>
+                <td>
+                  <% if tractor.preuve.attached? %>
+                    <%= button_tag "Preuve d'exécution", class: "btn btn-sm btn-primary", style: "font-size:x-small;", onclick: "openModal()" %>
+                  <% else %>
+                    <span class="text-muted">Aucune image</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% else %>
+              <!-- Ligne principale -->
+              <td><%= tractor.superficie %></td>
               <td>
-                <% if tractor.preuve.attached? %>  <!-- Assure-toi que l'image est bien attachée -->
-                  <!-- Modal Image -->
-                  <div id="imageModal" class="modal">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <img class="modal-content" id="modalImage">
-                    <div class="caption">
-                      <a href="<%= cloudinary_url(tractor.preuve.key) %>" download>Télécharger</a> 
-                    </div>
-                  </div> 
-
-                  <!-- Image cachée qui sera utilisée dans le modal -->
-                  <img src="<%= cloudinary_url(tractor.preuve.key) %>" class="d-none execution_photo">
-
-                  <!-- Bouton pour ouvrir le modal -->
+                <% if tractor.preuve.attached? %>
                   <%= button_tag "Preuve d'exécution", class: "btn btn-sm btn-primary", style: "font-size:x-small;", onclick: "openModal()" %>
                 <% else %>
                   <span class="text-muted">Aucune image</span>
                 <% end %>
               </td>
-              <td>
-                <%= tractor.superficie %>
-              </td>
-            </tr>
             <% end %>
-        </tbody>
-      </table>
-    </div>
+            
+            <!-- Ajouter la superficie de la machine au total -->
+            <% total_superficie += tractor.superficie.to_f %> <!-- Additionner les superficies -->
+          <% end %>
+        <% else %>
+          <!-- Si aucune machine n'est associée -->
+          <td colspan="3" class="text-muted text-center">Aucune machine associée</td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4" class="text-right"><strong>Total Superficie Labourée :</strong></td>
+      <td colspan="2"><%= total_superficie.round(2) %> </td> <!-- Affichage du total -->
+    </tr>
+  </tfoot>
+</table>
+
+
+        </div>
   </div>
    <div class="d-flex mt-4 mb-5" style="justify-content:space-between;">
     <div>
-      <%= page_entries_info @machines, entry_name: "Travaux effectués" %>
+      <%= page_entries_info @executions, entry_name: "Travaux effectués" %>
     </div>
     <div>
-      <%= paginate @machines %>
+      <%= paginate @executions %>
     </div>
   </div>
 </div>
@@ -167,7 +196,7 @@ media only screen and (max-width: 575.98px) {
     var modalImg = document.getElementById("modalImage");
 
     // Sélectionne l'image cachée dans la page
-    var img = document.querySelector('.machine_photo');
+    var img = document.querySelector('.execution_photo');
     
     // Ouvre le modal et affiche l'image
     modal.style.display = "block";

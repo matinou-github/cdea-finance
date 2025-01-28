@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @village_setting %>
+
+<div>
+  <%= link_to "Edit this village setting", edit_village_setting_path(@village_setting) %> |
+  <%= link_to "Back to village settings", village_settings_path %>
+
+  <%= button_to "Destroy this village setting", @village_setting, method: :delete %>
+</div>

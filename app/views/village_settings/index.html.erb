@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Village settings" %>
+
+<h1>Village settings</h1>
+
+<div id="village_settings">
+  <% @village_settings.each do |village_setting| %>
+    <%= render village_setting %>
+    <p>
+      <%= link_to "Show this village setting", village_setting %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New village setting", new_village_setting_path %>

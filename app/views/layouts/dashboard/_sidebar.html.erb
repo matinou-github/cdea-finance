@@ -24,6 +24,23 @@
                     <li>
                         <a href="<%=balances_path%>"><i class="fas fa-seedling"></i></i> <span>Mes Bilans de campagne</span></a>
                     </li>
+                <%elsif current_user.role == "tractoriste"%>
+                    <li class="active">
+                        <a href="<%=dashboard_accueil_path%>"><i class="fa fa-user"></i> <span>Accueil</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=tractors_path%>"><i class="fas fa-seedling"></i> <span>Mes tracteurs</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=machines_path%>"><i class="fas fa-seedling"></i> <span>Mes activités</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=fonctionnements_path%>"><i class="fas fa-seedling"></i></i> <span>Factures d'avances</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=soldes_path%>"><i class="fas fa-seedling"></i></i> <span>Facture de soldes</span></a>
+                    </li>
+                    
                 <%elsif current_user.role == "technicien"%>
                     <li class="active">
                         <a href="<%=dashboard_accueil_path%>"><i class="fa fa-user"></i> <span>Accueil</span></a>
@@ -85,6 +102,18 @@
                     </li>
                     <li>
                         <a href="<%=executions_path%>"><i class="fas fa-seedling"></i></i> <span>Taches executées</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=tractors_path%>"><i class="fas fa-seedling"></i></i> <span>Tracteurs disponibles</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=fonctionnements_path%>"><i class="fas fa-seedling"></i></i> <span>Dépenses tracteur</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=soldes_path%>"><i class="fas fa-seedling"></i></i> <span>Soldes tracteur</span></a>
+                    </li>
+                    <li>
+                        <a href="<%=synoptique_path%>"><i class="fas fa-seedling"></i></i> <span>Tableau synoptique</span></a>
                     </li>
                 <%end%>
                 <li class="text-center">

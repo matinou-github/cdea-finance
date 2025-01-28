@@ -1,0 +1,17 @@
+<%= form_with(model: village_setting) do |form| %>
+
+
+  <div>
+    <%= form.label :village, style: "display: block" %>
+    <%= form.select :village, User.distinct.pluck(:village), { prompt: "Sélectionnez un village" }, class: "form-control" %>
+  </div>
+
+  <div>
+    <%= form.label :kg_ha_labouree, style: "display: block" %>
+    <%= form.text_field :kg_ha_labouree, class: "form-control" %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

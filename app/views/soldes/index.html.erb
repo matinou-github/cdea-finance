@@ -1,13 +1,14 @@
 <div class="container my-5">
   <h2 class="text-center mb-4">Facture des soldes</h2>
-
+<%if current_user.role != "tractoriste"%>
   <div class="text-end">
     <%= link_to 'Nouvelles depenses de solde', new_solde_path, class: 'btn btn-primary mb-4' %>
   </div>
+<%end%>
   <table class="table table-striped table-bordered">
     <thead class="table-light">
       <tr>
-        <th>#</th>
+        <th>N°</th>
         <th>N° de facture de solde</th>
         <th>Proprietaire</th>
         <th>Tracteur</th>
@@ -23,12 +24,14 @@
           <td><%= solde.id %></td>
           <td><%= solde.user.full_name %></td>
           <td><%= solde.tractor.name %></td>
-          <td><%= solde.campagne %></td>
+          <td><%= solde.campagne %> - <%= solde.campagne +1 %></td>
           <td><%= number_to_currency(solde.solde_total, unit: "FCFA", delimiter: " ") %></td>
           <td>
             <%= link_to "Voir", solde_path(solde), class: "btn btn-sm btn-info" %>
+            <%if current_user.role != "tractoriste"%>
             <%= link_to "Modifier", edit_solde_path(solde), class: "btn btn-sm btn-warning" %>
             <%= link_to "Supprimer", solde, method: :delete, data: { confirm: "Êtes-vous sûr ?" }, class: "btn btn-sm btn-danger" %>
+            <%end%>
           </td>
         </tr>
       <% end %>

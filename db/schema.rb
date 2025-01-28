@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_25_153259) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_28_103054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -132,6 +132,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_25_153259) do
     t.index ["tractor_id"], name: "index_machines_on_tractor_id"
   end
 
+  create_table "remboursement_details", force: :cascade do |t|
+    t.bigint "remboursement_id", null: false
+    t.string "sac"
+    t.decimal "valeur_kg"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["remboursement_id"], name: "index_remboursement_details_on_remboursement_id"
+  end
+
   create_table "remboursements", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "type_remboursement"
@@ -195,6 +204,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_25_153259) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "solde_total"
+    t.decimal "reduction", default: "0.0"
     t.index ["tractor_id"], name: "index_soldes_on_tractor_id"
     t.index ["user_id"], name: "index_soldes_on_user_id"
   end
@@ -242,6 +252,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_25_153259) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "village_settings", force: :cascade do |t|
+    t.string "village"
+    t.decimal "kg_ha_labouree"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "zone_assignments", force: :cascade do |t|
     t.integer "user_id"
     t.integer "assigned_by_id"
@@ -260,6 +277,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_25_153259) do
   add_foreign_key "fonctionnements", "users"
   add_foreign_key "machines", "executions"
   add_foreign_key "machines", "tractors"
+  add_foreign_key "remboursement_details", "remboursements"
   add_foreign_key "remboursements", "users"
   add_foreign_key "remboursements", "users", column: "credite_par_id"
   add_foreign_key "restitutions", "users"

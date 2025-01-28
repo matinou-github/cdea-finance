@@ -21,7 +21,7 @@
           class: "form-select" %>
     </div>
     <div class="col-md-4">
-      <%= form.label :tractor_id, "Tracteur", class: "form-label fw-bold" %>
+      <%= form.label :tractor_id, "Nom du conducteur", class: "form-label fw-bold" %>
       <%= form.collection_select :tractor_id, Tractor.all, :id, :name, 
           { prompt: "-- Sélectionnez un tracteur --" }, 
           class: "form-select" %>
@@ -45,7 +45,11 @@
             <%= form.label :superficie_labouree, "Superficie labourée (en ha)" %>
             <%= form.number_field :superficie_labouree, step: 1, min: 1, class: "form-control expense-superficie_labouree", readonly: true%>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-3">
+            <%= form.label :reduction, "Charge du personnel (en ha)" %>
+            <%= form.number_field :reduction, class: "form-control reduction"%>
+          </div>
+          <div class="col-md-3">
             <%= form.label :montant_prestation, "Montant total" %>
           <%= form.number_field :montant_prestation, step: 0.01, readonly: true, class: "form-control expense-montant-total" %>
           </div>
@@ -97,6 +101,7 @@
   const campagneField = document.querySelector("#solde_campagne");
   const superficieField = document.querySelector(".expense-superficie_labouree");
   const depensesField = document.querySelector(".expense-cout-unitaire");
+  const reductionField = document.querySelector(".reduction");
   const coutUnitaireField = document.querySelector(".cout-unitaire");
   const montantPrestationField = document.querySelector(".expense-montant-total");
   const soldeTotalField = document.querySelector(".expense-solde-total");
@@ -117,7 +122,12 @@
 
           // Calculer le montant de la prestation
           const coutUnitaire = parseFloat(coutUnitaireField.value) || 0;
-          const montantPrestation = (data.superficie_labouree || 0) * coutUnitaire;
+          const reduction = parseFloat(reductionField.value) || 0;
+          console.log(data.superficie_labouree - reduction);
+          console.log(reduction);
+          const montantReduction = data.superficie_labouree - reduction
+            const montantPrestation = montantReduction * coutUnitaire;
+       
           montantPrestationField.value = montantPrestation.toFixed(2);
 
           // Calculer le solde total
@@ -135,6 +145,7 @@
   tractorSelect.addEventListener("change", fetchData);
   campagneField.addEventListener("change", fetchData);
   coutUnitaireField.addEventListener("input", fetchData);
+  reductionField.addEventListener("input", fetchData);
 });
 
 </script>

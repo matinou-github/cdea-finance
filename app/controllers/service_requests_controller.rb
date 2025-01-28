@@ -45,7 +45,8 @@ class ServiceRequestsController < ApplicationController
     @indice_setting = IndiceSetting.last
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
-    @kg_ha_laboure = @indice_setting.kg_ha_laboure
+    @village_setting = VillageSetting.find_by(village: current_user.village)
+    @kg_ha_laboure = @village_setting&.kg_ha_labouree || 0
     @service_request = ServiceRequest.new
     @service_request.service_request_herbicides.build
   end
@@ -56,7 +57,8 @@ class ServiceRequestsController < ApplicationController
     @frais_dossier = @indice_setting.frais_dossier
     @garantie_ha = @indice_setting.garantie_ha
 
-    @kg_ha_laboure = @indice_setting.kg_ha_laboure
+    @village_setting = VillageSetting.find_by(village: current_user.village)
+    @kg_ha_laboure = @village_setting&.kg_ha_labouree || 0
     @service_request = ServiceRequest.find(params[:id])
     @herbicides = @service_request.service_request_herbicides.includes(:herbicide) || [] 
     #service_request.service_request_herbicides

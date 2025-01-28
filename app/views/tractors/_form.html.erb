@@ -4,7 +4,7 @@
     <div class="card-body">
       <%= form_with(model: @tractor, local: true) do |form| %>
         <div class="mb-3">
-          <%= form.label :name, "Nom du Tracteur", class: "form-label" %>
+          <%= form.label :name, "Nom du conducteur", class: "form-label" %>
           <%= form.text_field :name, class: "form-control", placeholder: "Ex : Tracteur X123" %>
         </div>
 
@@ -14,7 +14,7 @@
             <%= form.collection_select :user_id, User.all, :id, :full_name, { prompt: "Sélectionnez un propriétaire" }, class: "form-select" %>
           <% else %>
             <%= form.hidden_field :user_id, value: current_user.id %>
-            <%= text_field_tag :user_name, current_user.name, class: "form-control", disabled: true %>
+            <%= text_field_tag :name, current_user.full_name, class: "form-control", disabled: true %>
           <% end %>
         </div>
 

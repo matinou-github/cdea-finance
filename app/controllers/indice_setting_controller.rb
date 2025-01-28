@@ -2,6 +2,8 @@ class IndiceSettingController < ApplicationController
 	layout 'dashboard'
 	def index
 		@indice_setting = IndiceSetting.first_or_initialize 
+		@village_setting = VillageSetting.new
+		@villages = VillageSetting.all
 	end
 
 

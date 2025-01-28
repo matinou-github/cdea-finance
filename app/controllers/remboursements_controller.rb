@@ -23,10 +23,12 @@ class RemboursementsController < ApplicationController
   # GET /remboursements/new
   def new
     @remboursement = Remboursement.new
+    @remboursement.remboursement_details.build
   end
 
   # GET /remboursements/1/edit
   def edit
+    @remboursement.remboursement_details.build if @remboursement.remboursement_details.empty?
   end
 
   # POST /remboursements or /remboursements.json
@@ -79,6 +81,6 @@ class RemboursementsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def remboursement_params
-      params.require(:remboursement).permit(:user_id, :type_remboursement, :valeurs, :credite_par_id, :year, :mais_recuperer)
+      params.require(:remboursement).permit(:user_id, :type_remboursement, :valeurs, :credite_par_id, :year, :mais_recuperer, remboursement_details_attributes: [:id, :sac, :valeur_kg, :_destroy, :valeurs_field])
     end
 end

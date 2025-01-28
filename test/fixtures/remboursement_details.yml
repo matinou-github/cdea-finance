@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  remboursement: one
+  sac: 1
+  valeur_kg: 9.99
+
+two:
+  remboursement: two
+  sac: 1
+  valeur_kg: 9.99

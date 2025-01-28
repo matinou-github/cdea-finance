@@ -4,14 +4,24 @@ class TractorsController < ApplicationController
   layout 'dashboard'
   def index
     # Recherche de tracteurs en fonction du nom ou du propriétaire
+    if current_user.role == "tractoriste"
+      @tractors = Tractor.includes(:user).where(user_id: current_user.id)
+      if params[:q].present?
+        @tractors = @tractors.where("tractors.name ILIKE :query OR users.nom ILIKE :query OR users.prenom ILIKE :query", query: "%#{params[:q]}%")
+                             .references(:users)
+      end
+      @tractors = @tractors.order(created_at: :desc).page(params[:page]).per(10)
+    else
     @tractors = Tractor.includes(:user) # Optimise les requêtes pour éviter N+1
 
     if params[:q].present?
       @tractors = @tractors.where("tractors.name ILIKE :query OR users.nom ILIKE :query OR users.prenom ILIKE :query", query: "%#{params[:q]}%")
                            .references(:users)
+  
     end
 
     @tractors = @tractors.order(created_at: :desc).page(params[:page]).per(10) # Ajoute la pagination
+  end
   end
 
   # GET /tractors/1 or /tractors/1.json

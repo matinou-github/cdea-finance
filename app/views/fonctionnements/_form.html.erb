@@ -22,7 +22,7 @@
           class: "form-select" %>
     </div>
     <div class="col-md-6">
-      <%= form.label :tractor_id, "Tracteur", class: "form-label fw-bold" %>
+      <%= form.label :tractor_id, "Nom du conducteur", class: "form-label fw-bold" %>
       <%= form.collection_select :tractor_id, Tractor.all, :id, :name, 
           { prompt: "-- Sélectionnez un tracteur --" }, 
           class: "form-select" %>
@@ -33,10 +33,6 @@
     <div class="col-md-6">
       <%= form.label :campagne, "Campagne (année)", class: "form-label fw-bold" %>
       <%= form.number_field :campagne, value: Time.current.year, class: "form-control" %>
-    </div>
-    <div class="col-md-6">
-      <%= form.label :cout_unitaire, "Coût unitaire de prestation", class: "form-label fw-bold" %>
-      <%= form.number_field :cout_unitaire, step: 0.01, class: "form-control" %>
     </div>
   </div>
 

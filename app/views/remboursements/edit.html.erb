@@ -1,3 +1,8 @@
+<style>
+  .dynamic-field[style*="opacity: 0"] {
+  transition: all 0.3s ease; /* Animation pour rendre le masquage fluide */
+}
+</style>
 <h1 class="text-center">Modification Remboursement</h1>
 
 <%= form_with(model: @remboursement, local: true, id: 'remboursement-form') do |form| %>
@@ -27,6 +32,22 @@
     <%= form.select :type_remboursement, options_for_select([["Nature", "nature"], ["Numéraire", "numeraire"], ["Remb/surplus", "Remb/surplus"]], selected: @remboursement.type_remboursement), {}, class: "form-select" %>
   </div>
 
+<div id="dynamic-fields">
+  <% @remboursement.remboursement_details.each_with_index do |detail, index| %>
+    <div class="dynamic-field d-flex align-items-center mb-2">
+      <%= form.hidden_field :id, value: detail.id, name: "remboursement[remboursement_details_attributes][#{index}][id]" %>
+      <%= form.text_field :sac, value: detail.sac, name: "remboursement[remboursement_details_attributes][#{index}][sac]", class: "form-control me-2 sac-field" %>
+      <%= form.number_field :valeur_kg, value: detail.valeur_kg, name: "remboursement[remboursement_details_attributes][#{index}][valeur_kg]", step: 0.01, class: "form-control me-2 valeur-kg-field" %>
+      <%= form.hidden_field :_destroy, value: "false", name: "remboursement[remboursement_details_attributes][#{index}][_destroy]", class: "destroy-field" %>
+      <button type="button" class="btn btn-danger remove-field">Retirer</button>
+    </div>
+  <% end %>
+</div>
+<button type="button" id="add-field" class="btn btn-success">Ajouter</button>
+
+  <!-- Champ caché pour les nouveaux détails ajoutés dynamiquement -->
+  <%#= form.hidden_field :valeurs_field, id: "valeurs-field" %>
+
   <div class="mb-3">
     <%= form.label :valeurs, "Valeur", class: "form-label" %>
     <%= form.number_field :valeurs, step: 0.01, class: "form-control", id: 'valeurs-field'%>
@@ -37,3 +58,97 @@
     <%= form.submit "Modifier", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dynamicFieldsContainer = document.getElementById("dynamic-fields");
+  const addFieldButton = document.getElementById("add-field");
+  const valeursField = document.getElementById("valeurs-field");
+
+  if (!dynamicFieldsContainer || !addFieldButton || !valeursField) {
+    console.error("Les éléments requis pour les champs dynamiques sont introuvables.");
+    return;
+  }
+
+  // Initialiser l'index des champs existants
+  let fieldIndex = dynamicFieldsContainer.children.length;
+
+  // Ajouter un nouveau champ dynamique
+  addFieldButton.addEventListener("click", () => {
+    const newField = document.createElement("div");
+    newField.className = "dynamic-field d-flex align-items-center mb-2";
+    newField.innerHTML = `
+      <input type="text" name="remboursement[remboursement_details_attributes][${fieldIndex}][sac]" 
+             placeholder="Sacs" class="form-control me-2 sac-field" />
+      <input type="number" name="remboursement[remboursement_details_attributes][${fieldIndex}][valeur_kg]" 
+             step="0.01" placeholder="Valeur (kg)" class="form-control me-2 valeur-kg-field" />
+      <input type="hidden" name="remboursement[remboursement_details_attributes][${fieldIndex}][_destroy]" 
+             class="destroy-field" value="false">
+      <button type="button" class="btn btn-danger remove-field">Retirer</button>
+    `;
+    dynamicFieldsContainer.appendChild(newField);
+
+    // Attacher l'événement de suppression au nouveau champ
+    attachRemoveHandler(newField.querySelector(".remove-field"));
+
+    // Attacher l'événement de changement au champ valeur_kg
+    attachValueChangeHandler(newField.querySelector(".valeur-kg-field"));
+
+    // Incrémenter l'index pour le prochain champ
+    fieldIndex++;
+  });
+
+  // Fonction pour gérer le retrait des champs
+  const attachRemoveHandler = (button) => {
+    button.addEventListener("click", (e) => {
+      const fieldContainer = e.target.closest(".dynamic-field");
+      const destroyField = fieldContainer.querySelector(".destroy-field");
+
+      if (destroyField) {
+        // Marquer le champ comme supprimé
+        destroyField.value = "true"; // Rails attend une valeur "true" pour `_destroy`
+        
+        // Masquer de manière alternative sans utiliser `display: none`
+        fieldContainer.style.opacity = "0"; // Masquer visuellement
+        fieldContainer.style.height = "0"; // Réduire la hauteur
+        fieldContainer.style.overflow = "hidden"; // Empêcher tout contenu visible
+        fieldContainer.style.pointerEvents = "none"; // Désactiver l'interaction utilisateur
+      } else {
+        // Supprimer les champs qui ne sont pas encore sauvegardés
+        fieldContainer.remove();
+      }
+
+      // Recalculer la somme après suppression
+      calculateAndUpdateSum();
+    });
+  };
+
+  // Fonction pour attacher l'événement de changement au champ valeur_kg
+  const attachValueChangeHandler = (field) => {
+    field.addEventListener("input", () => {
+      calculateAndUpdateSum();
+    });
+  };
+
+  // Calculer la somme des champs valeur_kg et mettre à jour valeurs-field
+  const calculateAndUpdateSum = () => {
+    let sum = 0;
+
+    dynamicFieldsContainer.querySelectorAll(".valeur-kg-field").forEach((field) => {
+      if (field.closest(".dynamic-field").style.opacity !== "0") {
+        const value = parseFloat(field.value);
+        if (!isNaN(value)) {
+          sum += value;
+        }
+      }
+    });
+
+    valeursField.value = sum.toFixed(2); // Mettre à jour le champ avec la somme
+  };
+
+  // Attacher des gestionnaires d'événements aux champs existants
+  dynamicFieldsContainer.querySelectorAll(".remove-field").forEach(attachRemoveHandler);
+  dynamicFieldsContainer.querySelectorAll(".valeur-kg-field").forEach(attachValueChangeHandler);
+});
+
+</script>

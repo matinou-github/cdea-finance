@@ -1,0 +1,2 @@
+class VillageSetting < ApplicationRecord
+end

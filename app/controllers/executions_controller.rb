@@ -8,7 +8,7 @@ class ExecutionsController < ApplicationController
       @executions = Execution.includes(machines: :tractor).where(user_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
     else
       @executions = Execution.includes(machines: :tractor).order(created_at: :desc)
-      #@executions = @executions.joins(:machines).where('LOWER(machines.machine_info) LIKE LOWER(?)', "%#{params[:machine_info].downcase}%") if params[:machine_info].present?
+      
       @executions = @executions.where(year: params[:year]) if params[:year].present?
       @executions = @executions.page(params[:page]).per(10)
        # Calcul de la somme de la superficie

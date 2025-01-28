@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-        enum :role, {:admin=>"admin", :agriculteur=>"agriculteur", :technicien=>"technicien", :secretaire=>"secretaire"}
+        enum :role, {:admin=>"admin", :agriculteur=>"agriculteur", :technicien=>"technicien", :secretaire=>"secretaire", :tractoriste=>"tractoriste"}
         has_one_attached :photo_courte
         has_one_attached :photo_complete
         has_one_attached :identity_card_photo

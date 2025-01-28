@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  village: MyString
+  kg_ha_labouree: 9.99
+
+two:
+  village: MyString
+  kg_ha_labouree: 9.99

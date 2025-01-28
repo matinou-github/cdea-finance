@@ -1,0 +1,12 @@
+<% content_for :title, "Editing village setting" %>
+
+<h1>Editing village setting</h1>
+
+<%= render "form", village_setting: @village_setting %>
+
+<br>
+
+<div>
+  <%= link_to "Show this village setting", @village_setting %> |
+  <%= link_to "Back to village settings", village_settings_path %>
+</div>

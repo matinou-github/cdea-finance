@@ -3,7 +3,12 @@ class FonctionnementsController < ApplicationController
   layout 'dashboard'
   # GET /fonctionnements or /fonctionnements.json
   def index
-    @fonctionnements = Fonctionnement.all
+    if current_user.role == 'tractoriste'
+      @fonctionnements = Fonctionnement.where(user_id: current_user.id)
+    else
+      @fonctionnements = Fonctionnement.all
+    end
+   
   end
 
   # GET /fonctionnements/1 or /fonctionnements/1.json

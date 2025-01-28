@@ -3,7 +3,11 @@ class SoldesController < ApplicationController
   layout 'dashboard'
   # GET /soldes or /soldes.json
   def index
-    @soldes = Solde.all
+    if current_user.role == 'tractoriste'
+      @soldes = Solde.where(user_id: current_user.id)
+    else
+      @soldes = Solde.all
+    end
   end
 
   # GET /soldes/1 or /soldes/1.json
@@ -87,6 +91,6 @@ class SoldesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def solde_params
-      params.require(:solde).permit(:campagne, :user_id, :tractor_id, :cout_unitaire, :superficie_labouree, :montant_prestation, :solde_total, :depenses)
+      params.require(:solde).permit(:campagne, :user_id, :tractor_id, :cout_unitaire, :superficie_labouree, :montant_prestation, :solde_total, :depenses, :reduction)
     end
 end
