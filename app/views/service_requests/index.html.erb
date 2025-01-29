@@ -12,9 +12,14 @@
             <div class="card-body">
                 <%= form_with url: service_requests_path, method: :get, local: true, class: "formSearch form-inline" do %>
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
                       <%= text_field_tag :search, params[:search], class: "search_nom form-control", placeholder: "Recherche par nom/prénom" %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2">
+                      <%= text_field_tag :campagne, params[:campagne], class: "search_nom form-control", placeholder: "Recherche par campagne" %>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -50,7 +55,7 @@
                     </div>
                     <div>
                       <div class="mb-2 mr-sm-2 mb-sm-0 position-relative form-group mt-2  me-2">
-                        <%= link_to "Télécharger PDF", print_service_request_service_requests_path(request.query_parameters), class: "copy-btn text-danger" %>
+                        <%= link_to "Allez à l'impression", print_service_request_service_requests_path(request.query_parameters), class: "copy-btn text-danger" %>
                       </div>
                     </div>
                   </div>
@@ -65,11 +70,12 @@
       <h4><i class="fas fa-seedling"></i> Demandes de Service</h4>
     </div>
     <div class="card-body table-responsive">
-      <table class="table table-hover">
+      <table class="table table-striped table-bordered table-hover">
         <thead>
           <tr>
             <th>ID</th>
             <th>Utilisateur</th>
+            <th>Campagne</th>
             <th>Superficie (ha)</th>
             <th>Herbicides et Quantités</th>
             <th>Garantie totale (FCFA)</th>
@@ -88,6 +94,7 @@
             <tr>
               <td><%= service_request.id %></td>
               <td><%= service_request.user.full_name %></td>
+              <td><%= service_request.campagne%> - <%= service_request.campagne + 1 %></td>
               <td><%= service_request.superficie %></td>
               <td>
                 <% if service_request.service_request_herbicides.any? %>

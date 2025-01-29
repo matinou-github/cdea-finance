@@ -6,15 +6,16 @@ class ServiceRequestsController < ApplicationController
   # GET /service_requests or /service_requests.json
   def index
     if current_user.role == "agriculteur"
-      @service_requests = ServiceRequest.includes(service_request_herbicides: :herbicide).where(user_id: current_user.id).page(params[:page]).per(10).order(created_at: :desc)
+      @service_requests = ServiceRequest.includes(service_request_herbicides: :herbicide).where(user_id: current_user.id).page(params[:page])
     elsif current_user.role == "technicien"
     # Trouver les utilisateurs associés au technicien courant
     user_ids = User.where(commune: current_user.commune, village: current_user.village).pluck(:id)
 
     # Récupérer les demandes de service de ces utilisateurs
-    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(user_id: user_ids).page(params[:page]).per(10).order(created_at: :desc)
+    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(user_id: user_ids).page(params[:page])
     else
-      @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page]).per(10).order(created_at: :desc)
+      @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).page(params[:page])
+    end
 
       if params[:search].present?
         search_term = "%#{params[:search]}%"
@@ -23,10 +24,11 @@ class ServiceRequestsController < ApplicationController
 
       @service_requests = @service_requests.where(status_request: params[:status_request]) if params[:status_request].present?
       @service_requests = @service_requests.where(status: params[:status]) if params[:status].present?
+      @service_requests = @service_requests.where(campagne: params[:campagne]) if params[:campagne].present?
 
-      @service_requests = @service_requests.per(10)
-    end
+      @service_requests = @service_requests.per(10).order(created_at: :desc)
   end
+  
 
   # GET /service_requests/1 or /service_requests/1.json
   def show
@@ -198,11 +200,38 @@ class ServiceRequestsController < ApplicationController
     @manager_name = @indice_setting.gerant_name
     render layout: 'print' # Utiliser le layout d'impression
   end
+
+  def print_synoptique_service_request
+
+  @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(status_request: "execute").page(params[:page])
+
+  if params[:search].present?
+    search_term = "%#{params[:search]}%"
+    @service_requests = @service_requests.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: search_term)
+  end
+
+  @service_requests = @service_requests.where(campagne: params[:campagne]) if params[:campagne].present?
+
+  @service_requests = @service_requests.per(10).order(created_at: :desc)
+    
+    @indice_setting = IndiceSetting.last
+    @manager_name = @indice_setting.gerant_name
+    render layout: 'print' # Utiliser le layout d'impression
+  end
   
  def synoptique
   @indice_setting = IndiceSetting.last
 
-    @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(status_request: "execute").page(params[:page]).per(10).order(created_at: :desc)
+  @service_requests = ServiceRequest.includes(:user, service_request_herbicides: :herbicide).where(status_request: "execute").page(params[:page])
+
+  if params[:search].present?
+    search_term = "%#{params[:search]}%"
+    @service_requests = @service_requests.joins(:user).where("users.nom ILIKE :search OR users.prenom ILIKE :search", search: search_term)
+  end
+
+  @service_requests = @service_requests.where(campagne: params[:campagne]) if params[:campagne].present?
+
+  @service_requests = @service_requests.per(10).order(created_at: :desc)
 
 
  end
@@ -222,6 +251,7 @@ class ServiceRequestsController < ApplicationController
         :status, 
         :recu_par,
         :status_request, 
+        :campagne,
         herbicides: [:id, :quantite]
       )
     end

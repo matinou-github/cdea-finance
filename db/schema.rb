@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_28_103054) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_29_142707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -107,7 +107,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_28_103054) do
   end
 
   create_table "indice_settings", force: :cascade do |t|
-    t.decimal "kg_ha_laboure", default: "0.0"
     t.decimal "valeur_soja", default: "0.0"
     t.integer "taux_majoration", default: 15
     t.decimal "garantie_ha", default: "0.0"
@@ -189,6 +188,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_28_103054) do
     t.string "status_request"
     t.string "kg_paye"
     t.string "recu_par", default: "CDAE-FINANCE"
+    t.integer "campagne"
     t.index ["herbicide_id"], name: "index_service_requests_on_herbicide_id"
     t.index ["user_id"], name: "index_service_requests_on_user_id"
   end

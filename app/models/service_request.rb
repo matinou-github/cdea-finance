@@ -74,7 +74,7 @@ after_update :assign_user_identification, if: :status_request_executed?
     else
       frais_dossier = @indice_setting.frais_dossier
     end
-    year = self.created_at.year
+    year = self.campagne
     balance = Balance.find_or_create_by(user_id: self.user_id, year: year)
     balance.total_kg_paye += self.kg_paye.to_f
     balance.service_request = self.id

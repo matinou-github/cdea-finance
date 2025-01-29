@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :print_service_request
+      get :print_synoptique_service_request
     end
   end
   resources :herbicides

@@ -1,0 +1,116 @@
+<style>
+  @media print {
+  /* Cache les éléments de navigation ou autres éléments non nécessaires */
+  .btn {
+    display: none;
+  }
+
+  /* Ajustez la mise en page pour l'impression */
+  body {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+</style>
+
+<%= button_to 'Imprimer cette page', '#', onclick: 'window.print(); return false;', class: 'btn btn-primary text-end' %>
+
+<div class="text-center">
+  <%= image_tag 'logo.png', width:"75px" %>
+</div>
+<h3 class="text-center">Tableau Synotpique
+  <%if params[:campagne].present?%>
+  Campagne <%=params[:campagne]%> - <%=params[:campagne].to_i + 1%>
+  <%end%>
+</h3>
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Campagne</th>
+      <th>Numero client</th>
+      <th>Nom de Client</th>
+      <th>Superficie (ha)</th>
+      <th>Herbicides</th>
+      <th>Quantité due</th>
+      <th>Montant accordé</th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+      <% total_general = 0 %>
+      <% total_superficie = 0%>
+      <% quantit_due = 0 %>
+    <% @service_requests.each do |service_request| %>
+      <tr>
+        <td><%= service_request.campagne%> - <%= service_request.campagne + 1%></td>
+        <td><%= service_request.user.identification  %></td>
+        <td><%= service_request.user.full_name %></td>
+        <td>
+          <%= service_request.superficie %>
+          <% @total_superficie = service_request.superficie %>
+          
+          </td>
+        </td>
+        <td>
+          <% if service_request.service_request_herbicides.any? %>
+            <ul>
+              <% total_herbicides = 0 %>
+              <% service_request.service_request_herbicides.each do |sr_herbicide| %>
+                <li>
+                  <%= sr_herbicide.herbicide.nom %>,
+                    <%= sr_herbicide.quantite %> 
+                  <span>
+                    <% @total_herbicide = sr_herbicide.quantite * sr_herbicide.herbicide.prix_achat %>
+                  </span>
+                </li>
+                <% total_herbicides += @total_herbicide %>
+              <% end %>
+                
+            </ul>
+          <% else %>
+            0
+          <% end %>
+        </td>
+        <td>
+          <%= service_request.kg_paye %> Kg
+          <% @quantit_due = service_request.kg_paye %>
+        </td>
+        <td>
+              <%total_global =  (@indice_setting.valeur_superficie * service_request.superficie.to_f) + total_herbicides.to_f %>
+              <%=total_global%>
+              <% total_general += total_global%>
+        </td>
+          
+      </tr>
+      <% total_superficie += @total_superficie.to_f %>
+      <%= quantit_due += @quantit_due.to_i%>
+    <% end %>
+    <tr>
+      <td colspan="2" style="text-align: center;font-weight: bolder;"> Total général</td>
+      <td  style="font-weight: bolder;"><%= total_superficie %></td>
+      <% grouped_herbicides = @service_requests.flat_map(&:service_request_herbicides).group_by { |sr_herbicide| sr_herbicide.herbicide.nom } %>
+
+      <td style="font-weight: bolder;">
+          <% grouped_herbicides.each do |herbicide_nom, sr_herbicides| %>
+          <%= herbicide_nom %> : <%= sr_herbicides.sum(&:quantite) %> <br>
+          <%end%>
+      </td>
+      <td style="font-weight: bolder;"><%= quantit_due%> Kg</td>
+      <td style="font-weight: bolder;"><%=total_general%></td>
+      
+    </tr>
+  </tbody>
+</table>
+
+<div class="text-end me-3">
+  <p>
+    <u>GERANT</u>,
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <i><%=@manager_name%></i>
+  </p>
+</div>

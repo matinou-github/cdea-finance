@@ -78,6 +78,12 @@
         <span class="form-control" id="kg_calcule" style="background-color: #e9ecef;">0</span>
       </div>
   </div>
+  <div class="form-group row">
+      <label class="col-form-label col-md-2">Campagne :</label>
+      <div class="col-md-10">
+        <%= f.number_field :campagne, value: Time.current.year, style: "background-color: #e9ecef;", class: "form-control" %>
+      </div>
+  </div>
 
   <div style="display: none;">
     <%= f.text_field :garantie, value: 0, id: "garantie_calculée_hidden" %>

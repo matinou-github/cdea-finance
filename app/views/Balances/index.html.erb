@@ -151,7 +151,7 @@
            <% balance_service_request_herbicide = ServiceRequestHerbicide.where(service_request: balance.service_request)%>
                 <tr>
                     <td><%= index + 1 %></td>
-                    <td><%= balance.year %></td>
+                    <td><%= balance.year %> - <%= balance.year + 1%></td>
                     <td><%= balance.user.identification %></td>
                     <td><%= balance.user.full_name %></td>
                     <td>
